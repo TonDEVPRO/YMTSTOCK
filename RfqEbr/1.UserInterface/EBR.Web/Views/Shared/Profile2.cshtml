@@ -1,0 +1,47 @@
+﻿@using EBR.Web.Services
+@{
+    var pathImages = Url.Content("~/Images/");
+}
+
+@model int
+
+    <li class="nav-item dropdown" ng-controller="mainController" ng-init="MRBDataName(@Model)">
+            <a class="nav-link" data-toggle="dropdown" href="#">
+                <i class="fa fa-bell-o"></i>
+                <span class="nav-header">{{emplist.EmpNo}} : {{emplist.EmpNameEng}}</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                <span class="dropdown-item dropdown-header text-center text-bold">Welcome To </span>
+                <div class="dropdown-divider"></div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <div class="text-center">
+
+                            <img class="profile-user-img img-fluid img-circle"
+                                 src="~/Scripts/admin-lte3/dist/img/avatar.png"
+                                 alt="User profile picture">
+                        </div>
+                        <p class="text-muted text-center p-3"><b>{{emplist.PositionName}}</b></p>
+                        <ul class="list-group list-group-unbordered mb-3">
+                            <li class="list-group-item">
+                                <b>EmpNo :</b>
+                                <label>{{emplist.EmpNo}}</label>
+                            </li>
+                            <li class="list-group-item">
+                                <b class="text-left">Department</b>
+                                <p>{{emplist.SectionName}}</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+    </li>
+        
+        <li class="nav-item">
+            @using (Html.BeginForm("LogOff", "Home"))
+            {
+                <button class="btn btn-info btn-xs " type="submit"><i class="fa fa-sign-out"></i>&nbsp;Logoff</button>
+            }
+        </li>
+   
+

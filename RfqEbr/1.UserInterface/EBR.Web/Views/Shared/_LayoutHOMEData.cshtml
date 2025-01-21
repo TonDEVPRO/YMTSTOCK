@@ -1,0 +1,196 @@
+﻿
+@using EBR.Web.Services
+@{
+    var pathImages = Url.Content("~/Images/");
+    var parthIcon = pathImages + "PraIcon.ico";
+    var baseurl = Request.Url.GetLeftPart(UriPartial.Authority) + Url.Content("~");
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>YMT-GROUP</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+
+    <link rel="shortcut icon" href="~/Images/YMTHolding.png">
+    <link href="~/Styles/assets/css/vendor/jquery-jvectormap-1.2.2.css" rel="stylesheet" type="text/css" />
+    <script src="~/Scripts/DataCode/underscore.js"></script>
+    <script src="~/Scripts/DataCode/lodash.min.js"></script>
+    <link href="~/Scripts/node_modules/datetime-picker/jquery.datetimepicker.css" rel="stylesheet" />
+    <link href="~/Scripts/MazerPro/dist/assets/vendors/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <link href="~/Styles/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Styles/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" />
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+
+</head>
+
+<body class="loading" data-layout-color="light" data-leftbar-theme="dark" data-layout-mode="fluid" data-rightbar-onstart="true" ng-app="MainApp">
+    <div class="wrapper" id="app">
+        <div class="leftside-menu">
+            <a href="@Url.Action("YMTHome", "Home")?EmpNo=@Model" class="logo text-center logo-light">
+                <span class="logo-lg">
+                    <img src="~/Images/YMTHolding.png" alt="" height="150" />
+                </span>
+                <span class="logo-sm">
+                    <img src="~/Images/YMTHolding.png" alt="" height="50" />
+                </span>
+            </a>
+            <div class="mt-5" id="leftside-menu-container" data-simplebar>
+                <ul class="side-nav">
+                    <li class="side-nav-title side-nav-item"></li>
+                    <li class="side-nav-title side-nav-item">MenuApps</li>
+                    <li class="side-nav-item">
+                        <a href="#" class="side-nav-link">
+                            <i class="uil-schedule"></i>
+                            <span> Management </span>
+                        </a>
+                    </li>
+                    <li class="side-nav-item">
+                        <a data-bs-toggle="collapse" href="#sidebarNds" aria-expanded="false" aria-controls="sidebarNds" class="side-nav-link">
+                            <i class="uil-shopping-trolley"></i>
+                            <span class="badge bg-danger text-white float-end">New</span>
+                            <span> NDS System </span>
+                        </a>
+                        <div class="collapse" id="sidebarNds">
+                            <ul class="side-nav-second-level">
+                                <li>
+                                    <a href="#">Dashboard</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("YMTNdsSystem", "Home")?EmpNo=@Model">NDS-System</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="side-nav-item">
+                        <a data-bs-toggle="collapse" href="#sidebarCrms" aria-expanded="false" aria-controls="sidebarCrms" class="side-nav-link">
+                            <i class="uil-shopping-basket"></i>
+                            <span class="badge bg-danger text-white float-end">New</span>
+                            <span> NDS SHOP </span>
+                        </a>
+                        <div class="collapse" id="sidebarCrms">
+                            <ul class="side-nav-second-level">
+                                <li>
+                                    <a href="#">Dashboard</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("YMTNdsStock", "Home")?EmpNo=@Model">NDS-STOCK</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="side-nav-item">
+                        <a data-bs-toggle="collapse" href="#sidebarC" aria-expanded="false" aria-controls="sidebarC" class="side-nav-link">
+                            <i class="uil-shopping-cart-alt"></i>
+                            <span class="badge bg-danger text-white float-end">New</span>
+                            <span> Holiday SHOP </span>
+                        </a>
+                        <div class="collapse" id="sidebarC">
+                            <ul class="side-nav-second-level">
+                                <li>
+                                    <a href="#">Dashboard</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("NDSHolidayStock", "Home")?EmpNo=@Model">Holiday STOCK</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    @*<li class="side-nav-item">
+            <a data-bs-toggle="collapse" href="#sidebarEmail" aria-expanded="false" aria-controls="sidebarEmail" class="side-nav-link">
+                <i class="uil-envelope"></i>
+                <span> Store</span>
+                <span class="menu-arrow"></span>
+            </a>
+            <div class="collapse" id="sidebarEmail">
+                <ul class="side-nav-second-level">
+                    <li>
+                        <a href="#">Inbox</a>
+                    </li>
+                    <li>
+                        <a href="#">Read Email</a>
+                    </li>
+                </ul>
+            </div>
+        </li>*@
+                    <li class="side-nav-item">
+                        <a data-bs-toggle="collapse" href="#sidebarProjects" aria-expanded="false" aria-controls="sidebarProjects" class="side-nav-link">
+                            <i class="uil-desktop"></i>
+                            <span> IT </span>
+                            <span class="menu-arrow"></span>
+                        </a>
+                        <div class="collapse" id="sidebarProjects">
+                            <ul class="side-nav-second-level">
+                                <li>
+                                    <a href="apps-projects-list.html">List</a>
+                                </li>
+                                <li>
+                                    <a href="apps-projects-details.html">Details</a>
+                                </li>
+                                <li>
+                                    <a href="apps-projects-gantt.html">Gantt <span class="badge rounded-pill bg-light text-dark font-10 float-end">New</span></a>
+                                </li>
+                                <li>
+                                    <a href="apps-projects-add.html">Create Project</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="content-page">
+            <div class="content">
+
+                @RenderBody()
+            </div>
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>
+                                <script>document.write(new Date().getFullYear())</script> © YMTHOLDING & YMT-GROUP.COM
+                            </h5>
+
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/angular")
+    @Scripts.Render("~/bundles/app")
+
+    <script>
+		window.baseUrl = "@baseurl";
+		window.autherize = "@Url.Action("Login", "Account")";
+		Icon = "@parthIcon";
+    </script>
+
+
+    <script src="~/Scripts/node_modules/moment/moment.js"></script>
+    <script src="~/Scripts/node_modules/datetime-picker/jquery.datetimepicker.full.js"></script>
+    <script src="~/Scripts/HyperDEV/assets/js/vendor.min.js"></script>
+    <script src="~/Scripts/HyperDEV/assets/js/app.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @RenderSection("scripts", required: false)
+
+</body>
+</html>
