@@ -75,6 +75,8 @@
     <Compile Include="Configuration\EmployeeInnoConfiguration.cs" />
     <Compile Include="Configuration\EmployeeLoginConfiguration.cs" />
     <Compile Include="Configuration\MasterRemarkConfig.cs" />
+    <Compile Include="Configuration\AttachmentsModelConfig.cs" />
+    <Compile Include="Configuration\ProductModelConfig.cs" />
     <Compile Include="Configuration\YmtgOrderModelConfig.cs" />
     <Compile Include="Configuration\QuotationFileConfig.cs" />
     <Compile Include="Configuration\YmtgProductNdsConfig.cs" />

@@ -85,7 +85,10 @@ namespace RfqEbr.Data.Contracts
 
         //OrderInformation
         IRepository<YmtgOrderModel> YmtgOrderModels { get; }
-        
+        IRepository<ProductModel> ProductModels { get; }
+
+        IRepository<AttachmentsModel> AttachmentsModels { get;  }
+
 
     }
 }

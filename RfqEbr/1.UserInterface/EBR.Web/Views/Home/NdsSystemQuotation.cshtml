@@ -232,7 +232,7 @@
                                             <td>{{ item.QuotationNumber }}</td>
                                             <td>{{ item.CustomerName }}</td>
                                             <td>{{ item.QuoLastname }}</td>
-                                            <td>{{ item.CreateDate | date:'yyyy-MM-dd' }}</td>
+                                            <td>{{ formatDate(item.CreateDate)}}</td>
                                             <td>{{  item.QuoStatus == 1 ? 'Confirm' : '' }}</td>
                                             <td>
                                                 <button type="button" class="btn btn-secondary right"  disabled ng-show="item.QuoStatus == 1">

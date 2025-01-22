@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
 using OfficeOpenXml.FormulaParsing.LexicalAnalysis;
 using OfficeOpenXml.Style;
+using Org.BouncyCastle.Asn1.X509;
 using RfqEbr.Data.Contracts;
 using RfqEbr.Models;
 using RfqEbr.Models.Table;
@@ -2602,10 +2603,10 @@ namespace EBR.Web.Controllers
 
 
         //Get Quotation file by order num
-        [HttpGet]
-        public ActionResult GetDataQuoFileTables(string orderNumber)
+        [HttpPost]
+        public ActionResult GetDataQuoFileTables(string OrderNumber)
         {
-            if (string.IsNullOrEmpty(orderNumber))
+            if (string.IsNullOrEmpty(OrderNumber))
             {
                 var FileBad = "Order number is required.";
 
@@ -2614,7 +2615,7 @@ namespace EBR.Web.Controllers
 
             //ËÒ file Quotation
 
-            var QuoNum = _uow.YmtgOrderNdss.GetAll().Where(z => z.OrderNumber == orderNumber).FirstOrDefault();
+            var QuoNum = _uow.YmtgOrderNdss.GetAll().Where(z => z.OrderNumber == OrderNumber).FirstOrDefault();
             string QuoNumStr;
             if (QuoNum == null)
             {
@@ -2626,36 +2627,33 @@ namespace EBR.Web.Controllers
                 QuoNumStr = QuoNum.QuotationNumber.ToString();
             }
 
-            var fileQuos = new List<object>();
+            var fileQuos = new List<QuotationFile>();
 
             if (!string.IsNullOrEmpty(QuoNumStr))
             {
 
                 fileQuos = _uow.QuotationFiles.GetAll()
-                         .Where(f => f.QuotationNumber == QuoNumStr)
-                         .Select(f => new
-                         {
-                             f.QuotationNumber,
-                             f.Id,
-                             f.FileName,
-                             f.FilePath,
-                             f.FileDescription,
-                             CreatedAt = f.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")
-                         })
-                          .ToList<object>();
+                        .Where(f => f.QuotationNumber == QuoNumStr).ToList();
+                //.Select(f => new
+                //{
+                //    f.QuotationNumber,
+                //    f.Id,
+                //    f.FileName,
+                //    f.FilePath,
+                //    f.FileDescription,
+                //    CreatedAt = f.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")
+                //})
+                // .ToList<object>();
 
             }
 
-
-            // Return {} if no files exist
             if (!fileQuos.Any())
             {
                 return new JsonNetResult("");
             }
 
-            // Return fileQuos directly if files exist
-         
             return new JsonNetResult(fileQuos);
+
         }
 
 
@@ -2679,26 +2677,239 @@ namespace EBR.Web.Controllers
 
         //Order Information
 
+ 
+
         [HttpGet]
         public JsonResult GetOrderInfos()
         {
-            var orderData = _context.OrderModel
-                .Select(o => new
-                {
-                    o.OrderNumber,
-                    o.OrderDate,
-                    o.ShipDate,
-                    o.TotalQty,
-                    o.OrderStatus,
-                    o.CustomerName
-                })
+
+            var orderData = _uow.YmtgOrderModels.GetAll()
+                   .Select(o => new
+                   {
+                       o.OrderNumber,
+                       o.OrderDate,
+                       o.ShipDate,
+                       o.TotalQty,
+                       o.OrderStatus,
+                       o.CustomerName
+                   })
                 .OrderByDescending(o => o.OrderNumber)
                 .ToList();
-            //return Ok(orderData);
-            return Json(new { data = orderData });
+            return Json(new { data = orderData }, JsonRequestBehavior.AllowGet);
+
         }
 
 
+        
+        public ActionResult NdsSystemOrderInformation(int EmpNo)
+        {
+            int empSession = Convert.ToInt32(Session["EmpNo"]);
+            if (empSession != EmpNo)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var CheckRole = _uow.YMTGUsers.GetAll().Where(t => t.Id == EmpNo).FirstOrDefault();
+            if (EmpNo == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            else
+            {
+                if (CheckRole.Status == "0" || CheckRole.Status == "2" || CheckRole.Status == "33")
+                {
+                    return View(EmpNo);
+                }
+                else
+                {
+                    return RedirectToAction("Home", "Home", new { EmpNo = EmpNo });
+                }
+            }
+        }
+
+        [HttpGet]
+        public ActionResult GetOrderDetails(string orderNumber)
+        {
+            var order = _uow.YmtgOrderModels.GetAll()
+                .Where(o => o.OrderNumber == orderNumber).FirstOrDefault();
+            return new JsonNetResult(order);
+        }
+
+        [HttpGet]
+        public ActionResult GetProductOrders(string orderNumber)
+        {
+            var productOrder = _uow.ProductModels.GetAll()
+                .Where(o => o.OrderNumber == orderNumber).ToList();
+
+            return new JsonNetResult(productOrder);
+        }
+
+
+
+
+        public ActionResult NdsSystemViewAttachments(string orderNumber, int EmpNo)
+        {
+            // ViewPage read only
+            var model = new UserQuo
+            {
+                QuotationNumber = orderNumber,
+                EmpNo = EmpNo
+            };
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult GetDataOtherFileTable(string orderNumber)
+
+        {
+            //if (string.IsNullOrEmpty(orderNumber))
+            //{
+            //    //return BadRequest("Order number is required.");
+            //}
+
+            //ËÒ file Quotation
+
+
+
+            var fileOther = _uow.AttachmentsModels.GetAll()
+                .Where(f => f.OrderNumber == orderNumber).ToList();
+            //.Select(f => new
+            //{
+
+            //    f.Id,
+            //    f.FileName,
+            //    f.FilePath,
+            //    f.FileDescription,
+            //    CreatedAt = f.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")
+            //})
+
+
+            //return Ok(fileOther);
+            return new JsonNetResult(fileOther);
+        }
+
+
+        //[HttpPost]
+        //public ActionResult UploadFileAboutOrders(HttpPostedFileBase file , string fileDescription, string orderNumber)
+        //{
+        //    if (file == null || file.ContentLength == 0)
+        //    {
+        //        var errorfile = "Invalid file.";
+        //        return new JsonNetResult(errorfile);
+        //    }
+
+        //    if (string.IsNullOrEmpty(orderNumber))
+        //    {
+        //        var errorfiles = "Order number is required.";
+        //        return new JsonNetResult(errorfiles);
+        //    }
+
+        //    if (string.IsNullOrEmpty(fileDescription))
+        //    {
+        //        fileDescription = "";
+        //    }
+
+        //    var otherfileFolderPath = Path.Combine(_uploadPath, "Otherfile", orderNumber);
+        //    if (!Directory.Exists(otherfileFolderPath))
+        //    {
+        //        Directory.CreateDirectory(otherfileFolderPath);
+        //    }
+
+        //    var fileName = Path.GetFileName(file.FileName);
+        //    var filePath = Path.Combine(otherfileFolderPath, fileName);
+
+        //    int counter = 1;
+        //    while (System.IO.File.Exists(filePath))
+        //    {
+        //        var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+        //        var fileExtension = Path.GetExtension(fileName);
+        //        fileName = $"{fileNameWithoutExtension}_{counter++}{fileExtension}";
+        //        filePath = Path.Combine(otherfileFolderPath, fileName);
+        //    }
+
+        //    using (var stream = new FileStream(filePath, FileMode.Create))
+        //    {
+        //        file.CopyTo(stream);
+        //    }
+
+        //    var newFile = new AttachmentsModel
+        //    {
+        //        OrderNumber = orderNumber,
+        //        FileName = fileName,
+        //        FilePath = Path.Combine("Uploads", "Otherfile", orderNumber, fileName), // à¡çº Path áºº Relative
+        //        FileDescription = fileDescription,
+        //        CreatedAt = DateTime.Now,
+        //        AddFileBy = "ADMIN"
+        //    };
+
+        //    _uow.AttachmentsModels.Add(newFile);
+        //    _uow.Commit();
+
+        //    return new JsonNetResult(newFile);
+
+        //}
+
+
+        [HttpPost]
+        public ActionResult UploadFileAboutOrders(HttpPostedFileBase file, string fileDescription, string orderNumber)
+        {
+            if (file == null || file.ContentLength == 0)
+            {
+                return Json(new { success = false, message = "Invalid file." }, JsonRequestBehavior.AllowGet);
+            }
+
+            if (string.IsNullOrEmpty(orderNumber))
+            {
+                return Json(new { success = false, message = "Order number is required." }, JsonRequestBehavior.AllowGet);
+            }
+
+            // Assign empty string if fileDescription is null or empty
+            fileDescription = fileDescription ?? string.Empty;
+
+            // Construct the folder path to save the file
+            var otherfileFolderPath = Path.Combine(Server.MapPath("~/Uploads/Otherfile"), orderNumber);
+            if (!Directory.Exists(otherfileFolderPath))
+            {
+                Directory.CreateDirectory(otherfileFolderPath);
+            }
+
+            // Get file name and ensure no duplicate file names
+            var fileName = Path.GetFileName(file.FileName);
+            var filePath = Path.Combine(otherfileFolderPath, fileName);
+
+            int counter = 1;
+            while (System.IO.File.Exists(filePath))
+            {
+                var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+                var fileExtension = Path.GetExtension(fileName);
+                fileName = $"{fileNameWithoutExtension}_{counter++}{fileExtension}";
+                filePath = Path.Combine(otherfileFolderPath, fileName);
+            }
+
+            // Save the file to the server
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                file.InputStream.CopyTo(stream);
+            }
+
+            // Save file information to the database
+            var newFile = new AttachmentsModel
+            {
+                OrderNumber = orderNumber,
+                FileName = fileName,
+                FilePath = $"/Uploads/Otherfile/{orderNumber}/{fileName}", // Relative path for database
+                FileDescription = fileDescription,
+                CreatedAt = DateTime.Now,
+                AddFileBy = "ADMIN"
+            };
+
+            // Save to database (ensure _uow is properly configured and used)
+            _uow.AttachmentsModels.Add(newFile);
+            _uow.Commit();
+
+            // Return success response
+            return Json(new { success = true, data = newFile }, JsonRequestBehavior.AllowGet);
+        }
 
     }
 }

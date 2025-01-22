@@ -94,8 +94,8 @@ namespace RfqEbr.Data
 
         //OrderInformation
         public IRepository<YmtgOrderModel> YmtgOrderModels { get { return GetStandardRepo<YmtgOrderModel>(); } }
+        public IRepository<ProductModel> ProductModels { get { return GetStandardRepo<ProductModel>(); } }
 
-
-        
+        public IRepository<AttachmentsModel> AttachmentsModels { get { return GetStandardRepo<AttachmentsModel>(); } }
     }
 }

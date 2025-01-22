@@ -69,7 +69,12 @@ namespace RfqEbr.Data
 
             //OrderInformation
             modelBuilder.Configurations.Add(new YmtgOrderModelConfig());
+            modelBuilder.Configurations.Add(new ProductModelConfig());
+
+            modelBuilder.Configurations.Add(new AttachmentsModelConfig());
             
+
+
         }
 
         //#Wansao - Table
@@ -128,8 +133,9 @@ namespace RfqEbr.Data
 
         //OrderInformation
         public DbSet<YmtgOrderModel> YmtgOrderModels { get; set; }
+        public DbSet<ProductModel> ProductModels { get; set; }
 
+        public DbSet<AttachmentsModel> AttachmentsModels { get; set; }
         
-
     }
 }

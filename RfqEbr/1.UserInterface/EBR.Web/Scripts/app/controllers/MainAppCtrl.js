@@ -2119,62 +2119,6 @@
     };
 
 
-    $scope.GetPageFile = function () {
-        // ดึงค่าจาก URL Query String
-        const urlParams = new URLSearchParams(window.location.search);
-        const orderNumber = urlParams.get('orderNumber'); // ดึงค่าของ orderNumber
-        $scope.orderNumber = orderNumber;
-        if (!orderNumber) {
-            console.error("Order number is missing in the URL.");
-            return;
-        }
-
-
-
-        $scope.GetDataQuoFileTable(orderNumber);
-    };
-
-    $scope.GetDataQuoFileTable = function (orderNumber) {
-
-
-
-        $http.get('/Home/GetDataQuoFileTables', { params: { orderNumber: orderNumber } })
-            .then(function (response) {
-
-
-
-                /*$scope.quoFile = response.data;*/ // เก็บข้อมูลใน scope
-                $scope.quoFile = response.data;
-                if (Array.isArray($scope.quoFile) && $scope.quoFile.length > 0) {
-                    var quotationNumber = $scope.quoFile[0].quotationNumber;
-                    $scope.quotationNumber = quotationNumber;
-                } else {
-                    $scope.quotationNumber = "";
-                }
-
-
-
-
-            })
-            .catch(function (error) {
-                console.error("Error loading QuoFile: ", error);
-                $scope.quoFile = []; // กำหนดค่าเริ่มต้นเมื่อเกิดข้อผิดพลาด
-            });
-
-
-        $http.get('/Home/GetDataOtherFileTable', { params: { orderNumber: orderNumber } })
-            .then(function (response) {
-                $scope.files = response.data; // เก็บข้อมูลใน scope
-
-            }, function (error) {
-                console.error("Error OtherFile : ", error);
-            });
-
-
-    };
-
-
-
 
     $scope.viewQuotation = function (quotationNumber , EmpNos) {
 
@@ -2188,20 +2132,266 @@
 
 
     // Order Information
-    $scope.dataOrders = [];
-
+ 
     $scope.GetOrderInfo = function () {
-        $http.get(window.baseUrl + "Home/GetOrderInfos")
+        //$http.get(window.baseUrl + "Home/GetOrderInfos")
+        //    .then(function (response) {
+        //        $scope.dataOrders = response.data.data; // Bind data to scope
+        //        console.log($scope.dataOrders);
+        //        initializeDataTable(); // เรียก DataTable หลังโหลดข้อมูล
+        //    }, function (error) {
+        //        console.error("Error fetching order information: ", error);
+        //    });
+
+        $scope.dataOrders = [];
+        $http.get(window.baseUrl + 'Home/GetOrderInfos')
             .then(function (response) {
-                $scope.dataOrders = response.data.data; // Bind data to scope
+                $scope.dataOrders = response.data.data;
+
+
                 console.log($scope.dataOrders);
-                initializeDataTable(); // เรียก DataTable หลังโหลดข้อมูล
-            }, function (error) {
-                console.error("Error fetching order information: ", error);
+                setTimeout(function () {
+                    $('#dataTables').DataTable();
+                }, 0);
             });
     };
 
+    $scope.GetOrderInformation = function (EmpNo) {
+        console.log(EmpNo);
 
+        $window.location.href = 'NdsSystemOrderInformation?EmpNo=' + EmpNo;
+    }
+
+    $scope.formatDate = function (netDate) {
+        // ดึงเฉพาะตัวเลขจาก /Date(...)/ และแปลงเป็น timestamp
+        var timestamp = parseInt(netDate.replace(/\/Date\((\d+)\)\//, '$1'));
+        var date = new Date(timestamp);
+
+        // คืนค่ารูปแบบวันที่ในแบบที่ต้องการ
+        /*    return date.toLocaleDateString(); // เช่น "22/1/2025" (ขึ้นอยู่กับโลเคล)*/
+
+        // แปลงรูปแบบวันที่เป็น dd/MM/yyyy
+        var day = date.getDate().toString().padStart(2, '0'); // เติม 0 ข้างหน้าให้ครบ 2 หลัก
+        var month = (date.getMonth() + 1).toString().padStart(2, '0'); // เดือน +1 และเติม 0
+        var year = date.getFullYear();
+
+        return `${day}/${month}/${year}`; // คืนค่าวันที่ในรูปแบบ dd/MM/yyyy
+    };
+
+
+    $scope.openModal = function (orderNumber) {
+        // เรียกข้อมูลจากเซิร์ฟเวอร์เพื่อแสดงใน ModalPopup
+        $http.get(window.baseUrl + `Home/GetOrderDetails?orderNumber=${orderNumber}`)
+            .then(function (response) {
+                $scope.modalData = response.data;
+
+                console.log($scope.modalData);
+
+                $scope.GetProductOrder($scope.modalData.OrderNumber);
+                // เก็บข้อมูลใน $scope.modalData
+                $('#OrderDetails').modal('show'); // เปิด ModalPopup
+            }, function (error) {
+                console.error("Error fetching order details: ", error);
+            });
+
+
+    };
+
+    $scope.GetProductOrder = function (orderNumber) {
+
+        console.log(orderNumber);
+
+
+        $http.get(window.baseUrl + `Home/GetProductOrders?orderNumber=${orderNumber}`)
+
+ 
+            .then(function (response) {
+                $scope.productOrders = response.data; // เก็บข้อมูลใน scope
+                console.log($scope.productOrders);
+
+            }, function (error) {
+                console.error("Error fetching product orders: ", error);
+            });
+    };
+
+    //$scope.GetPageFile = function () {
+    //    // ดึงค่าจาก URL Query String
+    //    const urlParams = new URLSearchParams(window.location.search);
+    //    const orderNumber = urlParams.get('orderNumber'); // ดึงค่าของ orderNumber
+    //    $scope.orderNumber = orderNumber;
+    //    if (!orderNumber) {
+    //        console.error("Order number is missing in the URL.");
+    //        return;
+    //    }
+
+    //    $scope.GetDataQuoFileTable(orderNumber);
+    //};
+
+
+    $scope.GetDataQuoFileTable = function (orderNumbers , EmpNo) {
+
+        console.log(orderNumbers);
+        console.log(EmpNo);
+
+        $http.post(window.baseUrl + 'Home/GetDataQuoFileTables',
+            {
+
+                OrderNumber: orderNumbers,
+                SubDistricts: SelectedSub
+            })
+            .then(function (response) {
+                $scope.quoFile = response.data; // เก็บผลลัพธ์จาก Backend
+
+                console.log($scope.quoFile);
+            })
+            .catch(function (error) {
+                console.error("Error:", error);
+            });
+
+        //$http.get(window.baseUrl + 'Home/GetDataQuoFileTables', {
+        //    OrderNumber: orderNumbers
+        //})
+        //    .then(function (response) {
+        //        $scope.quoFile = response.data;
+
+        //        console.log($scope.quoFile);
+
+        //        //if (Array.isArray($scope.quoFile) && $scope.quoFile.length > 0) {
+        //        //    var quotationNumber = $scope.quoFile[0].quotationNumber;
+        //        //    $scope.quotationNumber = quotationNumber;
+        //        //} else {
+        //        //    $scope.quotationNumber = "";
+        //        //}
+        //    });
+
+
+        //$http.get(window.baseUrl + 'Home/GetDataOtherFileTable', { orderNumber: orderNumbers })
+        //    .then(function (response) {
+        //        $scope.files = response.data; // เก็บข้อมูลใน scope
+
+        //        console.log($scope.files);
+        //    }, function (error) {
+        //        console.error("Error OtherFile : ", error);
+        //    });
+
+
+    };
+
+
+    $scope.downloadQuotation = function (quotationNumber) {
+        if (!quotationNumber) {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Quotation Number is missing!"
+            });
+            return;
+        }
+        const url = '/PDF/PrintPDF?quotationNumber=' + encodeURIComponent(quotationNumber);
+        window.open(url, '_blank');
+    };
+
+    // Upload File AboutOrder -ดูตารางที่ save file ของ Order
+    $scope.UploadFileAboutOrder = function () {
+
+        var fileInput = document.getElementById("fileInput").files[0];
+        if (!fileInput) {
+            Swal.fire({
+                icon: "warning",
+                title: "No file selected",
+                text: "Please select a file before uploading."
+            });
+            return;
+        }
+
+        if (!$scope.fileDescription || $scope.fileDescription.trim() === "") {
+            $scope.fileDescription = "";
+        }
+
+
+
+
+        var formData = new FormData();
+        formData.append("file", fileInput);
+        formData.append("fileDescription", $scope.fileDescription || "");
+        formData.append("orderNumber", $scope.orderNumber);
+
+        $http.post(window.baseUrl + "Home/UploadFileAboutOrders", formData, {
+            headers: { "Content-Type": undefined }
+        }).then(function (response) {
+
+            $scope.files = $scope.files.map(file => {
+                file.createdAt = new Date(file.createdAt);
+                return file;
+            });
+
+            $scope.$applyAsync(function () {
+
+                $scope.files.push(response.data.sendFile); // เพิ่มไฟล์ใหม่ลงในตาราง
+            });
+
+            Swal.fire({
+                icon: "success",
+                title: "File uploaded",
+                text: "The file has been uploaded successfully."
+            });
+
+
+            $scope.fileDescription = ""; // ล้างคำอธิบาย
+            document.getElementById('fileInput').value = null; // ล้างไฟล์ที่เลือก
+        }).catch(function () {
+            Swal.fire({
+                icon: "error",
+                title: "Upload Failed",
+                text: "An error occurred while uploading the file."
+            });
+        });
+    };
+
+
+
+    $scope.deleteFileAboutOrder = function (filePath, index) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "This file will be permanently deleted!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "Cancel"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $http.delete('/Home/DeleteFileAboutOrders', {
+                    params: { filePath: filePath, orderNumber: $scope.orderNumber }
+                }).then(function (response) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Deleted",
+                        text: response.data.Message
+                    });
+                    $scope.files.splice(index, 1); // ลบไฟล์ออกจากตาราง
+                }).catch(function (error) {
+                    console.error("Error deleting file:", error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Delete Failed",
+                        text: "An error occurred while deleting the file."
+                    });
+                });
+            }
+        });
+    };
+
+
+    $scope.GetFilesData = function (orderNumber, EmpNo) {
+        $window.location.href = 'NdsSystemViewAttachments?orderNumber=' + orderNumber +  '&EmpNo=' + EmpNo;
+    };
+
+
+    $scope.backHomeOrder = function (EmpNo) {
+        $window.location.href = 'NdsSystemOrderInformation?EmpNo=' + EmpNo;
+    };
 }]);
 
 
