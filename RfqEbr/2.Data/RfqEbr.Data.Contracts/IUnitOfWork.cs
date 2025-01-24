@@ -89,6 +89,10 @@ namespace RfqEbr.Data.Contracts
 
         IRepository<AttachmentsModel> AttachmentsModels { get;  }
 
+        //RFID
+        IRepository<Product> Products { get; }
+        IRepository<RFIDTag> RFIDTags { get; }
 
+        IRepository<Payment> Payments { get; }
     }
 }

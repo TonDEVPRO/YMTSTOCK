@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 namespace RfqEbr.Models
 {
-    //[Table("YMTG_MasterProvinces")]
     public class MasterProvince
     {
-        public int Id { get; set; }          // Primary Key
+        public int Id { get; set; }  
         public string Provinces { get; set; }
         public string Districts { get; set; }
         public string SubDistricts { get; set; }

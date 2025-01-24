@@ -41,14 +41,21 @@ using Font = iTextSharp.text.Font;
 using HttpGetAttribute = System.Web.Http.HttpGetAttribute;
 using HttpPostAttribute = System.Web.Mvc.HttpPostAttribute;
 using Rectangle = iTextSharp.text.Rectangle;
+using RFIDReaderAPI;
+using RFIDReaderAPI.Models;
+using System.Net.Http.Headers;
+using QRCoder;
+
 
 namespace EBR.Web.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : Controller , RFIDReaderAPI.Interface.IAsynchronousMessage
     {
         private readonly IUnitOfWork _uow;
-        private readonly string _uploadPath;
 
+        string IPConfig = "192.168.3.248:9090";
+
+        private List<string> displayedEpcs = new List<string>();
         public HomeController(IUnitOfWork uow)
         {
             _uow = uow;
@@ -129,151 +136,7 @@ namespace EBR.Web.Controllers
                 }
             }
         }
-        public ActionResult YMTHrManPower(int EmpNo)
-        {
 
-            string sessionEmpNo = Session["EmpNo"] as string;
-            if (string.IsNullOrEmpty(sessionEmpNo) || !int.TryParse(sessionEmpNo, out int empNoFromSession))
-            {
-                return RedirectToAction("Login", "Home");
-            }
-
-            if (empNoFromSession != EmpNo)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-
-            var En = Convert.ToString(EmpNo);
-            var CheckRole = _uow.EmployeeLogins.GetAll().Where(t => t.EmpNo == En).FirstOrDefault();
-
-            if (EmpNo == 0)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-            else
-            {
-                if (CheckRole.EmpStatus == "9" || CheckRole.EmpStatus == "2" || CheckRole.EmpStatus == "33")
-                {
-                    return View(EmpNo);
-                }
-                else
-                {
-                    return RedirectToAction("Home", "Home", new { EmpNo = EmpNo });
-                }
-            }
-        }
-        public ActionResult YMTPNote(int EmpNo)
-        {
-            int empSession = Convert.ToInt32(Session["EmpNo"]);
-
-            if (empSession != EmpNo)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-
-            var CheckRole = _uow.YMTGUsers.GetAll().Where(t => t.Id == EmpNo).FirstOrDefault();
-
-            if (EmpNo == 0)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-            else
-            {
-                if (CheckRole.Status == "0" || CheckRole.Status == "2" || CheckRole.Status == "33")
-                {
-                    return View(EmpNo);
-                }
-                else
-                {
-                    return RedirectToAction("Home", "Home", new { EmpNo = EmpNo });
-                }
-            }
-        }
-
-        public ActionResult YMTNdsOnline(int EmpNo)
-        {
-            int empSession = Convert.ToInt32(Session["EmpNo"]);
-
-            if (empSession != EmpNo)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-
-            var CheckRole = _uow.YMTGUsers.GetAll().Where(t => t.Id == EmpNo).FirstOrDefault();
-
-            if (EmpNo == 0)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-            else
-            {
-                if (CheckRole.Status == "0" || CheckRole.Status == "2" || CheckRole.Status == "33")
-                {
-                    return View(EmpNo);
-                }
-                else
-                {
-                    return RedirectToAction("Home", "Home", new { EmpNo = EmpNo });
-                }
-            }
-        }
-
-        public ActionResult YMTQCOnline(int EmpNo)
-        {
-            int empSession = Convert.ToInt32(Session["EmpNo"]);
-
-            if (empSession != EmpNo)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-
-            var CheckRole = _uow.YMTGUsers.GetAll().Where(t => t.Id == EmpNo).FirstOrDefault();
-
-            if (EmpNo == 0)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-            else
-            {
-                if (CheckRole.Status == "0" || CheckRole.Status == "2" || CheckRole.Status == "33")
-                {
-                    return View(EmpNo);
-                }
-                else
-                {
-                    return RedirectToAction("Home", "Home", new { EmpNo = EmpNo });
-                }
-            }
-        }
-
-
-        public ActionResult YMTIT(int EmpNo)
-        {
-            int empSession = Convert.ToInt32(Session["EmpNo"]);
-
-            if (empSession != EmpNo)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-
-            var CheckRole = _uow.YMTGUsers.GetAll().Where(t => t.Id == EmpNo).FirstOrDefault();
-
-            if (EmpNo == 0)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-            else
-            {
-                if (CheckRole.Status == "0" || CheckRole.Status == "2" || CheckRole.Status == "33")
-                {
-                    return View(EmpNo);
-                }
-                else
-                {
-                    return RedirectToAction("Home", "Home", new { EmpNo = EmpNo });
-                }
-            }
-        }
 
         public ActionResult YMTNdsStock(int EmpNo)
         {
@@ -302,25 +165,34 @@ namespace EBR.Web.Controllers
                 }
             }
         }
+        
+      public ActionResult POSSystem(int EmpNo)
+        {
+            int empSession = Convert.ToInt32(Session["EmpNo"]);
 
+            if (empSession != EmpNo)
+            {
+                return RedirectToAction("Login", "Home");
+            }
 
-        //public JsonResult GetStockNDS()
-        //{
-        //    var ListStockNDS = _uow.YMTGNDSShopStocks.GetAll().Select(e => new
-        //    {
-        //        e.Id,
-        //        e.Style,
-        //        e.Description,
-        //        e.Color,
-        //        e.Size,
-        //        e.Cost,
-        //        e.Price,
-        //        e.Total,
-        //        e.Status
-        //    }).ToList();
-        //    return Json(new { data = ListStockNDS });
-        //}
+            var CheckRole = _uow.YMTGUsers.GetAll().Where(t => t.Id == EmpNo).FirstOrDefault();
 
+            if (EmpNo == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            else
+            {
+                if (CheckRole.Status == "0" || CheckRole.Status == "2" || CheckRole.Status == "33")
+                {
+                    return View(EmpNo);
+                }
+                else
+                {
+                    return RedirectToAction("Home", "Home", new { EmpNo = EmpNo });
+                }
+            }
+        }
 
 
         [HttpGet]
@@ -2909,6 +2781,172 @@ namespace EBR.Web.Controllers
 
             // Return success response
             return Json(new { success = true, data = newFile }, JsonRequestBehavior.AllowGet);
+        }
+
+
+
+        public ActionResult RFIDIndex(int EmpNo)
+        {
+            int empSession = Convert.ToInt32(Session["EmpNo"]);
+            if (empSession != EmpNo)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var CheckRole = _uow.YMTGUsers.GetAll().Where(t => t.Id == EmpNo).FirstOrDefault();
+            if (EmpNo == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            else
+            {
+                if (CheckRole.Status == "0" || CheckRole.Status == "2" || CheckRole.Status == "33")
+                {
+                    return View(EmpNo);
+                }
+                else
+                {
+                    return RedirectToAction("Home", "Home", new { EmpNo = EmpNo });
+                }
+            }
+        }
+
+
+
+
+        public ActionResult GetTags()
+        {
+            // ประกาศ List เพื่อเก็บผลลัพธ์ทั้งหมด
+            List<Product> allData = new List<Product>();
+
+
+
+            // วนลูปผ่าน TagsRFID
+            var TagsRFID = _uow.RFIDTags.GetAll().ToList();
+            foreach (var d in TagsRFID)
+            {
+                // ดึงข้อมูลจาก Products ตามเงื่อนไข และเพิ่มลงใน allData
+                var data = _uow.Products.GetAll().Where(z => z.RFIDData == d.EPC).ToList();
+                allData.AddRange(data);
+            }
+
+            return Json(allData, JsonRequestBehavior.AllowGet);
+
+        }
+
+
+
+
+        public void StartReading()
+        {
+            if (RFIDReader.CreateTcpConn(IPConfig, this))
+            {
+                RFIDReader._Tag6C.GetEPC(IPConfig, eAntennaNo._1 | eAntennaNo._2 | eAntennaNo._3 | eAntennaNo._4, eReadType.Inventory);
+            }
+        }
+
+
+        public void ReStartReading()
+        {
+
+            var delRFID = _uow.RFIDTags.GetAll().ToList(); // ดึงข้อมูลทั้งหมดจากตาราง RFIDTags
+
+            foreach (var d in delRFID)
+            {
+                _uow.RFIDTags.Delete(d.Id);
+                _uow.Commit();
+            }
+
+            if (RFIDReader.CreateTcpConn(IPConfig, this))
+            {
+                RFIDReader._Tag6C.GetEPC(IPConfig, eAntennaNo._1 | eAntennaNo._2 | eAntennaNo._3 | eAntennaNo._4, eReadType.Inventory);
+            }
+
+
+        }
+
+        public void StopReading()
+        {
+            RFIDReader._RFIDConfig.Stop(IPConfig);
+            RFIDReader.CloseConn(IPConfig);
+
+            var delRFID = _uow.RFIDTags.GetAll().ToList(); // ดึงข้อมูลทั้งหมดจากตาราง RFIDTags
+
+            foreach (var d in delRFID)
+            {
+                _uow.RFIDTags.Delete(d.Id);
+                _uow.Commit();
+            }
+
+        }
+
+        public void OutPutTags(Tag_Model tag)
+        {
+
+            var newTag = new RFIDTag
+            {
+                EPC = tag.EPC,
+                ReadTime = DateTime.Now,
+                IsActive = 1
+            };
+
+
+
+            var checkdata = _uow.RFIDTags.GetAll().Where(t => t.EPC == tag.EPC).FirstOrDefault();
+            if (checkdata == null)
+            {
+                _uow.RFIDTags.Add(newTag);
+                _uow.Commit();
+                displayedEpcs.Add(tag.EPC);
+            }
+            else
+            {
+                displayedEpcs.Add(tag.EPC);
+            }
+
+        }
+
+
+
+        public void EventUpload(CallBackEnum type, object param) { }
+        public void GPIControlMsg(GPI_Model gpi_model) { }
+        public void OutPutTagsOver() { }
+        public void PortClosing(string connID) { }
+        public void PortConnecting(string connID) { }
+        public void WriteDebugMsg(string msg) { }
+        public void WriteLog(string msg) { }
+
+
+        public ActionResult GenerateQRCode(int paymentId)
+        {
+            // ดึงข้อมูลการชำระเงินจากฐานข้อมูล
+            var payment = _uow.Payments.GetAll().FirstOrDefault(p => p.Id == paymentId);
+
+            if (payment == null)
+            {
+                return new HttpStatusCodeResult(404, "Payment not found");
+            }
+
+            // สร้างข้อมูลที่ต้องการใส่ใน QR Code
+            var qrCodeContent = $"{payment.PaymentReference}|{payment.Amount}|{payment.Id}";  // เปลี่ยนชื่อเป็น qrCodeContent
+
+            // ใช้ QRCoder สร้าง QR Code
+            using (var qrGenerator = new QRCodeGenerator())
+            {
+                // สร้าง QR Code จากข้อมูล
+                var qrCodeData = qrGenerator.CreateQrCode(qrCodeContent, QRCodeGenerator.ECCLevel.Q);  // ใช้ qrCodeContent แทน qrCodeData
+                var qrCode = new QRCode(qrCodeData);
+
+                // สร้าง MemoryStream เพื่อแปลง QR Code เป็นภาพ PNG
+                using (var ms = new MemoryStream())
+                {
+                    // สร้างภาพ QR Code และบันทึกใน MemoryStream
+                    qrCode.GetGraphic(20).Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                    byte[] byteArray = ms.ToArray();
+
+                    // ส่งภาพกลับไปในรูปแบบ "image/png"
+                    return File(byteArray, "image/png");
+                }
+            }
         }
 
     }

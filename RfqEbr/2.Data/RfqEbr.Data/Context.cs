@@ -72,9 +72,14 @@ namespace RfqEbr.Data
             modelBuilder.Configurations.Add(new ProductModelConfig());
 
             modelBuilder.Configurations.Add(new AttachmentsModelConfig());
+
+            //RFID
+            modelBuilder.Configurations.Add(new ProductConfig());
+
+            modelBuilder.Configurations.Add(new RFIDTagsConfig());
+
+            modelBuilder.Configurations.Add(new PaymentConfig());
             
-
-
         }
 
         //#Wansao - Table
@@ -136,6 +141,12 @@ namespace RfqEbr.Data
         public DbSet<ProductModel> ProductModels { get; set; }
 
         public DbSet<AttachmentsModel> AttachmentsModels { get; set; }
+
+        //RFID
+
+        public DbSet<Product> Products { get; set; }
+        public DbSet<RFIDTag> RFIDTags { get; set; }
+        public DbSet<Payment> Payments { get; set; }
         
     }
 }

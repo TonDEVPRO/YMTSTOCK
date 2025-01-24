@@ -53,6 +53,11 @@
     <Reference Include="itextsharp, Version=5.5.13.4, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\iTextSharp.5.5.13.4\lib\net461\itextsharp.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="QRCoder, Version=1.6.0.0, Culture=neutral, PublicKeyToken=c4ed5b9ae8358a28, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\QRCoder.1.6.0\lib\net40\QRCoder.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -63,10 +68,12 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Nds\AttachmentsModel.cs" />
     <Compile Include="Nds\FooterEvent.cs" />
+    <Compile Include="Nds\Payment.cs" />
     <Compile Include="Nds\Item.cs" />
     <Compile Include="Nds\MasterProvince.cs" />
     <Compile Include="Nds\MasterRemark.cs" />
@@ -91,6 +98,8 @@
     </Compile>
     <Compile Include="Custom\Test.cs" />
     <Compile Include="Table\AuthorizeSystemMaster.cs" />
+    <Compile Include="Table\RFIDTag.cs" />
+    <Compile Include="Table\Product.cs" />
     <Compile Include="Table\EmployeeInno.cs" />
     <Compile Include="Table\YMTGNDSShopSaveHoliday.cs" />
     <Compile Include="Table\YMTGNDSShopHolidayLog.cs" />

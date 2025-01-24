@@ -97,5 +97,14 @@ namespace RfqEbr.Data
         public IRepository<ProductModel> ProductModels { get { return GetStandardRepo<ProductModel>(); } }
 
         public IRepository<AttachmentsModel> AttachmentsModels { get { return GetStandardRepo<AttachmentsModel>(); } }
+
+        //RFID
+
+        public IRepository<Product> Products { get { return GetStandardRepo<Product>(); } }
+
+        public IRepository<RFIDTag> RFIDTags { get { return GetStandardRepo<RFIDTag>(); } }
+
+        public IRepository<Payment> Payments { get { return GetStandardRepo<Payment>(); } }
+        
     }
 }

@@ -1,4 +1,4 @@
-﻿myApp.controller('mainController', ['$rootScope', '$scope', '$http', '$window' , function ($rootScope, $scope, $http, $window) {
+﻿myApp.controller('mainController', ['$rootScope', '$scope', '$http', '$window', '$interval', function ($rootScope, $scope, $http, $window, $interval) {
 
     /*    var today = moment(new Date());*/
 
@@ -1965,12 +1965,8 @@
 
     // Function Update
 
-    $scope.UpdateQuotation = function (EmpNo) {
-        console.log(EmpNo);
-
-        console.log($scope.QuoData.QuoNumber);
-        console.log($scope.Entries.length);
-
+    $scope.UpdateQuotation = function (EmpNo, selectedShipDate) {
+        console.log(selectedShipDate);
 
 
         if (!$scope.QuoData.QuoNumber || !$scope.Entries.length) {
@@ -1982,8 +1978,7 @@
             return;
         }
 
-        //$scope.isConfirmed = false; // สถานะ Checkbox เริ่มต้น
-        /*  $scope.selectedShipDate = "";*/ // วันที่จัดส่งเริ่มต้น
+     
         var quoStatus = $scope.isConfirmed ? 1 : 0; // 1 for confirmed, 0 otherwise
         /*  var shipDate = $scope.isConfirmed ? $scope.selectedShipDate : new Date().toISOString().slice(0, 10);*/ // Use selected date or default to today
         var shipDate = $scope.isConfirmed
@@ -1991,7 +1986,7 @@
             : new Date(); // กรณีไม่ได้เลือกวันใช้วันปัจจุบัน
 
 
-        console.log($scope.formattedDate);
+        console.log(shipDate);
 
    /*     const*/
 
@@ -2002,7 +1997,7 @@
             QuoLastname: $scope.QuoData.QuoLastname,
             QuoCompanyName: $scope.QuoData.CompanyName,
             OrderDate: $scope.QuoData.OrderDate,
-            ShipDate: shipDate.toISOString(),
+            ShipDate: shipDat,
             TotalQty: $scope.QuoData.TotalQty,
             TotalPrice: $scope.QuoData.TotalPrice,
             Remark: $scope.QuoData.Remark,
@@ -2236,8 +2231,7 @@
         $http.post(window.baseUrl + 'Home/GetDataQuoFileTables',
             {
 
-                OrderNumber: orderNumbers,
-                SubDistricts: SelectedSub
+                OrderNumber: orderNumbers
             })
             .then(function (response) {
                 $scope.quoFile = response.data; // เก็บผลลัพธ์จาก Backend
@@ -2392,6 +2386,181 @@
     $scope.backHomeOrder = function (EmpNo) {
         $window.location.href = 'NdsSystemOrderInformation?EmpNo=' + EmpNo;
     };
+
+
+
+
+
+
+    ///RFID Menu
+
+
+    $scope.RFIDGETDATA = function (EmpNo) {
+        console.log(EmpNo);
+
+
+        $http.post(window.baseUrl + 'Home/GetEmployee',
+            {
+                EmployeeNo: EmpNo
+            }).then(function (res) {
+                $scope.emplist = res.data;
+                console.log($scope.emplist);
+
+                $scope.getTags();
+
+                intervalPromise = $interval(function () {
+                    $scope.getTags(); // ดึงข้อมูล RFID
+                }, 1000);
+            });
+
+    };
+
+    $scope.RFIDUrlInfor = function (EmpNo) {
+        $window.location.href = 'RFIDIndex?EmpNo=' + EmpNo;
+    };
+
+    
+
+    $scope.tags = [];
+
+    let intervalPromise;
+
+    $scope.StartCheck = 1;
+    $scope.EPCID = ''; // Default EPCID value
+    $scope.ActiveId = 1; // Default Active status
+    $scope.products = []; // Array to hold product data
+
+    $scope.getTags = function () {
+        $http.post(window.baseUrl + 'Home/GetTags').then(function (response) {
+            $scope.products = response.data;
+
+
+
+            $scope.groupedProducts = (function () {
+                let groupedCache = null; // แคชข้อมูลที่ประมวลผลแล้ว
+                let lastProductList = []; // เก็บสถานะของ $scope.products ล่าสุด
+
+                return function () {
+                    // ตรวจสอบว่าข้อมูลเปลี่ยนหรือไม่
+                    if (angular.equals(lastProductList, $scope.products)) {
+                        return groupedCache; // ถ้าข้อมูลไม่เปลี่ยน คืนค่าแคช
+                    }
+
+                    // อัปเดตสถานะใหม่
+                    lastProductList = angular.copy($scope.products);
+
+                    // คำนวณใหม่
+                    let grouped = {};
+                    $scope.products.forEach(product => {
+                        let groupKey = product.ProductName + " - " + product.Size;
+
+                        if (!grouped[groupKey]) {
+                            grouped[groupKey] = {
+                                ProductName: product.ProductName,
+                                Size: product.Size,
+                                TotalPrice: 0,
+                                TotalQuantity: 0
+                            };
+                        }
+
+                        grouped[groupKey].Prices = product.UnitPrice;
+                        grouped[groupKey].TotalPrice += product.UnitPrice;
+                        grouped[groupKey].TotalQuantity += 1; // แก้ไขจำนวนที่เพิ่ม
+                    });
+
+                    groupedCache = Object.values(grouped); // แคชข้อมูลใหม่
+                    return groupedCache;
+                };
+            })();
+
+            // คำนวณ Total Amount และ Total Quantity แบบลดความซ้ำซ้อน
+            $scope.calculateTotals = function () {
+                if (!$scope.products || !$scope.products.length) {
+                    $scope.TotalsData = 0;
+                    $scope.totalQtys = 0;
+                    return;
+                }
+
+                // ใช้ reduce เพื่อรวมข้อมูล
+                let totals = $scope.products.reduce((acc, product) => {
+                    acc.totalAmount += product.UnitPrice;
+                    acc.totalQty += 1; // นับจำนวนสินค้า
+                    return acc;
+                }, { totalAmount: 0, totalQty: 0 });
+
+                $scope.TotalsData = totals.totalAmount;
+                $scope.totalQtys = totals.totalQty;
+            };
+
+            // เรียกใช้คำนวณครั้งแรก
+            $scope.calculateTotals();
+
+
+        });
+
+    };
+
+    $scope.ClickStart = function () {
+        $http.post(window.baseUrl + 'Home/StartReading').then(function (response) {
+            $scope.getTags();
+        });
+        $scope.StartCheck = 2;
+    };
+
+
+    $scope.startReading = function () {
+        $http.post(window.baseUrl + 'Home/StartReading').then(function (response) {
+            $scope.getTags();
+        });
+    };
+
+    $scope.ReStartReading = function () {
+        $http.post(window.baseUrl + 'Home/ReStartReading').then(function (response) {
+            $scope.getTags();
+        });
+    };
+
+
+    $scope.stopReading = function () {
+        $http.post(window.baseUrl + 'Home/StopReading').then(function () {
+            $scope.StartCheck = 1;
+        });
+    };
+
+
+    // เมื่อหน้าโหลดให้เรียกใช้ getQRCode
+
+    $scope.GenQr = function (EmpNo) {
+        $scope.paymentId = 1; // ใช้ Payment ID ที่ต้องการทดสอบ
+        $scope.qrCodeUrl = '';
+
+        $scope.getQRCode();
+        // ฟังก์ชันในการดึง QR Code จาก API
+
+    };
+
+
+    $scope.getQRCode = function () {
+        $http.post(window.baseUrl + 'Home/payment', {
+            paymentId:  $scope.paymentId
+        })
+            .then(function (response) {
+                // สร้าง URL สำหรับแสดงผล QR Code
+                var base64Image = btoa(String.fromCharCode.apply(null, new Uint8Array(response.data)));
+                $scope.qrCodeUrl = 'data:image/png;base64,' + base64Image;
+            }, function (error) {
+                console.error('Error generating QR code', error);
+            });
+    };
+
+    ///RFID Menu
+
+
+
+    $scope.POSSystemData = function (EmpNo) {
+
+        $window.location.href = 'POSSystem?EmpNo=' + EmpNo;
+    }
 }]);
 
 

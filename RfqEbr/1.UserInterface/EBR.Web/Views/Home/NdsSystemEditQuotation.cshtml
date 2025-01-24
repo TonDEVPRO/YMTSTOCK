@@ -588,12 +588,12 @@
         </div>
         <!-- Action Buttons // controller Update-->
         <div class="m-4">
-            <button class="btn btn-primary" ng-click="UpdateQuotation(@Model.EmpNo)">
+            <button class="btn btn-primary" ng-click="UpdateQuotation(@Model.EmpNo ,selectedShipDate)">
                 Save
             </button>
-            @*   <button class="btn btn-secondary" ng-click="ClearForm()">ล้างข้อมูล</button> *@
             <button class="btn btn-danger" ng-click="Cancel(@Model.EmpNo)">Cancel</button>
         </div>
+
         <script>
             // เปิด/ปิดการใช้งานของ Shipment Date Section
             function toggleShipmentDate() {
