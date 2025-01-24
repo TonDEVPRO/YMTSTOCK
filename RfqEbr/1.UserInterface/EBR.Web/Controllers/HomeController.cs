@@ -2916,37 +2916,61 @@ namespace EBR.Web.Controllers
         public void WriteLog(string msg) { }
 
 
-        public ActionResult GenerateQRCode(int paymentId)
+
+        [HttpPost]
+        public ActionResult SaveToProductTable([FromBody] List<ProductList> Entries)
+
         {
-            // ดึงข้อมูลการชำระเงินจากฐานข้อมูล
-            var payment = _uow.Payments.GetAll().FirstOrDefault(p => p.Id == paymentId);
 
-            if (payment == null)
+            if (Entries != null)
             {
-                return new HttpStatusCodeResult(404, "Payment not found");
-            }
-
-            // สร้างข้อมูลที่ต้องการใส่ใน QR Code
-            var qrCodeContent = $"{payment.PaymentReference}|{payment.Amount}|{payment.Id}";  // เปลี่ยนชื่อเป็น qrCodeContent
-
-            // ใช้ QRCoder สร้าง QR Code
-            using (var qrGenerator = new QRCodeGenerator())
-            {
-                // สร้าง QR Code จากข้อมูล
-                var qrCodeData = qrGenerator.CreateQrCode(qrCodeContent, QRCodeGenerator.ECCLevel.Q);  // ใช้ qrCodeContent แทน qrCodeData
-                var qrCode = new QRCode(qrCodeData);
-
-                // สร้าง MemoryStream เพื่อแปลง QR Code เป็นภาพ PNG
-                using (var ms = new MemoryStream())
+                foreach (var entry in Entries)
                 {
-                    // สร้างภาพ QR Code และบันทึกใน MemoryStream
-                    qrCode.GetGraphic(20).Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                    byte[] byteArray = ms.ToArray();
+                    var newProduct = new YmtgProductNds
+                    {
+                        QuotationNumber = entry.QuotationNumber,
+                        ProductName = entry.SelectedStyleName,
+                        Qty = entry.Quantity,
+                        SKUCode = "",
+                        SKUCodeFull = entry.SelectedSku,
+                        Size = entry.SelectedSize,
+                        Color = entry.SelectedColor,
+                        Price = entry.Quantity * entry.PricePerUnit,
+                        PrintingType = 0,
+                        CreateBy = "ADMIN",
+                        CreateDate = DateTime.Now
+                    };
 
-                    // ส่งภาพกลับไปในรูปแบบ "image/png"
-                    return File(byteArray, "image/png");
+                    // ตรวจสอบและกำหนดค่า SKUCode
+                    if (!string.IsNullOrEmpty(entry.SelectedSku) && entry.SelectedSku.Length > 3)
+                    {
+                        newProduct.SKUCode = entry.SelectedSku.Substring(0, entry.SelectedSku.Length - 3);
+                    }
+
+                    // ตรวจสอบและกำหนดค่า PrintingType
+                    if (!string.IsNullOrEmpty(entry.SelectedSku) && entry.SelectedSku.Length > 3)
+                    {
+
+                        // ดึงสามอักขระสุดท้าย
+                        string lastThreeChars = entry.SelectedSku.Substring(entry.SelectedSku.Length - 3);
+
+                        // พยายามแปลงสตริงเป็นจำนวนเต็ม
+                        if (int.TryParse(lastThreeChars, out int printingType))
+                        {
+                            newProduct.PrintingType = printingType;
+                        }
+                        else
+                        {
+                            //แปลงค่่าไม่สำเร็จ
+                            newProduct.PrintingType = 0; // หรือค่าที่เหมาะสมตามบริบท
+                        }
+
+                        //newProduct.PrintingType = entry.SelectedSku.Substring(entry.SelectedSku.Length - 3);
+                    }
+                    //_context.YmtgProducts.Add(newProduct);
                 }
             }
+           return new JsonNetResult(Entries);
         }
 
     }

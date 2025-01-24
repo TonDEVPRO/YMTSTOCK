@@ -1429,11 +1429,11 @@
         //        console.log($scope.data);
         //    });
 
-        $window.location.href = 'NdsSystemEditQuotation?QuotationNumber=' + QuoNo + '&EmpNo=' + EmpNos;
+        $window.location.href = 'NdsSystemEditQuotation?EmpNo=' + EmpNos + '&QuotationNumber=' + QuoNo;
     }
 
 
-    $scope.GetdataQuoForEdits = function (QuoNum,EmpNo){
+    $scope.GetdataQuoForEdits = function (EmpNo ,QuoNum){
         console.log(QuoNum);
         console.log(EmpNo);
 
@@ -1716,11 +1716,12 @@
             return;
         }
  
+        $scope.entries = [];
 
         $scope.NewEntry.SelectedStyleName = $scope.QuoData.StyleName;
         $scope.NewEntry.SelectedSku = $scope.skuCode;
-/*        $scope.Entries.push(angular.copy($scope.NewEntry));*/
-        $scope.Entries.push($scope.NewEntry);
+        $scope.Entries.push(angular.copy($scope.NewEntry));
+/*        $scope.Entries.push($scope.NewEntry);*/
 
         //คำนวนใหม่
         $scope.CalculateTotalSum()
@@ -1997,7 +1998,7 @@
             QuoLastname: $scope.QuoData.QuoLastname,
             QuoCompanyName: $scope.QuoData.CompanyName,
             OrderDate: $scope.QuoData.OrderDate,
-            ShipDate: shipDat,
+            ShipDate: shipDate,
             TotalQty: $scope.QuoData.TotalQty,
             TotalPrice: $scope.QuoData.TotalPrice,
             Remark: $scope.QuoData.Remark,
@@ -2223,7 +2224,7 @@
     //};
 
 
-    $scope.GetDataQuoFileTable = function (orderNumbers , EmpNo) {
+    $scope.GetDataQuoFileTable = function (EmpNo , orderNumbers) {
 
         console.log(orderNumbers);
         console.log(EmpNo);
@@ -2561,6 +2562,118 @@
 
         $window.location.href = 'POSSystem?EmpNo=' + EmpNo;
     }
+
+
+
+
+
+
+    $scope.SaveQuotation = function (QuoData, SelectedProvinces, SelectedDistricts,
+        SelectedSub, SZipcode, skuCode, SelectedTypeSell, Entries) {
+        // Validate ค่าว่าง
+        if (!SelectedTypeSell || SelectedTypeSell.trim() === "") {
+            Swal.fire({
+                icon: "error",
+                title: "Validation Error",
+                text: "กรุณาระบุข้อมูล Quotation Type"
+            });
+            return;
+        }
+
+        if ((!QuoData.CustomerName || QuoData.CustomerName.trim() === "") &&
+            (!QuoData.CompanyName || QuoData.CompanyName.trim() === "")) {
+            Swal.fire({
+                icon: "error",
+                title: "Validation Error",
+                text: "กรุณาระบุข้อมูล Customer Name หรือ Company Name"
+            });
+            return;
+        }
+
+        if (!Entries || Entries.length === 0) {
+            Swal.fire({
+                icon: "error",
+                title: "Validation Error",
+                text: "โปรดระบุสินค้า อย่างน้อย 1 รายการ"
+            });
+            return;
+        }
+
+        $http.post('/Home/SaveQuotation', {
+            QuotationNumber: QuoData.QuoNumber,
+            CustomerName: QuoData.CustomerName,
+            OrderDate: QuoData.OrderDate,
+            OrderStatus: "",
+            ShipDate: QuoData.ShipDate,
+            TotalQty: QuoData.TotalQty,
+            TotalPrice: QuoData.TotalPrice,
+            CustomerEmail: QuoData.CustomerEmail,
+            CustomerAddress: QuoData.CustomerAddress,
+            CustomerPhone: QuoData.CustomerPhone,
+            Remark: '',
+            CreateBy: QuoData.CreateBy,
+            CreateDate: QuoData.CreateDate,
+            /*  CustomerAddressTax: dataQuotation.CustomerAddressTax,*/
+            QuoProvince: SelectedProvinces,
+            QuoStatus: 0,
+            QuoDistricts: SelectedDistricts,
+            QuoSubDistricts: SelectedSub,
+            QuoZipCode: SZipcode,
+            QuoCompanyName: QuoData.CompanyName,
+            QuoRemark: QuoData.Remark,
+            QuoLastname: QuoData.QuoLastname,
+            QuoTaxID: QuoData.QuoTaxID,
+            QuoType: SelectedTypeSell,
+            QuoShippingPrice: QuoData.QuoShippingPrice
+        }).then(function (response) {
+
+            var generatedQuotationNumber = response.data.quotationNumber;
+
+            var updatedEntries = angular.copy(Entries);
+            updatedEntries.forEach(function (entry) {
+                entry.QuotationNumber = generatedQuotationNumber;
+            });
+
+            $http.post('/Home/SaveToProductTable', updatedEntries)
+                .then(function (response) {
+
+                    var QuoNumber = response.data[0].quotationNumber;
+
+                    // Update Quotation station-----*
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "Save Complete",
+                        text: "New Quotation : " + QuoNumber + " Created."
+                    }).then(function () {
+                        // Redirect ไปหน้า index 
+                        $window.location.href = "/Home/Index";
+                    });
+                })
+                .catch(function (error) {
+                    console.error("Error while saving entries:", error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "Failed to save entries."
+                    });
+                });
+            // Add Update Quo Status
+        }).catch(function (error) {
+            console.error("Error:", error);
+            alert("ไม่สามารถบันทึกข้อมูลได้");
+        });
+    };
+
+
+
+
+
+
+
+
+
+
 }]);
 
 
