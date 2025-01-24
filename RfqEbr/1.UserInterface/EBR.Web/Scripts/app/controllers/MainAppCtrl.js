@@ -1458,9 +1458,9 @@
             console.log(response.data);
 
 
-            const shipDate = response.data.shipDate
-                ? formatDateToDDMMYYYY(new Date(response.data.shipDate))
-                : '';
+            //const shipDate = response.data.shipDate
+            //    ? formatDateToDDMMYYYY(new Date(response.data.shipDate))
+            //    : '';
             /* $scope.SelectedProvinces = response.data.provinces;*/
 
             $scope.QuoData = {
@@ -1495,7 +1495,7 @@
                 QuoTaxID: response.data.QuoTaxID,
                 QuoShippingPrice: response.data.QuoShippingPrice,
                 QuoStatus: response.data.QuoStatus, // เพิ่ม QuoStatus
-                ShipDate: shipDate  // เพิ่ม ShipDate
+                ShipDate: response.data.ShipDate  // เพิ่ม ShipDate
 
 
             };
@@ -1591,7 +1591,7 @@
                 console.log("Sku Number:", response.data);
             });
     };
-    /*GetSkuCode(QuoData.StyleName)*/
+ 
     $scope.GetSkuCode = function (styleName) {
         console.log("Selected StyleName:", styleName);
         $http.post(window.baseUrl + 'Home/GetSkuCode', {
@@ -1599,7 +1599,6 @@
         })
             .then(function (response) {
                 $scope.skuCode = response.data;
-                console.log("Sku Codes:", response.data);
             })
             .catch(function (error) {
                 console.error("Error fetching SKU Codes:", error);
@@ -1715,14 +1714,13 @@
             });
             return;
         }
- 
-        $scope.entries = [];
-
         $scope.NewEntry.SelectedStyleName = $scope.QuoData.StyleName;
         $scope.NewEntry.SelectedSku = $scope.skuCode;
-        $scope.Entries.push(angular.copy($scope.NewEntry));
-/*        $scope.Entries.push($scope.NewEntry);*/
 
+        if (!$scope.Entries) {
+            $scope.Entries = []; // ตรวจสอบว่ากำหนดเป็น array หรือยัง
+        }
+        $scope.Entries.push(angular.copy($scope.NewEntry));
         //คำนวนใหม่
         $scope.CalculateTotalSum()
         $scope.CalculateQty(); // คำนวณยอดรวมของ Quantity
@@ -1735,8 +1733,6 @@
             PricePerUnit: 0,
             TotalPrice: 0
         };
-        //$scope.QuoData.StyleName = '';
-        //$scope.skuCode = '';
     };
 
     $scope.RemoveEntry = function (index) {
@@ -1748,10 +1744,9 @@
             $scope.CalculateTotalSum()
             $scope.CalculateQty(); // คำนวณยอดรวมของ Quantity
         } else {
-            alert('555');
+            alert('');
         }
     };
-
 
     $scope.TotalSum = 0;
 
@@ -1783,19 +1778,27 @@
     };
 
     $scope.CalculateQty = function () {
-
-
         $scope.QuoData.TotalQty = $scope.Entries.reduce(function (sum, entry) {
             return sum + entry.Quantity;
         }, 0);
     };
 
 
-  
+
+    //$scope.QuoData.TotalPrice = $scope.TotalSum;
+    //$scope.NewQuoNumber = [];
 
 
 
+    //GenQuotationNumber
+    $scope.GenerateQuotationNumber = function () {
+        $http.get('/Home/GenerateQuotationNumber')
+            .then(function (response) {
+                $scope.NewQuoNumber = response.data;
+                console.log("QuotationNumber:", response.data);
+            });
 
+    }
 
 
 
@@ -2118,7 +2121,7 @@
 
     $scope.viewQuotation = function (quotationNumber , EmpNos) {
 
-        $window.location.href = '/Home/NdsSystemViewPage?quotationNumber=' + quotationNumber + '&EmpNo=' + EmpNos;
+        $window.location.href = '/Home/NdsSystemViewPage?EmpNo=' + EmpNos + '&quotationNumber=' + quotationNumber;
 
     };
 
@@ -2210,24 +2213,22 @@
             });
     };
 
-    //$scope.GetPageFile = function () {
-    //    // ดึงค่าจาก URL Query String
-    //    const urlParams = new URLSearchParams(window.location.search);
-    //    const orderNumber = urlParams.get('orderNumber'); // ดึงค่าของ orderNumber
-    //    $scope.orderNumber = orderNumber;
-    //    if (!orderNumber) {
-    //        console.error("Order number is missing in the URL.");
-    //        return;
-    //    }
+    $scope.GetPageFile = function (EmpNo, orderNumber) {
+        // ดึงค่าจาก URL Query String
+        const urlParams = new URLSearchParams(window.location.search);
+  /*      const orderNumber = urlParams.get('orderNumber'); // ดึงค่าของ orderNumber*/
+        $scope.orderNumber = orderNumber;
+        if (!orderNumber) {
+            console.error("Order number is missing in the URL.");
+            return;
+        }
 
-    //    $scope.GetDataQuoFileTable(orderNumber);
-    //};
+        $scope.GetDataQuoFileTable(orderNumber);
+    };
 
 
-    $scope.GetDataQuoFileTable = function (EmpNo , orderNumbers) {
+    $scope.GetDataQuoFileTable = function (orderNumbers) {
 
-        console.log(orderNumbers);
-        console.log(EmpNo);
 
         $http.post(window.baseUrl + 'Home/GetDataQuoFileTables',
             {
@@ -2243,31 +2244,6 @@
                 console.error("Error:", error);
             });
 
-        //$http.get(window.baseUrl + 'Home/GetDataQuoFileTables', {
-        //    OrderNumber: orderNumbers
-        //})
-        //    .then(function (response) {
-        //        $scope.quoFile = response.data;
-
-        //        console.log($scope.quoFile);
-
-        //        //if (Array.isArray($scope.quoFile) && $scope.quoFile.length > 0) {
-        //        //    var quotationNumber = $scope.quoFile[0].quotationNumber;
-        //        //    $scope.quotationNumber = quotationNumber;
-        //        //} else {
-        //        //    $scope.quotationNumber = "";
-        //        //}
-        //    });
-
-
-        //$http.get(window.baseUrl + 'Home/GetDataOtherFileTable', { orderNumber: orderNumbers })
-        //    .then(function (response) {
-        //        $scope.files = response.data; // เก็บข้อมูลใน scope
-
-        //        console.log($scope.files);
-        //    }, function (error) {
-        //        console.error("Error OtherFile : ", error);
-        //    });
 
 
     };
@@ -2529,30 +2505,10 @@
     };
 
 
-    // เมื่อหน้าโหลดให้เรียกใช้ getQRCode
-
-    $scope.GenQr = function (EmpNo) {
-        $scope.paymentId = 1; // ใช้ Payment ID ที่ต้องการทดสอบ
-        $scope.qrCodeUrl = '';
-
-        $scope.getQRCode();
-        // ฟังก์ชันในการดึง QR Code จาก API
-
-    };
+ 
 
 
-    $scope.getQRCode = function () {
-        $http.post(window.baseUrl + 'Home/payment', {
-            paymentId:  $scope.paymentId
-        })
-            .then(function (response) {
-                // สร้าง URL สำหรับแสดงผล QR Code
-                var base64Image = btoa(String.fromCharCode.apply(null, new Uint8Array(response.data)));
-                $scope.qrCodeUrl = 'data:image/png;base64,' + base64Image;
-            }, function (error) {
-                console.error('Error generating QR code', error);
-            });
-    };
+ 
 
     ///RFID Menu
 
@@ -2569,7 +2525,7 @@
 
 
     $scope.SaveQuotation = function (QuoData, SelectedProvinces, SelectedDistricts,
-        SelectedSub, SZipcode, skuCode, SelectedTypeSell, Entries) {
+        SelectedSub, SZipcode, skuCode, SelectedTypeSell, Entries , EmpNo) {
         // Validate ค่าว่าง
         if (!SelectedTypeSell || SelectedTypeSell.trim() === "") {
             Swal.fire({
@@ -2599,21 +2555,21 @@
             return;
         }
 
-        $http.post('/Home/SaveQuotation', {
+
+        $scope.ListdataQuo = {
             QuotationNumber: QuoData.QuoNumber,
             CustomerName: QuoData.CustomerName,
             OrderDate: QuoData.OrderDate,
-            OrderStatus: "",
+            OrderStatus: '',
             ShipDate: QuoData.ShipDate,
             TotalQty: QuoData.TotalQty,
             TotalPrice: QuoData.TotalPrice,
             CustomerEmail: QuoData.CustomerEmail,
             CustomerAddress: QuoData.CustomerAddress,
             CustomerPhone: QuoData.CustomerPhone,
-            Remark: '',
-            CreateBy: QuoData.CreateBy,
+            Remark: QuoData.Remark,
+            CreateBy: EmpNo,
             CreateDate: QuoData.CreateDate,
-            /*  CustomerAddressTax: dataQuotation.CustomerAddressTax,*/
             QuoProvince: SelectedProvinces,
             QuoStatus: 0,
             QuoDistricts: SelectedDistricts,
@@ -2625,29 +2581,40 @@
             QuoTaxID: QuoData.QuoTaxID,
             QuoType: SelectedTypeSell,
             QuoShippingPrice: QuoData.QuoShippingPrice
-        }).then(function (response) {
+        };
 
-            var generatedQuotationNumber = response.data.quotationNumber;
+
+
+
+        $http.post(window.baseUrl + 'Home/SaveQuotations', {
+            ListdataQuos :  $scope.ListdataQuo 
+        }).then(function (response) {
+            console.log(response.data);
+
+
+            var generatedQuotationNumber = response.data.QuotationNumber;
 
             var updatedEntries = angular.copy(Entries);
             updatedEntries.forEach(function (entry) {
                 entry.QuotationNumber = generatedQuotationNumber;
             });
 
-            $http.post('/Home/SaveToProductTable', updatedEntries)
-                .then(function (response) {
+            console.log(generatedQuotationNumber);
+            console.log(updatedEntries);
+
+            $http.post(window.baseUrl + 'Home/SaveToProductTable', {
+                Entries: updatedEntries,
+               EmpNos : EmpNo
+            }).then(function (response) {
 
                     var QuoNumber = response.data[0].quotationNumber;
-
-                    // Update Quotation station-----*
-
                     Swal.fire({
                         icon: "success",
                         title: "Save Complete",
                         text: "New Quotation : " + QuoNumber + " Created."
                     }).then(function () {
                         // Redirect ไปหน้า index 
-                        $window.location.href = "/Home/Index";
+                        $window.location.href = 'NdsSystemQuotation?EmpNo=' + EmpNo;
                     });
                 })
                 .catch(function (error) {

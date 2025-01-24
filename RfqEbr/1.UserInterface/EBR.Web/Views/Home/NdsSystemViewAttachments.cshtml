@@ -6,7 +6,7 @@
 
 @model EBR.Web.Models.UserQuo
 
-<div ng-controller="mainController" ng-init="GetDataQuoFileTable(@Model.EmpNo ,'@Model.QuotationNumber')">
+<div ng-controller="mainController" ng-init="GetPageFile(@Model.EmpNo ,'@Model.QuotationNumber')">
     <div class="container mt-3">
 
         <h2 class="text-bold mb-4 text-center">Attachments (Order online number : {{ orderNumber }})</h2>

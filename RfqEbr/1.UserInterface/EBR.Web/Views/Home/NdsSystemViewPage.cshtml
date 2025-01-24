@@ -460,7 +460,8 @@
                                class="form-control"
                                ng-model="selectedShipDate"
                                placeholder="Choose Date (dd/mm/yyyy)"
-                               disabled>
+                               disabled 
+                               ng-value="selectedShipDate | date:'dd/MM/yyyy'">
                     </div>
                 </div>
             </div>

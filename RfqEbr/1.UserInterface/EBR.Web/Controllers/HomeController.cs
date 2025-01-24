@@ -2632,95 +2632,11 @@ namespace EBR.Web.Controllers
 
         [HttpGet]
         public ActionResult GetDataOtherFileTable(string orderNumber)
-
         {
-            //if (string.IsNullOrEmpty(orderNumber))
-            //{
-            //    //return BadRequest("Order number is required.");
-            //}
-
-            //ËÒ file Quotation
-
-
-
             var fileOther = _uow.AttachmentsModels.GetAll()
                 .Where(f => f.OrderNumber == orderNumber).ToList();
-            //.Select(f => new
-            //{
-
-            //    f.Id,
-            //    f.FileName,
-            //    f.FilePath,
-            //    f.FileDescription,
-            //    CreatedAt = f.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")
-            //})
-
-
-            //return Ok(fileOther);
             return new JsonNetResult(fileOther);
         }
-
-
-        //[HttpPost]
-        //public ActionResult UploadFileAboutOrders(HttpPostedFileBase file , string fileDescription, string orderNumber)
-        //{
-        //    if (file == null || file.ContentLength == 0)
-        //    {
-        //        var errorfile = "Invalid file.";
-        //        return new JsonNetResult(errorfile);
-        //    }
-
-        //    if (string.IsNullOrEmpty(orderNumber))
-        //    {
-        //        var errorfiles = "Order number is required.";
-        //        return new JsonNetResult(errorfiles);
-        //    }
-
-        //    if (string.IsNullOrEmpty(fileDescription))
-        //    {
-        //        fileDescription = "";
-        //    }
-
-        //    var otherfileFolderPath = Path.Combine(_uploadPath, "Otherfile", orderNumber);
-        //    if (!Directory.Exists(otherfileFolderPath))
-        //    {
-        //        Directory.CreateDirectory(otherfileFolderPath);
-        //    }
-
-        //    var fileName = Path.GetFileName(file.FileName);
-        //    var filePath = Path.Combine(otherfileFolderPath, fileName);
-
-        //    int counter = 1;
-        //    while (System.IO.File.Exists(filePath))
-        //    {
-        //        var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
-        //        var fileExtension = Path.GetExtension(fileName);
-        //        fileName = $"{fileNameWithoutExtension}_{counter++}{fileExtension}";
-        //        filePath = Path.Combine(otherfileFolderPath, fileName);
-        //    }
-
-        //    using (var stream = new FileStream(filePath, FileMode.Create))
-        //    {
-        //        file.CopyTo(stream);
-        //    }
-
-        //    var newFile = new AttachmentsModel
-        //    {
-        //        OrderNumber = orderNumber,
-        //        FileName = fileName,
-        //        FilePath = Path.Combine("Uploads", "Otherfile", orderNumber, fileName), // à¡çº Path áºº Relative
-        //        FileDescription = fileDescription,
-        //        CreatedAt = DateTime.Now,
-        //        AddFileBy = "ADMIN"
-        //    };
-
-        //    _uow.AttachmentsModels.Add(newFile);
-        //    _uow.Commit();
-
-        //    return new JsonNetResult(newFile);
-
-        //}
-
 
         [HttpPost]
         public ActionResult UploadFileAboutOrders(HttpPostedFileBase file, string fileDescription, string orderNumber)
@@ -2916,9 +2832,57 @@ namespace EBR.Web.Controllers
         public void WriteLog(string msg) { }
 
 
+        [HttpPost]
+        public ActionResult SaveQuotations(YmtgOrderNds ListdataQuos)
+
+        {
+            if (ListdataQuos == null)
+            {
+   
+                var errordata = "ข้อมูลไม่ถูกต้อง";
+
+                return new JsonNetResult(errordata);
+            }
+            string NewQuotationNumber = "";
+
+            // Gen เลข
+            var MaxQuo = _uow.YmtgOrderNdss.GetAll()
+                .OrderByDescending(o => o.Id)
+                .Select(o => o.QuotationNumber)
+                .FirstOrDefault();
+
+
+
+            if (MaxQuo != null && MaxQuo.Length >= 9)
+            {
+                string QuoHead1 = "QUONDS";
+                string QuoHead2 = DateTime.Now.ToString("yy"); // Year
+                string QuoHead3 = DateTime.Now.ToString("MM");  // Month// Month
+                int nextSequence = int.Parse(MaxQuo.Substring(MaxQuo.Length - 4)) + 1; // Extract last 3 characters and increment by 1
+                NewQuotationNumber = QuoHead1 + QuoHead2 + QuoHead3 + nextSequence.ToString("D4");
+            }
+            else
+            {
+                // กรณีไม่มีข้อมูลก่อนหน้านี้ กำหนดค่าเริ่มต้น
+                string QuoHead1 = "QUONDS";
+                string QuoHead2 = DateTime.Now.ToString("yy"); // Year, last 2 digits
+                string QuoHead3 = DateTime.Now.ToString("MM"); // Month
+                NewQuotationNumber = QuoHead1 + QuoHead2 + QuoHead3 + "0001";
+            }
+
+            ListdataQuos.QuotationNumber = NewQuotationNumber;
+            ListdataQuos.CreateDate = DateTime.Now;
+
+            _uow.YmtgOrderNdss.Add(ListdataQuos);
+            _uow.Commit();
+  
+
+            return new JsonNetResult(ListdataQuos);
+        }
+
 
         [HttpPost]
-        public ActionResult SaveToProductTable([FromBody] List<ProductList> Entries)
+        public ActionResult SaveToProductTable(List<ProductList> Entries , string EmpNos)
 
         {
 
@@ -2937,8 +2901,9 @@ namespace EBR.Web.Controllers
                         Color = entry.SelectedColor,
                         Price = entry.Quantity * entry.PricePerUnit,
                         PrintingType = 0,
-                        CreateBy = "ADMIN",
-                        CreateDate = DateTime.Now
+                        CreateBy = EmpNos,
+                        CreateDate = DateTime.Now,
+                        OrderNumber = ""
                     };
 
                     // ตรวจสอบและกำหนดค่า SKUCode
@@ -2967,10 +2932,11 @@ namespace EBR.Web.Controllers
 
                         //newProduct.PrintingType = entry.SelectedSku.Substring(entry.SelectedSku.Length - 3);
                     }
-                    //_context.YmtgProducts.Add(newProduct);
+                    _uow.YmtgProductNdss.Add(newProduct);
+                    _uow.Commit();
                 }
             }
-           return new JsonNetResult(Entries);
+            return new JsonNetResult(Entries);
         }
 
     }
