@@ -748,9 +748,6 @@ namespace EBR.Web.Controllers
             return new JsonNetResult(skuCodes);
         }
 
-
-
-
         [HttpGet]
         public ActionResult GetProvinces()
         {
@@ -765,33 +762,23 @@ namespace EBR.Web.Controllers
             var GetDistrictLists = GetDistrict.Select(g => g.Key).ToList();
             return new JsonNetResult(GetDistrictLists);
         }
-
-        [HttpPost]
+       [HttpPost]
         public ActionResult GetListSubs(string Districts , string Provinces)
         {
             var GetSubDistricts = _uow.MasterProvinces.GetAll().Where(z => z.Districts == Districts && z.Provinces == Provinces)
                 .GroupBy(p => p.SubDistricts).ToList();
             var GetSubDistrictsList = GetSubDistricts.Select(g => g.Key).ToList();
             return new JsonNetResult(GetSubDistrictsList);
-
         }
-
         [HttpPost]
         public ActionResult GetListZipcode(MasterProvince request)
         {
             var GetZipcode = _uow.MasterProvinces.GetAll()
             .Where(z => z.SubDistricts == request.SubDistricts && z.Districts == request.Districts)
             .GroupBy(p => p.ZipCode).ToList();
-
             var GetZipcodeList = GetZipcode.Select(g => g.Key).FirstOrDefault();
             return new JsonNetResult(GetZipcodeList);
         }
-
-
-
-
-
-
         [HttpGet]
         public ActionResult GetLoadRemark()
         {
@@ -799,33 +786,16 @@ namespace EBR.Web.Controllers
 
             return new JsonNetResult(GetLoadRemark);
         }
-
-
-
-
         [HttpPost]
         public ActionResult GetForEditProduct( string QuotationNumber)
         {
-
-
             var dataquoEditProduct = _uow.YmtgProductNdss.GetAll().Where(z => z.QuotationNumber == QuotationNumber).ToList();
-
             return new JsonNetResult(dataquoEditProduct);
         }
 
 
-
-
-
-
-
-
-
-
-        // File
         [HttpGet]
         public ActionResult GetQuotationFiles(string quotationNumber)
-
         {
             if (string.IsNullOrEmpty(quotationNumber))
             {
@@ -835,7 +805,6 @@ namespace EBR.Web.Controllers
             var files = _uow.QuotationFiles.GetAll()
                 .Where(f => f.QuotationNumber == quotationNumber).ToList();
             return new JsonNetResult(files);
-
         }
 
 
@@ -860,11 +829,9 @@ namespace EBR.Web.Controllers
                     }
                     catch (Exception ex)
                     {
-                        // Log หรือจัดการข้อผิดพลาด
                         Console.WriteLine($"Error deleting file: {ex.Message}");
                     }
                 }
-
                 return new JsonNetResult(getdatamain);
             }
             else
@@ -875,7 +842,7 @@ namespace EBR.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult UploadFile(HttpPostedFileBase files, string fileDescription, string quotationNumber)
+        public ActionResult UploadFiledata(HttpPostedFileBase files, string fileDescription, string quotationNumber)
         {
             // ตรวจสอบว่าไฟล์ถูกส่งมาหรือไม่
             if (files == null || files.ContentLength == 0)
@@ -920,21 +887,30 @@ namespace EBR.Web.Controllers
             files.SaveAs(filePath);
 
             // สร้างข้อมูลไฟล์ใหม่สำหรับบันทึกลงฐานข้อมูล
-            var newFile = new QuotationFile
-            {
-                QuotationNumber = quotationNumber,
-                FileName = fileName,
-                FilePath = Path.Combine("Uploads", quotationNumber, fileName).Replace("\\", "/"), // ใช้ Path แบบ Relative
-                FileDescription = fileDescription,
-                CreatedAt = DateTime.Now
-            };
+            //var newFile = new QuotationFile
+            //{
+            //    QuotationNumber = quotationNumber,
+            //    FileName = fileName,
+            //    FilePath = Path.Combine("Uploads", quotationNumber, fileName).Replace("\\", "/"), // ใช้ Path แบบ Relative
+            //    FileDescription = fileDescription,
+            //    CreatedAt = DateTime.Now
+            //};
 
-            // บันทึกข้อมูลลงฐานข้อมูล
+            var newFile = new QuotationFile();
+
+            newFile.QuotationNumber = quotationNumber;
+            newFile.FileName = fileName;
+            newFile.FilePath = Path.Combine("Uploads", quotationNumber, fileName).Replace("\\", "/"); 
+            newFile.FileDescription = fileDescription;
+            newFile.CreatedAt = DateTime.Now;
+
+
             _uow.QuotationFiles.Add(newFile);
             _uow.Commit();
 
             // ส่งข้อมูลกลับไปยัง Client
-            return Json(new { success = true, data = newFile }, JsonRequestBehavior.AllowGet);
+            return new JsonNetResult(newFile);
+            //return Json(new { success = true, data = newFile }, JsonRequestBehavior.AllowGet);
         }
 
 
@@ -1629,10 +1605,6 @@ namespace EBR.Web.Controllers
                     document.Add(mainTable);
 
 
-
-
-
-
                     // ฟังก์ชันช่วยสร้างเซลล์ที่จัดตำแหน่ง
                     PdfPCell CreateAlignedCell(string text, Font font, int alignment)
                     {
@@ -1656,843 +1628,21 @@ namespace EBR.Web.Controllers
         }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        public ActionResult GetMasterCustomerName()
-        {
-            var query = _uow.YMTGOrderDetails.GetAll().GroupBy(p => p.CustomerCode).ToList();
-            var querys = query.Select(g => g.Key).ToList();
-            return new JsonNetResult(querys);
-        }
-
-        public ActionResult GetMasterBandName(string CodeName)
-        {
-            var query = _uow.YMTGOrderDetails.GetAll().Where(z => z.CustomerCode == CodeName).FirstOrDefault();
-            return new JsonNetResult(query);
-        }
-        public ActionResult GetMasterSeasons(string CodeName)
-        {
-            var query = _uow.YMTGOrderDetails.GetAll().Where(z=> z.CustomerCode == CodeName).GroupBy(p => p.Season).ToList();
-            var querys = query.Select(g => g.Key).ToList();
-            return new JsonNetResult(querys);
-        }
-
-        public ActionResult GetMasterStyle(string CodeName , string SeasonName)
-        {
-            var query = _uow.YMTGOrderDetails.GetAll().Where(z => z.CustomerCode == CodeName && z.Season == SeasonName).GroupBy(p => p.Style).ToList();
-            var querys = query.Select(g => g.Key).ToList();
-            return new JsonNetResult(querys);
-        }
-
-        public ActionResult GetMasterOrder(string CodeName, string SeasonName , string StyleName)
-        {
-            var query = _uow.YMTGOrderDetails.GetAll().Where(z => z.CustomerCode == CodeName && z.Season == SeasonName && z.Style == StyleName).GroupBy(p => p.OrderNo).ToList();
-            var querys = query.Select(g => g.Key).ToList();
-            return new JsonNetResult(querys);
-        }
-
-        
-        public ActionResult GetListAllStyle(string CodeName,  string ListStyle , string SeasonName)
-        {
-            if(ListStyle == null)
-            {
-                var getlist = _uow.YPTGUploadfileDatas.GetAll().Where(x => x.Season == SeasonName && x.BrandCode  == CodeName).ToList();
-                return new JsonNetResult(getlist);
-            }
-            else
-            {
-                var getlist = _uow.YPTGUploadfileDatas.GetAll().Where(x => x.Season == SeasonName && x.StyleName == ListStyle).ToList();
-                return new JsonNetResult(getlist);
-            }
-        }
-
-
-        [HttpPost]
-        public ActionResult UploadFiles(IEnumerable<HttpPostedFileBase> files, string brandCode, string brandName, string season, string styleName , string OrderNo , string TypeName , int Id)
-        {
-            if (files == null || !files.Any())
-            {
-                return new JsonNetResult("No files uploaded.");
-            }
-            var UploadDataDetail = new YPTGUploadDetail();
-            var uploadedFileDB = new YPTGUploadfileData();
-
-            var uploadFolderPath = System.Web.Hosting.HostingEnvironment.MapPath("~/Uploads/");
-
-            if (!Directory.Exists(uploadFolderPath))
-            {
-                Directory.CreateDirectory(uploadFolderPath);
-            }
-
-            var folderPathToBrandCode = Path.Combine(uploadFolderPath + brandCode);
-
-            // Check if the folder exists
-            if (!Directory.Exists(folderPathToBrandCode))
-            {
-                Directory.CreateDirectory(folderPathToBrandCode);
-            }
-
-            var BrandToseason = Path.Combine(folderPathToBrandCode + @"\" + season);
-
-            if (!Directory.Exists(BrandToseason))
-            {
-                Directory.CreateDirectory(BrandToseason);
-            }
-
-            var SeasonTostyleName = Path.Combine(BrandToseason + @"\" +  styleName);
-
-            if (!Directory.Exists(SeasonTostyleName) && styleName != null && styleName != "undefined")
-            {
-                Directory.CreateDirectory(SeasonTostyleName);
-            }
-
-            var StyleNameToTypeName = Path.Combine(SeasonTostyleName + @"\" + TypeName);
-
-            if (!Directory.Exists(StyleNameToTypeName))
-            {
-                Directory.CreateDirectory(StyleNameToTypeName);
-            }
-
-
-            if(OrderNo == "undefined" || OrderNo == "null")
-            {
-
-       
-                var getdataorders = _uow.YMTGOrderDetails.GetAll().Where(x => x.Style == styleName && x.CustomerCode == brandCode && x.Season == season).ToList();
-
-
-                foreach(var listorder in getdataorders)
-                {
-
-
-                    var checkdata = _uow.YPTGUploadfileDatas.GetAll().Where(zz => zz.OrderNo == listorder.OrderNo && zz.TypeName == TypeName).FirstOrDefault();
-
-                    if(checkdata == null)
-                    {
-                        foreach (var file in files)
-                        {
-                            if (file != null && file.ContentLength > 0)
-                            {
-                                var originalFileName = Path.GetFileName(file.FileName);
-
-                                var filePath = "";
-                                var renamedFileName = "";
-
-                                string typePrefix = string.Empty;
-
-                                switch (TypeName)
-                                {
-                                    case "MRP":
-                                        typePrefix = "MRP";
-                                        break;
-                                    case "PACKING":
-                                        typePrefix = "PK";
-                                        break;
-                                    case "SIZE BREAK DOWN":
-                                        typePrefix = "SB";
-                                        break;
-                                    case "SPEC SHEET":
-                                        typePrefix = "SP";
-                                        break;
-                                    case "SWATCH CARD":
-                                        typePrefix = "SC";
-                                        break;
-                                    case "P-NOTED":
-                                        typePrefix = string.Empty;
-                                        break;
-                                }
-
-                                if (!string.IsNullOrEmpty(typePrefix) || TypeName == "P-NOTED")
-                                {
-                                    if (TypeName == "P-NOTED")
-                                    {
-                                        renamedFileName = $"{styleName}-{listorder.OrderNo}{Path.GetExtension(originalFileName)}";
-                                    }
-                                    else
-                                    {
-                                        renamedFileName = $"{typePrefix}-{styleName}-{listorder.OrderNo}{Path.GetExtension(originalFileName)}";
-                                    }
-                                    filePath = Path.Combine(StyleNameToTypeName, renamedFileName);
-                                    file.SaveAs(filePath);
-                                }
-
-                                var getuserpass = _uow.YMTGUsers.GetAll().Where(z => z.Id == Id).FirstOrDefault();
-
-
-                                uploadedFileDB.TypeName = TypeName;
-                                uploadedFileDB.BrandCode = brandCode;
-                                uploadedFileDB.BrandName = brandName;
-                                uploadedFileDB.StyleName = styleName;
-                                uploadedFileDB.Season = season;
-                                uploadedFileDB.OrderNo = listorder.OrderNo;
-                                uploadedFileDB.NewFileName = renamedFileName;
-                                uploadedFileDB.FileUploadCode = Guid.NewGuid().ToString();
-                                uploadedFileDB.OriginalFileName = originalFileName;
-                                uploadedFileDB.FileExtension = Path.GetExtension(originalFileName);
-                                uploadedFileDB.FilePathUrl = StyleNameToTypeName;
-                                uploadedFileDB.FilePathName = filePath;
-                                uploadedFileDB.Revision = "";
-                                uploadedFileDB.RevisionDate = "";
-                                uploadedFileDB.Status = 1;
-                                uploadedFileDB.Remark = TypeName + brandName + styleName + season + listorder.OrderNo;
-                                uploadedFileDB.CreateDate = DateTime.Now;
-                                uploadedFileDB.CreateBy = getuserpass.YPTName;
-                                uploadedFileDB.FactoryCode = getuserpass.Factory;
-                                uploadedFileDB.FileId = 1;
-
-                                _uow.YPTGUploadfileDatas.Add(uploadedFileDB);
-                                _uow.Commit();
-
-                            }
-                        }
-                    }else
-                    {
-                        foreach (var file in files)
-                        {
-                            if (file != null && file.ContentLength > 0)
-                            {
-                                var originalFileName = Path.GetFileName(file.FileName);
-
-                                var filePath = "";
-                                var renamedFileName = "";
-
-                                string typePrefix = string.Empty;
-
-                                switch (TypeName)
-                                {
-                                    case "MRP":
-                                        typePrefix = "MRP";
-                                        break;
-                                    case "PACKING":
-                                        typePrefix = "PK";
-                                        break;
-                                    case "SIZE BREAK DOWN":
-                                        typePrefix = "SB";
-                                        break;
-                                    case "SPEC SHEET":
-                                        typePrefix = "SP";
-                                        break;
-                                    case "SWATCH CARD":
-                                        typePrefix = "SC";
-                                        break;
-                                    case "P-NOTED":
-                                        typePrefix = string.Empty;
-                                        break;
-                                }
-
-                                if (!string.IsNullOrEmpty(typePrefix) || TypeName == "P-NOTED")
-                                {
-                                    if (TypeName == "P-NOTED")
-                                    {
-                                        renamedFileName = $"{styleName}-{OrderNo}{Path.GetExtension(originalFileName)}";
-                                    }
-                                    else
-                                    {
-                                        renamedFileName = $"{typePrefix}-{styleName}-{OrderNo}{Path.GetExtension(originalFileName)}";
-                                    }
-                                    filePath = Path.Combine(StyleNameToTypeName, renamedFileName);
-                                    file.SaveAs(filePath);
-                                }
-
-                                var getuserpass = _uow.YMTGUsers.GetAll().Where(z => z.Id == Id).FirstOrDefault();
-
-
-                                uploadedFileDB.TypeName = TypeName;
-                                uploadedFileDB.BrandCode = brandCode;
-                                uploadedFileDB.BrandName = brandName;
-                                uploadedFileDB.StyleName = styleName;
-                                uploadedFileDB.Season = season;
-                                uploadedFileDB.OrderNo = OrderNo;
-                                uploadedFileDB.NewFileName = renamedFileName;
-                                uploadedFileDB.FileUploadCode = Guid.NewGuid().ToString();
-                                uploadedFileDB.OriginalFileName = originalFileName;
-                                uploadedFileDB.FileExtension = Path.GetExtension(originalFileName);
-                                uploadedFileDB.FilePathUrl = StyleNameToTypeName;
-                                uploadedFileDB.FilePathName = filePath;
-                                uploadedFileDB.Revision = "";
-                                uploadedFileDB.RevisionDate = "";
-                                uploadedFileDB.Status = 1;
-                                uploadedFileDB.Remark = TypeName + brandName + styleName + season + OrderNo;
-                                uploadedFileDB.CreateDate = DateTime.Now;
-                                uploadedFileDB.CreateBy = getuserpass.YPTName;
-                                uploadedFileDB.FactoryCode = getuserpass.Factory;
-                                uploadedFileDB.FileId = 1;
-
-                                _uow.YPTGUploadfileDatas.Add(uploadedFileDB);
-                                _uow.Commit();
-
-                            }
-                        }
-                    }
-
-                   
-                }
-
-
-
-            }
-            else
-            {
-                foreach (var file in files)
-                {
-                    if (file != null && file.ContentLength > 0)
-                    {
-                        var originalFileName = Path.GetFileName(file.FileName);
-
-                        var filePath = "";
-                        var renamedFileName = "";
-
-                        string typePrefix = string.Empty;
-
-                        switch (TypeName)
-                        {
-                            case "MRP":
-                                typePrefix = "MRP";
-                                break;
-                            case "PACKING":
-                                typePrefix = "PK";
-                                break;
-                            case "SIZE BREAK DOWN":
-                                typePrefix = "SB";
-                                break;
-                            case "SPEC SHEET":
-                                typePrefix = "SP";
-                                break;
-                            case "SWATCH CARD":
-                                typePrefix = "SC";
-                                break;
-                            case "P-NOTED":
-                                typePrefix = string.Empty;
-                                break;
-                        }
-
-                        if (!string.IsNullOrEmpty(typePrefix) || TypeName == "P-NOTED")
-                        {
-                            if (TypeName == "P-NOTED")
-                            {
-                                renamedFileName = $"{styleName}-{OrderNo}{Path.GetExtension(originalFileName)}";
-                            }
-                            else
-                            {
-                                renamedFileName = $"{typePrefix}-{styleName}-{OrderNo}{Path.GetExtension(originalFileName)}";
-                            }
-                            filePath = Path.Combine(StyleNameToTypeName, renamedFileName);
-                            file.SaveAs(filePath);
-                        }
-
-                        var getuserpass = _uow.YMTGUsers.GetAll().Where(z => z.Id == Id).FirstOrDefault();
-
-
-                        uploadedFileDB.TypeName = TypeName;
-                        uploadedFileDB.BrandCode = brandCode;
-                        uploadedFileDB.BrandName = brandName;
-                        uploadedFileDB.StyleName = styleName;
-                        uploadedFileDB.Season = season;
-                        uploadedFileDB.OrderNo = OrderNo;
-                        uploadedFileDB.NewFileName = renamedFileName;
-                        uploadedFileDB.FileUploadCode = Guid.NewGuid().ToString();
-                        uploadedFileDB.OriginalFileName = originalFileName;
-                        uploadedFileDB.FileExtension = Path.GetExtension(originalFileName);
-                        uploadedFileDB.FilePathUrl = StyleNameToTypeName;
-                        uploadedFileDB.FilePathName = filePath;
-                        uploadedFileDB.Revision = "";
-                        uploadedFileDB.RevisionDate = "";
-                        uploadedFileDB.Status = 1;
-                        uploadedFileDB.Remark = TypeName + brandName + styleName + season + OrderNo;
-                        uploadedFileDB.CreateDate = DateTime.Now;
-                        uploadedFileDB.CreateBy = getuserpass.YPTName;
-                        uploadedFileDB.FactoryCode = getuserpass.Factory;
-                        uploadedFileDB.FileId = 1;
-
-                        _uow.YPTGUploadfileDatas.Add(uploadedFileDB);
-                        _uow.Commit();
-
-                    }
-                }
-            }
-    
-
-
-   
-
-
-
-            //string recipient = "jaruwan.s@yehpattana.com";
-            //string subject = "TON IT TEST";
-            //string body = "TEST MAIL >> ทดสอบการส่งเมล์";
-
-            //SendEmail(recipient, subject, body);
-
-            var GetFinishdata = _uow.YPTGUploadfileDatas.GetAll().Where(t => t.StyleName == styleName).OrderByDescending(t => t.Id).ToList();
-
-
-
-
-
-            // กำหนดโปรโตคอล TLS ที่ต้องการ (.NET Framework 4.5 ขึ้นไปจะรองรับ TLS 1.2)
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-            // ปิดการตรวจสอบใบรับรอง SSL (ถ้ามีปัญหาเรื่อง SSL Certificate)
-            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-
-            // URL ของ Line Notify API
-            string url = "https://notify-api.line.me/api/notify";
-
-            // สร้างคำขอแบบ HTTP POST
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "POST";
-            request.KeepAlive = false;
-            request.ContentType = "application/x-www-form-urlencoded";
-
-            // กำหนด Authorization header สำหรับ Token
-            request.Headers.Add("Authorization", "Bearer " + "4qBCGsP9XuVZZNvp5f8dH06A9UJtAqXSMUpUP42PaKP");
-
-
-            string networkUrl = uploadedFileDB.FilePathName.Replace(@"\\192.168.6.250\PNote", "http://192.168.6.250/PNote").Replace(@"\", "/");
-
-            // เตรียมข้อมูลที่จะส่งไปยัง API
-            var postData = string.Format("message={0}",
-
-                "\r\n" + "_________" + "\r\n" +
-                "\r\n" + "PNOTE-UploadfileToSystem" + "\r\n"
-                + "_________" + "\r\n"
-                + "BrandName : " + uploadedFileDB.BrandName + "\r\n"
-                + "Season : " + uploadedFileDB.Season + "\r\n"
-                + "StyleName : " + uploadedFileDB.StyleName + "\r\n"
-                + "OrderNo : " + uploadedFileDB.OrderNo + "\r\n"
-                + "TypeName : " + uploadedFileDB.TypeName + "\r\n"
-                + "FileName : " + uploadedFileDB.NewFileName + "\r\n"
-            //+ "UrlDownload : " + uploadedFileDB.FilePathName + "\r\n"
-            //+ "ไฟล์ Packing:" + "[คลิกที่นี่](http://192.168.6.250/PNote/PNOTE-DEV/MCJ/25SS/12JABC30/PACKING/PK-12JABC30-YPSO-24-1771.xlsx) " + "\r\n"
-                + "Status : " + "complete" + "\r\n"
-                + "CreateBy : " + uploadedFileDB.CreateBy + "\r\n"
-                + "CreateDate : " + uploadedFileDB.CreateDate + "\r\n"
-                );
- 
-
-
-            byte[] data = Encoding.UTF8.GetBytes(postData);
-
-            // ใส่ข้อมูลลงใน request body
-            using (Stream stream = request.GetRequestStream())
-            {
-                stream.Write(data, 0, data.Length);
-            }
-            try
-            {
-                // รับการตอบกลับจาก API
-                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-                {
-                    using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-                    {
-                        string result = reader.ReadToEnd();
-                        Console.WriteLine("Response from LINE Notify: " + result);
-                    }
-                }
-            }
-            catch (WebException ex)
-            {
-                // ดักจับข้อผิดพลาดและแสดงรายละเอียด
-                Console.WriteLine("Error: " + ex.Message);
-                if (ex.Response != null)
-                {
-                    using (StreamReader reader = new StreamReader(ex.Response.GetResponseStream()))
-                    {
-                        string errorResponse = reader.ReadToEnd();
-                        Console.WriteLine("Error Response: " + errorResponse);
-                    }
-                }
-            }
-
-
-            return Json(new { message = "uploaded successfully.", GetFinishdata });
-        }
-
-        public ActionResult Download(int Id)
-        {
-            var fileDetail = _uow.YPTGUploadfileDatas.GetAll().Where(x => x.Id == Id).FirstOrDefault();
-            if (fileDetail == null)
-            {
-                return HttpNotFound();
-            }
-            var filePath = Path.Combine(fileDetail.FilePathUrl, fileDetail.NewFileName);
-            return File(filePath, "application/octet-stream", fileDetail.NewFileName);
-        }
-
-
-        public ActionResult OpenfileId(int fileIds)
-        {
-            var fileDetail = _uow.YPTGUploadfileDatas.GetAll().Where(x => x.Id == fileIds).FirstOrDefault();
-            return new JsonNetResult(fileDetail);
-        }
-
-
-
-        public ActionResult checkfilealready(YPTGUploadfileData DataAlready)
-        {
-            if(DataAlready.OrderNo == null)
-            {
-
-                var getlist = _uow.YPTGUploadfileDatas.GetAll().Where(x => x.TypeName == DataAlready.TypeName && x.BrandCode == DataAlready.BrandCode &&
-                x.Season == DataAlready.Season && x.StyleName == DataAlready.StyleName  && x.Status == 1).FirstOrDefault();
-                return new JsonNetResult(getlist);
-            }else
-            {
-
-                var getlist = _uow.YPTGUploadfileDatas.GetAll().Where(x => x.TypeName == DataAlready.TypeName && x.BrandCode == DataAlready.BrandCode &&
-                x.Season == DataAlready.Season && x.StyleName == DataAlready.StyleName && x.OrderNo == DataAlready.OrderNo && x.Status == 1).FirstOrDefault();
-                return new JsonNetResult(getlist);
-            }
-
-
-        }
-
-
-        //MASTER DATA UPDATE & UPLOAD
-        public ActionResult GetMasterCustomers()
-        {
-            var query = _uow.YPTGUploadfileDatas.GetAll().GroupBy(p => p.BrandCode).ToList();
-            var querys = query.Select(g => g.Key).ToList();
-            return new JsonNetResult(querys);
-        }
-
-        public ActionResult GetMasterNameCustomers(string getBandname)
-        {
-            var query = _uow.YPTGUploadfileDatas.GetAll().Where(z => z.BrandCode == getBandname).FirstOrDefault();
-            return new JsonNetResult(query);
-        }
-
-        public ActionResult GetUpdateSeason(string CodeName)
-        {
-            var query = _uow.YPTGUploadfileDatas.GetAll().Where(z => z.BrandCode == CodeName).GroupBy(p => p.Season).ToList();
-            var querys = query.Select(g => g.Key).ToList();
-            return new JsonNetResult(querys);
-        }
-        public ActionResult GetUpateMasterStyle(string CodeName, string SeasonName)
-        {
-            var query = _uow.YPTGUploadfileDatas.GetAll().Where(z => z.BrandCode == CodeName && z.Season == SeasonName).GroupBy(p => p.StyleName).ToList();
-            var querys = query.Select(g => g.Key).ToList();
-            return new JsonNetResult(querys);
-        }
-         public ActionResult GetUpdateMasterOrder(string UpdateCodeName, string UpdateSeasonName, string UpdateStyleName)
-        {
-            var query = _uow.YPTGUploadfileDatas.GetAll().Where(z => z.BrandCode == UpdateCodeName && z.Season == UpdateSeasonName && z.StyleName == UpdateStyleName).GroupBy(p => p.OrderNo).ToList();
-            var querys = query.Select(g => g.Key).ToList();
-            return new JsonNetResult(querys);
-        }
-
-        public ActionResult GetUpdateMasterTypeName(string UpdateCodeName, string UpdateSeasonName, string UpdateStyleName , string UpdateOrderNo)
-        {
-            var query = _uow.YPTGUploadfileDatas.GetAll().Where(z => z.BrandCode == UpdateCodeName && z.Season == UpdateSeasonName && z.StyleName == UpdateStyleName && z.OrderNo == UpdateOrderNo).GroupBy(p => p.TypeName).ToList();
-            var querys = query.Select(g => g.Key).ToList();
-            return new JsonNetResult(querys);
-        }
-
-        public ActionResult Getdataupdate(string UpdateCodeName, string UpdateSeasonName, string UpdateStyleName, string UpdateOrderNo , string UpdateTypename)
-        {
-            var query = _uow.YPTGUploadfileDatas.GetAll().Where(z => z.BrandCode == UpdateCodeName && z.Season == UpdateSeasonName && z.StyleName == UpdateStyleName && z.OrderNo == UpdateOrderNo && z.TypeName == UpdateTypename && z.Status == 1).ToList();
-            return new JsonNetResult(query);
-        }
-
-
-
-        public ActionResult DeldataupdateToLog(YPTGUploadfileDataLog deldatas)
-        {
-            var getdatamain = _uow.YPTGUploadfileDatas.GetAll().Where(z => z.Id == deldatas.Id).FirstOrDefault();
-            var sourceFilePath = deldatas.FilePathName;
-            var uploadFolderPath = deldatas.FilePathUrl + "\\" + "MoveRevision"; 
-
-            if (!Directory.Exists(uploadFolderPath))
-            {
-                Directory.CreateDirectory(uploadFolderPath);
-            }
-
-            string destinationFilePath = Path.Combine(uploadFolderPath, deldatas.NewFileName);
-
-            // ตรวจสอบว่าไฟล์ต้นทางมีอยู่หรือไม่
-            if (System.IO.File.Exists(sourceFilePath))
-            {
-                System.IO.File.Move(sourceFilePath, destinationFilePath);
-            }
-            else
-            {
-                return HttpNotFound("ไม่พบไฟล์ต้นทาง");
-            }
-
-            //MoveDatatolog
-            deldatas.LogId = deldatas.Id;
-            _uow.YPTGUploadfileDataLogs.Add(deldatas);
-            _uow.Commit();
-
-            //Updatedatafromtable
-            getdatamain.Status = 2;
-            _uow.YPTGUploadfileDatas.Update(getdatamain);
-            _uow.Commit();
-
-            var getlistdata = _uow.YPTGUploadfileDatas.GetAll().Where(z => z.Id == getdatamain.Id && z.Status == 1).FirstOrDefault();
-            return new JsonNetResult(getlistdata);
-        }
-
-
-        [HttpPost]
-        public ActionResult UploadUpdatesFiles(IEnumerable<HttpPostedFileBase> files, string brandCode, string brandName, string season, string styleName, string OrderNo, string TypeName, int Id)
-        {
-            var getuser = _uow.YMTGUsers.GetAll().Where(z => z.Id == Id).FirstOrDefault();
-            var getdataupload = _uow.YPTGUploadfileDatas.GetAll().Where(z => z.BrandCode == brandCode && z.Season == season && z.StyleName == styleName && z.OrderNo == OrderNo && z.TypeName == TypeName
-            && z.Status == 2).FirstOrDefault();
-
-            var filePath = "";
-
-            var DateRevision = DateTime.Now.ToString("dd-MM-yy");
-
-            var RevisionName = $"REV{(string.IsNullOrEmpty(getdataupload.Revision) ? 1 : int.Parse(getdataupload.Revision.Substring(3)) + 1):D2}";
-
-            foreach (var file in files)
-            {
-                if (file != null && file.ContentLength > 0)
-                {
-                    var originalFileName = Path.GetFileName(file.FileName);
-                    var renamedFileName = "";
-                    string typePrefix = string.Empty;
-
-                    switch (TypeName)
-                    {
-                        case "MRP":
-                            typePrefix = "MRP";
-                            break;
-                        case "PACKING":
-                            typePrefix = "PK";
-                            break;
-                        case "SIZE BREAK DOWN":
-                            typePrefix = "SB";
-                            break;
-                        case "SPEC SHEET":
-                            typePrefix = "SP";
-                            break;
-                        case "SWATCH CARD":
-                            typePrefix = "SC";
-                            break;
-                        case "P-NOTED":
-                            typePrefix = string.Empty; 
-                            break;
-                    }
-
-                    if (!string.IsNullOrEmpty(typePrefix) || TypeName == "P-NOTED")
-                    {
-                        if (TypeName == "P-NOTED")
-                        {
-                            renamedFileName = $"{styleName}-{OrderNo}-{RevisionName}-{DateRevision}{Path.GetExtension(originalFileName)}";
-                        }else
-                        {
-                            renamedFileName = $"{typePrefix}-{styleName}-{OrderNo}-{RevisionName}-{DateRevision}{Path.GetExtension(originalFileName)}";
-                        }
-
-                        filePath = Path.Combine(getdataupload.FilePathUrl, renamedFileName);
-                        file.SaveAs(filePath);
-                    }
-
-                    getdataupload.Status = 1;
-                    getdataupload.Revision = RevisionName;
-                    getdataupload.RevisionDate = DateRevision;
-                    getdataupload.CreateDate = DateTime.Now;
-                    getdataupload.CreateBy = getuser.YPTName;
-                    getdataupload.NewFileName = renamedFileName;
-                    getdataupload.FilePathName = getdataupload.FilePathUrl + "\\" + renamedFileName;
-
-                    _uow.YPTGUploadfileDatas.Update(getdataupload);
-                    _uow.Commit();
-                }
-            }
-            var Getdatatolist = _uow.YPTGUploadfileDatas.GetAll().Where(z => z.Id == getdataupload.Id && z.Status == 1).ToList();
-            return new JsonNetResult(Getdatatolist);
-        }
-        public ActionResult GetListCustomerSearchs(string CustomerSearchs)
-        {
-            var query = _uow.YPTGUploadfileDatas.GetAll().Where(z => z.BrandCode == CustomerSearchs).ToList();
-            return new JsonNetResult(query);
-        }  
-        public ActionResult GetSearchSeason(string CustomerSearchs)
-        {
-            var query = _uow.YPTGUploadfileDatas.GetAll().Where(z => z.BrandCode == CustomerSearchs).GroupBy(p => p.Season).ToList();
-            var querys = query.Select(g => g.Key).ToList();
-            return new JsonNetResult(querys);
-        }
-        public ActionResult GetSearchMasterStyle(string CustomerSearchs)
-        {
-            var query = _uow.YPTGUploadfileDatas.GetAll().Where(z => z.BrandCode == CustomerSearchs).GroupBy(p => p.StyleName).ToList();
-            var querys = query.Select(g => g.Key).ToList();
-            return new JsonNetResult(querys);
-        }
-        public ActionResult ListSearchStylesName(string CustomerSearchs, string SeasonSearchs)
-        {
-            var query = _uow.YPTGUploadfileDatas.GetAll().Where(z => z.BrandCode == CustomerSearchs && z.Season == SeasonSearchs).ToList();
-            return new JsonNetResult(query);
-        }
-        public ActionResult MenuSearchMasterStyle(string CustomerSearchs, string SeasonSearchs)
-        {
-            var query = _uow.YPTGUploadfileDatas.GetAll().Where(z => z.BrandCode == CustomerSearchs && z.Season == SeasonSearchs).GroupBy(p => p.StyleName).ToList();
-            var querys = query.Select(g => g.Key).ToList();
-            return new JsonNetResult(querys);
-        }
-        public ActionResult ListSearchOrderNo(string CustomerSearchs, string SeasonSearchs , string StyleNameSearchs)
-        {
-            var query = _uow.YPTGUploadfileDatas.GetAll().Where(z => z.BrandCode == CustomerSearchs && z.Season == SeasonSearchs && z.StyleName == StyleNameSearchs).ToList();
-            return new JsonNetResult(query);
-        }
-        public ActionResult MenuSearchOrderNo(string CustomerSearchs, string SeasonSearchs, string StyleNameSearchs)
-        {
-            var query = _uow.YPTGUploadfileDatas.GetAll().Where(z => z.BrandCode == CustomerSearchs && z.Season == SeasonSearchs && z.StyleName == StyleNameSearchs).GroupBy(p => p.OrderNo).ToList();
-            var querys = query.Select(g => g.Key).ToList();
-            return new JsonNetResult(querys);
-        }
-        public ActionResult ListSearchTypename(string CustomerSearchs, string SeasonSearchs, string StyleNameSearchs , string OrderNoSearchs)
-        {
-            var query = _uow.YPTGUploadfileDatas.GetAll().Where(z => z.BrandCode == CustomerSearchs 
-            && z.Season == SeasonSearchs && z.StyleName == StyleNameSearchs && z.OrderNo == OrderNoSearchs).ToList();
-            return new JsonNetResult(query);
-        }
-       public ActionResult MenuSearchTypeName(string CustomerSearchs, string SeasonSearchs, string StyleNameSearchs, string OrderNoSearchs)
-        {
-            var query = _uow.YPTGUploadfileDatas.GetAll().Where(z => z.BrandCode == CustomerSearchs && z.Season == SeasonSearchs
-            && z.StyleName == StyleNameSearchs && z.OrderNo == OrderNoSearchs).GroupBy(p => p.TypeName).ToList();
-            var querys = query.Select(g => g.Key).ToList();
-            return new JsonNetResult(querys);
-        }
-        public ActionResult ListSearchdataupdate(string CustomerSearchs, string SeasonSearchs, string StyleNameSearchs, string OrderNoSearchs , string TypeNameSearchs)
-        {
-            var query = _uow.YPTGUploadfileDatas.GetAll().Where(z => z.BrandCode == CustomerSearchs
-            && z.Season == SeasonSearchs && z.StyleName == StyleNameSearchs && z.OrderNo == OrderNoSearchs && z.TypeName == TypeNameSearchs).ToList();
-            return new JsonNetResult(query);
-        }
-        [HttpPost]
-        public ActionResult SendEmail(string recipient, string subject, string body)
-        {
-            var smtpServer = "mail.yehpattana.com";
-            var smtpPort = 587; // หรือ 465 สำหรับ SSL
-            var username = "automail@yehpattana.com";
-            var password = "@1234a";
-            var from = "automail@yehpattana.com";
-
-            using (var message = new MailMessage())
-            {
-                message.From = new MailAddress(from);
-                message.To.Add(recipient);
-                message.Subject = subject;
-                message.Body = body;
-                message.IsBodyHtml = true;
-
-                using (var client = new SmtpClient(smtpServer, smtpPort))
-                {
-                    client.Credentials = new NetworkCredential(username, password);
-                    client.EnableSsl = false; // ปิดการใช้ SSL หากเซิร์ฟเวอร์ไม่รองรับ
-
-                    try
-                    {
-                        client.Send(message);
-                        return Json(new { success = true, message = "Email sent successfully" });
-                    }
-                    catch (SmtpException smtpEx)
-                    {
-                        return Json(new { success = false, message = $"SMTP Error: {smtpEx.StatusCode} - {smtpEx.Message}" });
-                    }
-                    catch (Exception ex)
-                    {
-                        return Json(new { success = false, message = $"Error sending email: {ex.Message}" });
-                    }
-                }
-            }
-        }
-
-
-
-
-
-
         //Get Quotation file by order num
         [HttpPost]
-        public ActionResult GetDataQuoFileTables(string OrderNumber)
+        public ActionResult GetDataQuoFileTables(string orderNumbers)
         {
-            if (string.IsNullOrEmpty(OrderNumber))
+            if (string.IsNullOrEmpty(orderNumbers))
             {
                 var FileBad = "Order number is required.";
 
                 return new JsonNetResult(FileBad);
             }
-
-            //ËÒ file Quotation
-
-            var QuoNum = _uow.YmtgOrderNdss.GetAll().Where(z => z.OrderNumber == OrderNumber).FirstOrDefault();
+            var QuoNum = _uow.YmtgOrderNdss.GetAll().Where(z => z.OrderNumber == orderNumbers).FirstOrDefault();
             string QuoNumStr;
             if (QuoNum == null)
             {
                 QuoNumStr = "";
-
             }
             else
             {
@@ -2503,29 +1653,15 @@ namespace EBR.Web.Controllers
 
             if (!string.IsNullOrEmpty(QuoNumStr))
             {
-
                 fileQuos = _uow.QuotationFiles.GetAll()
                         .Where(f => f.QuotationNumber == QuoNumStr).ToList();
-                //.Select(f => new
-                //{
-                //    f.QuotationNumber,
-                //    f.Id,
-                //    f.FileName,
-                //    f.FilePath,
-                //    f.FileDescription,
-                //    CreatedAt = f.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")
-                //})
-                // .ToList<object>();
-
             }
 
             if (!fileQuos.Any())
             {
                 return new JsonNetResult("");
             }
-
             return new JsonNetResult(fileQuos);
-
         }
 
 
@@ -2534,7 +1670,6 @@ namespace EBR.Web.Controllers
 
         public ActionResult NdsSystemViewPage(string quotationNumber , int EmpNo)
         {
-            // ViewPage read only
             var model = new UserQuo
             {
                 QuotationNumber = quotationNumber,
@@ -2547,14 +1682,9 @@ namespace EBR.Web.Controllers
 
 
 
-        //Order Information
-
- 
-
         [HttpGet]
         public JsonResult GetOrderInfos()
         {
-
             var orderData = _uow.YmtgOrderModels.GetAll()
                    .Select(o => new
                    {
@@ -2611,30 +1741,24 @@ namespace EBR.Web.Controllers
         {
             var productOrder = _uow.ProductModels.GetAll()
                 .Where(o => o.OrderNumber == orderNumber).ToList();
-
             return new JsonNetResult(productOrder);
         }
 
-
-
-
         public ActionResult NdsSystemViewAttachments(string orderNumber, int EmpNo)
         {
-            // ViewPage read only
             var model = new UserQuo
             {
                 QuotationNumber = orderNumber,
                 EmpNo = EmpNo
             };
-
             return View(model);
         }
 
-        [HttpGet]
-        public ActionResult GetDataOtherFileTable(string orderNumber)
+        [HttpPost]
+        public ActionResult GetDataOtherFileTable(string orderNumbers)
         {
             var fileOther = _uow.AttachmentsModels.GetAll()
-                .Where(f => f.OrderNumber == orderNumber).ToList();
+                .Where(f => f.OrderNumber == orderNumbers).ToList();
             return new JsonNetResult(fileOther);
         }
 
@@ -2685,7 +1809,7 @@ namespace EBR.Web.Controllers
             {
                 OrderNumber = orderNumber,
                 FileName = fileName,
-                FilePath = $"/Uploads/Otherfile/{orderNumber}/{fileName}", // Relative path for database
+                FilePath = $"Uploads\\Otherfile\\{orderNumber}\\{fileName}", // Relative path for database
                 FileDescription = fileDescription,
                 CreatedAt = DateTime.Now,
                 AddFileBy = "ADMIN"
@@ -2699,8 +1823,7 @@ namespace EBR.Web.Controllers
             return Json(new { success = true, data = newFile }, JsonRequestBehavior.AllowGet);
         }
 
-
-
+ 
         public ActionResult RFIDIndex(int EmpNo)
         {
             int empSession = Convert.ToInt32(Session["EmpNo"]);
@@ -2725,17 +1848,10 @@ namespace EBR.Web.Controllers
                 }
             }
         }
-
-
-
-
         public ActionResult GetTags()
         {
             // ประกาศ List เพื่อเก็บผลลัพธ์ทั้งหมด
             List<Product> allData = new List<Product>();
-
-
-
             // วนลูปผ่าน TagsRFID
             var TagsRFID = _uow.RFIDTags.GetAll().ToList();
             foreach (var d in TagsRFID)
@@ -2744,14 +1860,8 @@ namespace EBR.Web.Controllers
                 var data = _uow.Products.GetAll().Where(z => z.RFIDData == d.EPC).ToList();
                 allData.AddRange(data);
             }
-
             return Json(allData, JsonRequestBehavior.AllowGet);
-
         }
-
-
-
-
         public void StartReading()
         {
             if (RFIDReader.CreateTcpConn(IPConfig, this))
@@ -2760,53 +1870,39 @@ namespace EBR.Web.Controllers
             }
         }
 
-
         public void ReStartReading()
         {
-
             var delRFID = _uow.RFIDTags.GetAll().ToList(); // ดึงข้อมูลทั้งหมดจากตาราง RFIDTags
-
             foreach (var d in delRFID)
             {
                 _uow.RFIDTags.Delete(d.Id);
                 _uow.Commit();
             }
-
             if (RFIDReader.CreateTcpConn(IPConfig, this))
             {
                 RFIDReader._Tag6C.GetEPC(IPConfig, eAntennaNo._1 | eAntennaNo._2 | eAntennaNo._3 | eAntennaNo._4, eReadType.Inventory);
             }
-
-
         }
-
         public void StopReading()
         {
             RFIDReader._RFIDConfig.Stop(IPConfig);
             RFIDReader.CloseConn(IPConfig);
-
             var delRFID = _uow.RFIDTags.GetAll().ToList(); // ดึงข้อมูลทั้งหมดจากตาราง RFIDTags
-
             foreach (var d in delRFID)
             {
                 _uow.RFIDTags.Delete(d.Id);
                 _uow.Commit();
             }
-
         }
 
         public void OutPutTags(Tag_Model tag)
         {
-
             var newTag = new RFIDTag
             {
                 EPC = tag.EPC,
                 ReadTime = DateTime.Now,
                 IsActive = 1
             };
-
-
-
             var checkdata = _uow.RFIDTags.GetAll().Where(t => t.EPC == tag.EPC).FirstOrDefault();
             if (checkdata == null)
             {
@@ -2818,10 +1914,7 @@ namespace EBR.Web.Controllers
             {
                 displayedEpcs.Add(tag.EPC);
             }
-
         }
-
-
 
         public void EventUpload(CallBackEnum type, object param) { }
         public void GPIControlMsg(GPI_Model gpi_model) { }
@@ -2830,11 +1923,8 @@ namespace EBR.Web.Controllers
         public void PortConnecting(string connID) { }
         public void WriteDebugMsg(string msg) { }
         public void WriteLog(string msg) { }
-
-
         [HttpPost]
         public ActionResult SaveQuotations(YmtgOrderNds ListdataQuos)
-
         {
             if (ListdataQuos == null)
             {
@@ -2870,17 +1960,16 @@ namespace EBR.Web.Controllers
                 NewQuotationNumber = QuoHead1 + QuoHead2 + QuoHead3 + "0001";
             }
 
+            ListdataQuos.OrderStatus = "";
             ListdataQuos.QuotationNumber = NewQuotationNumber;
             ListdataQuos.CreateDate = DateTime.Now;
 
             _uow.YmtgOrderNdss.Add(ListdataQuos);
             _uow.Commit();
-  
+
 
             return new JsonNetResult(ListdataQuos);
         }
-
-
         [HttpPost]
         public ActionResult SaveToProductTable(List<ProductList> Entries , string EmpNos)
 
@@ -2937,6 +2026,37 @@ namespace EBR.Web.Controllers
                 }
             }
             return new JsonNetResult(Entries);
+        }
+        public ActionResult DeleteFileAboutOrders(string filePath, string orderNumber, int FilesId)
+        {
+
+            var getdatamain = _uow.AttachmentsModels.GetAll().Where(z => z.Id == FilesId).FirstOrDefault();
+
+            if (getdatamain != null)
+            {
+                // ลบข้อมูลจากฐานข้อมูล
+                _uow.AttachmentsModels.Delete(getdatamain.Id);
+                _uow.Commit();
+
+                // ลบไฟล์ออกจากโฟลเดอร์
+                 filePath = getdatamain.FilePath; // สมมติว่ามี FilePath ในข้อมูล
+                if (!string.IsNullOrEmpty(filePath) && System.IO.File.Exists(filePath))
+                {
+                    try
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error deleting file: {ex.Message}");
+                    }
+                }
+                return new JsonNetResult(getdatamain);
+            }
+            else
+            {
+                return new JsonNetResult(new { error = "Data not found" });
+            }
         }
 
     }

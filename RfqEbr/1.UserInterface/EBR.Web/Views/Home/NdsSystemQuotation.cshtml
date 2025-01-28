@@ -209,6 +209,7 @@
                                 <table id="dataTable" class="display table table-striped table-bordered dt-responsive nowrap" style="width:100%">
                                     <thead>
                                         <tr>
+                                            <th class="text-center">Id</th>
                                             <th class="text-center">Quotation Number</th>
                                             <th class="text-center">Quotation Type</th>
                                             <th class="text-center">Customer Name</th>
@@ -224,6 +225,7 @@
                                         <tr ng-repeat="item in data">
                                             <td class="text-center">{{ item.Id }}</td>
                                             <td class="text-center">{{ item.QuotationNumber }}</td>
+                                            <td class="text-center">{{ item.QuoType }}</td>
                                             <td class="text-center">{{ item.CustomerName }}</td>
                                             <td class="text-center">{{ item.QuoLastname }}</td>
                                             <td class="text-center">{{ formatDate(item.CreateDate)}}</td>

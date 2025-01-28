@@ -1,6 +1,4 @@
-﻿
-
-@{
+﻿@{
     ViewBag.Title = "_LayoutHOMEData";
     Layout = "~/Views/Shared/_LayoutHOMEData.cshtml";
 }
@@ -322,8 +320,6 @@
             </div>
 
         </div>
-
-
         <div class="container mt-3">
             <div class="mb-4 p-3 border rounded bg-light">
                 <h4 class="text-bold">Quotation details</h4>
@@ -526,7 +522,7 @@
                                 <td>{{file.FileName}}</td>
                                 <td>{{file.FileDescription}}</td>
                                 <td ng-show="false">{{file.FilePath}}</td>
-                                <td>{{file.CreatedAt | date:'dd/MM/yyyy HH:mm:ss'}}</td>
+                                <td>{{file.CreatedAt | date:'dd/MM/yyyy'}}</td>
                                 <td>
                                     <!-- ปุ่มดาวน์โหลด -->
                                     <button class="btn btn-info btn-sm" ng-click="downloadFile(file.FilePath)">
@@ -570,7 +566,7 @@
                                class="form-control"
                                ng-model="selectedShipDate"
                                placeholder="Choose Date (dd/mm/yyyy)"
-                               readonly>
+                                ng-value="selectedShipDate | date:'dd/MM/yyyy'" readonly>
                     </div>
 
                     <!-- Clear Button -->
@@ -616,7 +612,7 @@
             // ตั้งค่า Datepicker
             document.addEventListener("DOMContentLoaded", function () {
                 $('#datepicker').datepicker({
-                    format: 'dd/mm/yyyy', // รูปแบบวันที่ dd/mm/yyyy
+                    format: 'dd/MM/yyyy', // รูปแบบวันที่ dd/mm/yyyy
                     autoclose: true,      // ปิดเมื่อเลือกวันที่
                     todayHighlight: true  // ไฮไลต์วันที่วันนี้
                 });

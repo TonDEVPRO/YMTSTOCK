@@ -349,7 +349,7 @@
         {
             StockId: ListStockTotal.Id,
             Total: ListStockTotal.Total,
-            Remark: ListStockTotal.Remark, 
+            Remark: ListStockTotal.Remark,
             AddQty: AddNewQty,
             TotalQty: TotalStock,
             CreateBy: FullUserId
@@ -357,12 +357,12 @@
 
 
         $http.post(window.baseUrl + 'Home/SaveStocks', {
-            ndsShopStocks :  $scope.ListSaveStock 
+            ndsShopStocks: $scope.ListSaveStock
         }).then(function (response) {
             $scope.ListStockTotals = response.data;
 
             $http.post(window.baseUrl + 'Home/SaveStockLogs', {
-                ndsShopStocksLogs : $scope.ListSaveStockLog
+                ndsShopStocksLogs: $scope.ListSaveStockLog
             }).then(function (response) {
                 $scope.ListStocklogs = response.data;
             });
@@ -398,13 +398,13 @@
 
 
         $http.post(window.baseUrl + 'Home/UpdateStocks', {
-            ndsShopStocks :  $scope.ListUpdateStock
+            ndsShopStocks: $scope.ListUpdateStock
         }).then(function (response) {
             $scope.UpdateStockTotals = response.data;
 
             console.log($scope.UpdateStockTotals);
             $http.post(window.baseUrl + 'Home/UpdateStockLogs', {
-                ndsShopStocksLogs :     $scope.ListUpdateStockLog
+                ndsShopStocksLogs: $scope.ListUpdateStockLog
             }).then(function (response) {
                 $scope.ListStocklogs = response.data;
             });
@@ -423,7 +423,7 @@
 
 
 
-    
+
 
     $scope.YMTNdsSystemData = function (EmpNo) {
         console.log(EmpNo);
@@ -437,7 +437,7 @@
             });
     }
 
-    
+
 
     $scope.YMTHolidayStockData = function (EmpNo) {
         console.log(EmpNo);
@@ -534,28 +534,28 @@
         $scope.fillSize = function (string) {
             $scope.Size = string;
             $scope.filterDataSize = null;
-            
+
             $scope.AddMaster = {
                 Cost: '',
                 Price: '',
-                Total: '' 
+                Total: ''
             };
         };
     };
 
-    
+
 
 
 
     $scope.SaveMasterStock = function (StyleNo, Descriptions, Colors, Sizes, AddMaster, EmpNo) {
- 
+
         $scope.ListMasterStock = {
             Style: StyleNo,
             Color: Colors,
             Size: Sizes,
             Description: Descriptions,
-            Cost: AddMaster.Cost, 
-            Price: AddMaster.Price, 
+            Cost: AddMaster.Cost,
+            Price: AddMaster.Price,
             Total: AddMaster.Total,
             Remark: AddMaster.Remark,
             CreateBy: EmpNo
@@ -637,7 +637,7 @@
     }
 
 
- 
+
 
 
     $scope.GetStockHoliday = function () {
@@ -649,7 +649,7 @@
 
 
 
-    
+
 
     $scope.GetHolidayOrder = function (ddlOrderNo) {
         $http.post(window.baseUrl + 'Home/GetHolidayStyle', { OrderNos: ddlOrderNo }).then(function (response) {
@@ -670,8 +670,8 @@
         })
     };
 
- 
-    $scope.GetHolidaySize = function (ddlOrderNo, ddlStyle , Colors) {
+
+    $scope.GetHolidaySize = function (ddlOrderNo, ddlStyle, Colors) {
 
         console.log(ddlOrderNo);
         console.log(ddlStyle);
@@ -692,10 +692,10 @@
         })
     };
 
-    
 
 
-    $scope.GetHolidayDetailAll = function (ddlOrderNo, ddlStyle, Colors , ddlSize) {
+
+    $scope.GetHolidayDetailAll = function (ddlOrderNo, ddlStyle, Colors, ddlSize) {
 
         console.log(ddlOrderNo);
         console.log(ddlStyle);
@@ -715,7 +715,7 @@
 
 
 
-    $scope.SaveHolidayStock = function (ddlOrderNo, ddlStyle, Colors, ddlSize , alldata , UserIds) {
+    $scope.SaveHolidayStock = function (ddlOrderNo, ddlStyle, Colors, ddlSize, alldata, UserIds) {
 
         console.log(ddlOrderNo);
         console.log(ddlStyle);
@@ -740,19 +740,19 @@
             }).then(function () {
                 $window.location.href = "/Home/NDSHolidayStock?EmpNo=" + FullUserId;
             });
-             
+
         })
 
 
     };
 
 
-    
 
-    
+
+
     $scope.GetMasterSeason = function (MasterSea) {
         $http.post(window.baseUrl + 'Home/GetMasterBandName', {
-           CodeName : MasterSea
+            CodeName: MasterSea
         }).then(function (res) {
             $scope.ListCodeName = res.data
             console.log($scope.ListCodeName);
@@ -776,8 +776,8 @@
 
 
         $http.post(window.baseUrl + 'Home/GetMasterStyle', {
-            CodeName: MasterCustomer, 
-            SeasonName : SeasonNames
+            CodeName: MasterCustomer,
+            SeasonName: SeasonNames
         }).then(function (res) {
             $scope.ListStylename = res.data
         });
@@ -892,11 +892,11 @@
                         text: 'Please check Data and file upload',
                     });
 
-                    
+
                 }
             });
         }
- 
+
     };
 
     $scope.checkEnter = function (event, EmpNoData) {
@@ -1012,14 +1012,14 @@
         });
 
     }
-    $scope.GetDataUpdatefile = function (UploadLoadCustomer, SeasonUpdateName, StyleNameUpdate, OrderNoUpdate , TypenameUpdate) {
+    $scope.GetDataUpdatefile = function (UploadLoadCustomer, SeasonUpdateName, StyleNameUpdate, OrderNoUpdate, TypenameUpdate) {
 
         $http.post(window.baseUrl + 'Home/Getdataupdate', {
             UpdateCodeName: UploadLoadCustomer,
             UpdateSeasonName: SeasonUpdateName,
             UpdateStyleName: StyleNameUpdate,
-            UpdateOrderNo: OrderNoUpdate, 
-            UpdateTypename : TypenameUpdate
+            UpdateOrderNo: OrderNoUpdate,
+            UpdateTypename: TypenameUpdate
         }).then(function (res) {
             $scope.Listdataupdate = res.data
             console.log($scope.Listdataupdate);
@@ -1055,9 +1055,9 @@
                 console.log($scope.listfile);
 
                 if ($scope.listfile == '') {
-                        for (var i = 0; i < files.length; i++) {
-                            formData.append('files', files[i]);
-                        }
+                    for (var i = 0; i < files.length; i++) {
+                        formData.append('files', files[i]);
+                    }
                     formData.append('brandCode', $scope.UploadLoadCustomer);
                     formData.append('brandName', $scope.ListNameCustomer.BrandName);
                     formData.append('season', $scope.SeasonUpdateName);
@@ -1102,14 +1102,14 @@
         console.log(deldata);
 
         $http.post(window.baseUrl + 'Home/DeldataupdateToLog', {
-            deldatas : deldata
+            deldatas: deldata
         }).then(function (res) {
             $scope.Listdataupdate = res.data;
 
             console.log($scope.Listdataupdate);
         });
     }
-    
+
 
     //MenuSearch 
     $scope.GetListCustomerSearch = function (CustomerSearch) {
@@ -1144,7 +1144,7 @@
 
 
         $http.post(window.baseUrl + 'Home/ListSearchStylesName', {
-            CustomerSearchs: CustomerSearch, 
+            CustomerSearchs: CustomerSearch,
             SeasonSearchs: SeasonSearch
         }).then(function (res) {
             $scope.ListSearchData = res.data;
@@ -1188,7 +1188,7 @@
         $http.post(window.baseUrl + 'Home/ListSearchTypename', {
             CustomerSearchs: CustomerSearch,
             SeasonSearchs: SeasonSearch,
-            StyleNameSearchs: StyleNameSearch, 
+            StyleNameSearchs: StyleNameSearch,
             OrderNoSearchs: OrderNoSearch
         }).then(function (res) {
             $scope.ListSearchData = res.data;
@@ -1220,7 +1220,7 @@
 
             console.log($scope.ListSearchData);
         });
-    } 
+    }
     $scope.ShippingManualFAEmp = function (EmpNo) {
         $http.post(window.baseUrl + 'Home/GetEmployee',
             {
@@ -1306,8 +1306,8 @@
                 $scope.ListQuo = response.data; // เก็บผลลัพธ์จาก Backend
 
                 console.log($scope.ListQuo);
- 
-   
+
+
                 $scope.data = [];
                 $http.get(window.baseUrl + 'Home/GetdataquoNew')
                     .then(function (response) {
@@ -1318,7 +1318,7 @@
                         }, 0);
                     });
 
-  /*              $scope.initializeDataTable(); // เรียกใช้ DataTable หลังจากข้อมูลพร้อม*/
+                /*              $scope.initializeDataTable(); // เรียกใช้ DataTable หลังจากข้อมูลพร้อม*/
             })
             .catch(function (error) {
                 console.error("Error:", error);
@@ -1403,7 +1403,7 @@
 
 
 
- 
+
 
 
 
@@ -1433,9 +1433,16 @@
     }
 
 
-    $scope.GetdataQuoForEdits = function (EmpNo ,QuoNum){
+    $scope.GetdataQuoForEdits = function (EmpNo, QuoNum) {
         console.log(QuoNum);
         console.log(EmpNo);
+
+
+        $scope.NewEntry = {
+            TotalPrice: 0,
+            Quantity: 0,
+            PricePerUnit: 0
+        };
 
 
         $http.post(window.baseUrl + 'Home/GetEmployee',
@@ -1450,8 +1457,8 @@
         $scope.GetPageLoad(EmpNo);
 
         $http.post(window.baseUrl + 'Home/GetdataQuoForEdit', {
-            QuotationNumber: QuoNum, 
-            EmpNos : EmpNo
+            QuotationNumber: QuoNum,
+            EmpNos: EmpNo
         }).then(function (response) {
 
 
@@ -1504,12 +1511,14 @@
             console.log($scope.QuoData);
 
 
+            $scope.selectedShipDate = $scope.QuoData.ShipDate.split('T')[0];
+
             $scope.isConfirmed = $scope.QuoData.QuoStatus.toString() === '1';
             $scope.selectedShipDate = $scope.isConfirmed ? $scope.QuoData.ShipDate : '';
 
+            $scope.selectedShipDate = new Date($scope.QuoData.ShipDate).toLocaleDateString('en-GB');
 
-
-
+            console.log($scope.selectedShipDate);
 
             $scope.SelectedTypeSell = $scope.QuoData.QuoType;
             console.log($scope.QuoData.QuoType);
@@ -1525,7 +1534,7 @@
             $scope.SelectedSub = response.data.QuoSubDistricts;
             $scope.SZipcode = response.data.QuoZipCode;
 
-       
+
 
             $http.post(window.baseUrl + 'Home/GetForEditProduct', {
                 QuotationNumber: $scope.QuoData.QuoNumber
@@ -1556,6 +1565,15 @@
     }
 
     $scope.GetDataPageLoad = function (EmpNo) {
+
+ 
+        $scope.NewEntry = {
+            TotalPrice: 0,
+            Quantity: 0,
+            PricePerUnit : 0
+        };
+        console.log($scope.NewEntry.TotalPrice);
+     /*   $scope.NewEntry.TotalPrice = 0;*/
 
         console.log(EmpNo);
         $scope.GetSku(); // โหลด Style Name
@@ -1591,7 +1609,7 @@
                 console.log("Sku Number:", response.data);
             });
     };
- 
+
     $scope.GetSkuCode = function (styleName) {
         console.log("Selected StyleName:", styleName);
         $http.post(window.baseUrl + 'Home/GetSkuCode', {
@@ -1792,7 +1810,7 @@
 
     //GenQuotationNumber
     $scope.GenerateQuotationNumber = function () {
-        $http.get('/Home/GenerateQuotationNumber')
+        $http.get(window.baseUrl + 'Home/GenerateQuotationNumber')
             .then(function (response) {
                 $scope.NewQuoNumber = response.data;
                 console.log("QuotationNumber:", response.data);
@@ -1806,10 +1824,6 @@
 
     $scope.UploadFile = function () {
         var fileInput = document.getElementById('fileInput').files[0];
-
- 
-
-        console.log(fileInput);
 
         if (!fileInput) {
             Swal.fire({
@@ -1830,12 +1844,16 @@
         formData.append("fileDescription", $scope.fileDescription);
         formData.append("quotationNumber", $scope.QuoData.QuoNumber); // รับ QuotationNumber จาก Model
 
-        $http.post(window.baseUrl +'Home/UploadFile', formData, {
+        $http.post(window.baseUrl + 'Home/UploadFiledata', formData, {
             headers: { 'Content-Type': undefined }
         }).then(function (response) {
+
+
+
+            console.log(response);
             // ใช้ $scope.$apply เพื่อกระตุ้น AngularJS ให้จับการเปลี่ยนแปลง
             $scope.$applyAsync(function () {
-                $scope.files.push(response.data.data); // เพิ่มไฟล์ใหม่ลงในตาราง
+                $scope.files.push(response.data); // เพิ่มไฟล์ใหม่ลงในตาราง
             });
 
             Swal.fire({
@@ -1859,10 +1877,12 @@
 
 
     $scope.downloadFile = function (filePath) {
-        window.open('/Home/DownloadFile?filePath=' + encodeURIComponent(filePath), '_blank');
+
+        console.log(filePath);
+        window.open(window.baseUrl + 'Home/DownloadFile?filePath=' + encodeURIComponent(filePath), '_blank');
     };
 
-    $scope.deleteFile = function (filePaths, index ,DelId) {
+    $scope.deleteFile = function (filePaths, index, DelId) {
         console.log(index);
 
         Swal.fire({
@@ -1878,7 +1898,7 @@
             if (result.isConfirmed) {
                 $http.post(window.baseUrl + 'Home/DeleteFile', {
                     filePath: filePaths,
-                    quotationNumber: $scope.QuoData.QuoNumber, 
+                    quotationNumber: $scope.QuoData.QuoNumber,
                     DelIds: DelId
                 }).then(function (response) {
                     Swal.fire({
@@ -1913,9 +1933,6 @@
 
         }).then(function (response) {
             $scope.files = response.data;
-
-            console.log($scope.files);
-            // เก็บข้อมูลไฟล์ใน $scope.files
         }, function (error) {
             console.error("Error loading files:", error);
         });
@@ -1982,7 +1999,7 @@
             return;
         }
 
-     
+
         var quoStatus = $scope.isConfirmed ? 1 : 0; // 1 for confirmed, 0 otherwise
         /*  var shipDate = $scope.isConfirmed ? $scope.selectedShipDate : new Date().toISOString().slice(0, 10);*/ // Use selected date or default to today
         var shipDate = $scope.isConfirmed
@@ -1992,7 +2009,7 @@
 
         console.log(shipDate);
 
-   /*     const*/
+        /*     const*/
 
         $scope.updateData = {
             QuotationNumber: $scope.QuoData.QuoNumber,
@@ -2026,7 +2043,7 @@
             }))
         };
         console.log($scope.updateData);
- 
+
 
         //// Send update request
 
@@ -2038,13 +2055,13 @@
             .then(function (response) {
                 $scope.data = response.data; // เก็บข้อมูล Remark ใน Scope
 
-                        Swal.fire({
-                            icon: "success",
-                            title: "Update Complete",
-                            text: "Quotation updated successfully."
-                        }).then(function () {
-                            $window.location.href = 'NdsSystemQuotation?EmpNo=' + EmpNo;
-                        });
+                Swal.fire({
+                    icon: "success",
+                    title: "Update Complete",
+                    text: "Quotation updated successfully."
+                }).then(function () {
+                    $window.location.href = 'NdsSystemQuotation?EmpNo=' + EmpNo;
+                });
 
                 console.log($scope.data);
             }, function (error) {
@@ -2119,7 +2136,7 @@
 
 
 
-    $scope.viewQuotation = function (quotationNumber , EmpNos) {
+    $scope.viewQuotation = function (quotationNumber, EmpNos) {
 
         $window.location.href = '/Home/NdsSystemViewPage?EmpNo=' + EmpNos + '&quotationNumber=' + quotationNumber;
 
@@ -2131,8 +2148,8 @@
 
 
     // Order Information
- 
-    $scope.GetOrderInfo = function () {
+
+    $scope.GetOrderInfo = function (EmpNo) {
         //$http.get(window.baseUrl + "Home/GetOrderInfos")
         //    .then(function (response) {
         //        $scope.dataOrders = response.data.data; // Bind data to scope
@@ -2141,6 +2158,16 @@
         //    }, function (error) {
         //        console.error("Error fetching order information: ", error);
         //    });
+
+        $http.post(window.baseUrl + 'Home/GetEmployee',
+            {
+                EmployeeNo: EmpNo
+            }).then(function (res) {
+                $scope.emplist = res.data;
+
+            });
+
+
 
         $scope.dataOrders = [];
         $http.get(window.baseUrl + 'Home/GetOrderInfos')
@@ -2203,7 +2230,7 @@
 
         $http.get(window.baseUrl + `Home/GetProductOrders?orderNumber=${orderNumber}`)
 
- 
+
             .then(function (response) {
                 $scope.productOrders = response.data; // เก็บข้อมูลใน scope
                 console.log($scope.productOrders);
@@ -2216,7 +2243,7 @@
     $scope.GetPageFile = function (EmpNo, orderNumber) {
         // ดึงค่าจาก URL Query String
         const urlParams = new URLSearchParams(window.location.search);
-  /*      const orderNumber = urlParams.get('orderNumber'); // ดึงค่าของ orderNumber*/
+        /*      const orderNumber = urlParams.get('orderNumber'); // ดึงค่าของ orderNumber*/
         $scope.orderNumber = orderNumber;
         if (!orderNumber) {
             console.error("Order number is missing in the URL.");
@@ -2227,24 +2254,39 @@
     };
 
 
-    $scope.GetDataQuoFileTable = function (orderNumbers) {
+    $scope.GetDataQuoFileTable = function (orderNumber) {
 
 
         $http.post(window.baseUrl + 'Home/GetDataQuoFileTables',
             {
-
-                OrderNumber: orderNumbers
+                orderNumbers: orderNumber
             })
             .then(function (response) {
-                $scope.quoFile = response.data; // เก็บผลลัพธ์จาก Backend
-
+                $scope.quoFile = response.data;
+                if (Array.isArray($scope.quoFile) && $scope.quoFile.length > 0) {
+                    var quotationNumber = $scope.quoFile[0].quotationNumber;
+                    $scope.quotationNumber = quotationNumber;
+                } else {
+                    $scope.quotationNumber = "";
+                }
                 console.log($scope.quoFile);
             })
             .catch(function (error) {
                 console.error("Error:", error);
             });
 
+        $http.post(window.baseUrl + 'Home/GetDataOtherFileTable', {
 
+            orderNumbers: orderNumber
+        })
+            .then(function (response) {
+                $scope.files = response.data; // เก็บข้อมูลใน scope
+                console.log($scope.files);
+
+
+            }, function (error) {
+                console.error("Error OtherFile : ", error);
+            });
 
     };
 
@@ -2291,15 +2333,16 @@
             headers: { "Content-Type": undefined }
         }).then(function (response) {
 
-            $scope.files = $scope.files.map(file => {
-                file.createdAt = new Date(file.createdAt);
-                return file;
-            });
 
-            $scope.$applyAsync(function () {
+            $http.post(window.baseUrl + 'Home/GetDataOtherFileTable',
+                {
+                    orderNumbers: response.data.data.OrderNumber
+                })
+                .then(function (response) {
+                    $scope.files = response.data;
+                    console.log($scope.files);
+                });
 
-                $scope.files.push(response.data.sendFile); // เพิ่มไฟล์ใหม่ลงในตาราง
-            });
 
             Swal.fire({
                 icon: "success",
@@ -2310,6 +2353,8 @@
 
             $scope.fileDescription = ""; // ล้างคำอธิบาย
             document.getElementById('fileInput').value = null; // ล้างไฟล์ที่เลือก
+
+
         }).catch(function () {
             Swal.fire({
                 icon: "error",
@@ -2321,7 +2366,7 @@
 
 
 
-    $scope.deleteFileAboutOrder = function (filePath, index) {
+    $scope.deleteFileAboutOrder = function (filePath, index, fileId) {
         Swal.fire({
             title: "Are you sure?",
             text: "This file will be permanently deleted!",
@@ -2333,8 +2378,10 @@
             cancelButtonText: "Cancel"
         }).then((result) => {
             if (result.isConfirmed) {
-                $http.delete('/Home/DeleteFileAboutOrders', {
-                    params: { filePath: filePath, orderNumber: $scope.orderNumber }
+                $http.post(window.baseUrl + 'Home/DeleteFileAboutOrders', {
+                    filePath: filePath,
+                    orderNumber: $scope.orderNumber,
+                    FilesId: fileId
                 }).then(function (response) {
                     Swal.fire({
                         icon: "success",
@@ -2356,7 +2403,7 @@
 
 
     $scope.GetFilesData = function (orderNumber, EmpNo) {
-        $window.location.href = 'NdsSystemViewAttachments?orderNumber=' + orderNumber +  '&EmpNo=' + EmpNo;
+        $window.location.href = 'NdsSystemViewAttachments?orderNumber=' + orderNumber + '&EmpNo=' + EmpNo;
     };
 
 
@@ -2396,7 +2443,9 @@
         $window.location.href = 'RFIDIndex?EmpNo=' + EmpNo;
     };
 
-    
+    $scope.NdssystemLink = function (EmpNo) {
+        $window.location.href = 'YMTNdsSystem?EmpNo=' + EmpNo;
+    };
 
     $scope.tags = [];
 
@@ -2505,10 +2554,10 @@
     };
 
 
- 
 
 
- 
+
+
 
     ///RFID Menu
 
@@ -2525,111 +2574,141 @@
 
 
     $scope.SaveQuotation = function (QuoData, SelectedProvinces, SelectedDistricts,
-        SelectedSub, SZipcode, skuCode, SelectedTypeSell, Entries , EmpNo) {
+        SelectedSub, SZipcode, skuCode, SelectedTypeSell, Entries, EmpNo) {
         // Validate ค่าว่าง
-        if (!SelectedTypeSell || SelectedTypeSell.trim() === "") {
+
+
+        console.log(SelectedTypeSell);
+        console.log(SelectedDistricts);
+        console.log(QuoData);
+
+        console.log(Entries);
+
+        if (SelectedTypeSell == undefined) {
             Swal.fire({
                 icon: "error",
                 title: "Validation Error",
                 text: "กรุณาระบุข้อมูล Quotation Type"
             });
-            return;
         }
-
-        if ((!QuoData.CustomerName || QuoData.CustomerName.trim() === "") &&
-            (!QuoData.CompanyName || QuoData.CompanyName.trim() === "")) {
+        else if (QuoData == undefined)
+        {
+                Swal.fire({
+                    icon: "error",
+                    title: "Validation Error",
+                    text: "กรุณาระบุข้อมูล Customer Name หรือ Company Name"
+                });
+        }
+        else if (QuoData.CustomerEmail == undefined) {
             Swal.fire({
                 icon: "error",
                 title: "Validation Error",
-                text: "กรุณาระบุข้อมูล Customer Name หรือ Company Name"
+                text: "กรุณาระบุข้อมูล CustomerEmail"
             });
-            return;
+        }
+        else if (QuoData.CustomerPhone == undefined) {
+            Swal.fire({
+                icon: "error",
+                title: "Validation Error",
+                text: "กรุณาระบุข้อมูล CustomerPhone"
+            });
         }
 
-        if (!Entries || Entries.length === 0) {
+        else if (SelectedDistricts == undefined) {
             Swal.fire({
+                icon: "error",
+                title: "Validation Error",
+                text: "กรุณาระบุที่อยู่"
+            });
+        }
+        else if (Entries == undefined)
+        {
+             Swal.fire({
                 icon: "error",
                 title: "Validation Error",
                 text: "โปรดระบุสินค้า อย่างน้อย 1 รายการ"
+             });
+        }
+        else {
+            $scope.ListdataQuo = {
+                QuotationNumber: QuoData.QuoNumber,
+                CustomerName: QuoData.CustomerName,
+                OrderDate: QuoData.OrderDate,
+                OrderStatus: '',
+                ShipDate: QuoData.ShipDate,
+                TotalQty: QuoData.TotalQty,
+                TotalPrice: QuoData.TotalPrice,
+                CustomerEmail: QuoData.CustomerEmail,
+                CustomerAddress: QuoData.CustomerAddress,
+                CustomerPhone: QuoData.CustomerPhone,
+                Remark: QuoData.Remark,
+                CreateBy: EmpNo,
+                CreateDate: QuoData.CreateDate,
+                QuoProvince: SelectedProvinces,
+                QuoStatus: 0,
+                QuoDistricts: SelectedDistricts,
+                QuoSubDistricts: SelectedSub,
+                QuoZipCode: SZipcode,
+                QuoCompanyName: QuoData.CompanyName,
+                QuoRemark: QuoData.Remark,
+                QuoLastname: QuoData.QuoLastname,
+                QuoTaxID: QuoData.QuoTaxID,
+                QuoType: SelectedTypeSell,
+                QuoShippingPrice: QuoData.QuoShippingPrice
+            };
+            console.log($scope.ListdataQuo);
+
+
+            $http.post(window.baseUrl + 'Home/SaveQuotations', {
+                ListdataQuos :  $scope.ListdataQuo
+            }).then(function (response) {
+                console.log(response.data);
+
+
+                var generatedQuotationNumber = response.data.QuotationNumber;
+
+                var updatedEntries = angular.copy(Entries);
+                updatedEntries.forEach(function (entry) {
+                    entry.QuotationNumber = generatedQuotationNumber;
+                });
+
+                console.log(generatedQuotationNumber);
+                console.log(updatedEntries);
+
+                $http.post(window.baseUrl + 'Home/SaveToProductTable', {
+                    Entries: updatedEntries,
+                   EmpNos : EmpNo
+                }).then(function (response) {
+
+                    var QuoNumber = response.data[0].QuotationNumber;
+
+     
+                        Swal.fire({
+                            icon: "success",
+                            title: "Save Complete",
+                            text: "New Quotation : " + QuoNumber + " Created."
+                        }).then(function () {
+                            // Redirect ไปหน้า index
+                            $window.location.href = 'NdsSystemQuotation?EmpNo=' + EmpNo;
+                        });
+                    })
+                    .catch(function (error) {
+                        console.error("Error while saving entries:", error);
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "Failed to save entries."
+                        });
+                    });
+                // Add Update Quo Status
+            }).catch(function (error) {
+                console.error("Error:", error);
+                alert("ไม่สามารถบันทึกข้อมูลได้");
             });
-            return;
         }
 
 
-        $scope.ListdataQuo = {
-            QuotationNumber: QuoData.QuoNumber,
-            CustomerName: QuoData.CustomerName,
-            OrderDate: QuoData.OrderDate,
-            OrderStatus: '',
-            ShipDate: QuoData.ShipDate,
-            TotalQty: QuoData.TotalQty,
-            TotalPrice: QuoData.TotalPrice,
-            CustomerEmail: QuoData.CustomerEmail,
-            CustomerAddress: QuoData.CustomerAddress,
-            CustomerPhone: QuoData.CustomerPhone,
-            Remark: QuoData.Remark,
-            CreateBy: EmpNo,
-            CreateDate: QuoData.CreateDate,
-            QuoProvince: SelectedProvinces,
-            QuoStatus: 0,
-            QuoDistricts: SelectedDistricts,
-            QuoSubDistricts: SelectedSub,
-            QuoZipCode: SZipcode,
-            QuoCompanyName: QuoData.CompanyName,
-            QuoRemark: QuoData.Remark,
-            QuoLastname: QuoData.QuoLastname,
-            QuoTaxID: QuoData.QuoTaxID,
-            QuoType: SelectedTypeSell,
-            QuoShippingPrice: QuoData.QuoShippingPrice
-        };
-
-
-
-
-        $http.post(window.baseUrl + 'Home/SaveQuotations', {
-            ListdataQuos :  $scope.ListdataQuo 
-        }).then(function (response) {
-            console.log(response.data);
-
-
-            var generatedQuotationNumber = response.data.QuotationNumber;
-
-            var updatedEntries = angular.copy(Entries);
-            updatedEntries.forEach(function (entry) {
-                entry.QuotationNumber = generatedQuotationNumber;
-            });
-
-            console.log(generatedQuotationNumber);
-            console.log(updatedEntries);
-
-            $http.post(window.baseUrl + 'Home/SaveToProductTable', {
-                Entries: updatedEntries,
-               EmpNos : EmpNo
-            }).then(function (response) {
-
-                    var QuoNumber = response.data[0].quotationNumber;
-                    Swal.fire({
-                        icon: "success",
-                        title: "Save Complete",
-                        text: "New Quotation : " + QuoNumber + " Created."
-                    }).then(function () {
-                        // Redirect ไปหน้า index 
-                        $window.location.href = 'NdsSystemQuotation?EmpNo=' + EmpNo;
-                    });
-                })
-                .catch(function (error) {
-                    console.error("Error while saving entries:", error);
-                    Swal.fire({
-                        icon: "error",
-                        title: "Error",
-                        text: "Failed to save entries."
-                    });
-                });
-            // Add Update Quo Status
-        }).catch(function (error) {
-            console.error("Error:", error);
-            alert("ไม่สามารถบันทึกข้อมูลได้");
-        });
+      
     };
 
 

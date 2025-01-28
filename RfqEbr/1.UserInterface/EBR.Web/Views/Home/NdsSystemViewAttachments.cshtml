@@ -16,8 +16,6 @@
 
         <!-- ตารางแสดงไฟล์ -->
         <div class="mb-4 p-3 border rounded">
-
-
             <div style="display: flex; align-items: center;"
                  ng-if="quotationNumber && quotationNumber.trim() !== ''">
                 <h4 class="text-bold" style="margin: 0; margin-right: 10px;">
@@ -36,7 +34,6 @@
                             <th>No.</th>
                             <th>File Name</th>
                             <th>Description</th>
-                            @*  <th>Path</th> *@
                             <th>Created At</th>
                             <th>Actions</th>
                         </tr>
@@ -47,17 +44,14 @@
                             <td>{{file.fileName}}</td>
                             <td>{{file.fileDescription}}</td>
                             <td ng-show="false">{{file.filePath}}</td>
-                            <td>{{file.createdAt | date:'dd/MM/yyyy HH:mm:ss'}}</td>
+                            <td>{{file.createdAt | date:'dd/MM/yyyy'}}</td>
                             <td>
                                 <!-- ปุ่มดาวน์โหลด -->
                                 <button class="btn btn-info btn-sm" ng-click="downloadFile(file.filePath)">
                                     Download
                                 </button>
-
                             </td>
                         </tr>
-
-
                     </tbody>
                 </table>
             </div>
@@ -102,17 +96,17 @@
                     <tbody>
                         <tr ng-repeat="file in files">
                             <td>{{$index + 1}}</td>
-                            <td>{{file.fileName}}</td>
-                            <td>{{file.fileDescription}}</td>
-                            <td ng-show="false">{{file.filePath}}</td>
-                            <td>{{file.createdAt | date:'dd/MM/yyyy HH:mm:ss'}}</td>
+                            <td>{{file.FileName}}</td>
+                            <td>{{file.FileDescription}}</td>
+                            <td ng-show="false">{{file.FilePath}}</td>
+                            <td>{{file.CreatedAt | date:'dd/MM/yyyy HH:mm:ss'}}</td>
                             <td>
                                 <!-- ปุ่มดาวน์โหลด -->
-                                <button class="btn btn-info btn-sm" ng-click="downloadFile(file.filePath)">
+                                <button class="btn btn-info btn-sm" ng-click="downloadFile(file.FilePath)">
                                     Download
                                 </button>
                                 <!-- ปุ่มลบ -->
-                                <button class="btn btn-danger btn-sm" ng-click="deleteFileAboutOrder(file.filePath, $index)">
+                                <button class="btn btn-danger btn-sm" ng-click="deleteFileAboutOrder(file.FilePath, $index , file.Id)">
                                     Delete
                                 </button>
                             </td>

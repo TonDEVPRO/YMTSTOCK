@@ -415,7 +415,7 @@
                                 <th>No.</th>
                                 <th>File Name</th>
                                 <th>Description</th>
-                                <th>Path</th>
+                                @*<th>Path</th>*@
                                 <th>Created At</th>
                                 <th>Actions</th>
                             </tr>
@@ -425,8 +425,8 @@
                                 <td>{{$index + 1}}</td>
                                 <td>{{file.FileName}}</td>
                                 <td>{{file.FileDescription}}</td>
-                                <td>{{file.FilePath}}</td>
-                                <td>{{file.CreatedAt}}</td>
+                                @*<td>{{file.FilePath}}</td>*@
+                            <td>{{file.CreatedAt || date:'dd/MM/yyyy}}</td>
                                 <td>
                                     <button class="btn btn-info btn-sm" ng-click="downloadFile(file.FilePath)">
                                         Download
