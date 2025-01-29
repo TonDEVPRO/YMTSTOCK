@@ -189,6 +189,7 @@
     <Folder Include="Content\vendor\waypoints\src\" />
     <Folder Include="Content\vendor\waypoints\test\" />
     <Folder Include="Properties\PublishProfiles\" />
+    <Folder Include="Uploads\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -3615,7 +3616,6 @@
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
     <Content Include="Scripts\app\app.js" />
-    <Content Include="Scripts\app\controllers\RFIDApp.js" />
     <Content Include="Scripts\app\controllers\MainAppCtrl.js" />
     <Content Include="Scripts\app\directives.js" />
     <Content Include="Scripts\app\factory.js" />

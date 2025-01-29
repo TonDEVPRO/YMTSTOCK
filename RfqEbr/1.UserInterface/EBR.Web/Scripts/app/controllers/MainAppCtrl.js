@@ -77,6 +77,8 @@
                             text: 'No Authorized In System'
                         });
                     } else {
+
+
                         window.location.href = window.baseUrl + "Home/YMTHome?EmpNo=" + $scope.listEmpNo.Id
                     }
                 });
@@ -159,6 +161,9 @@
 
     };
     $scope.YMTHomeData = function (EmpNo) {
+
+
+
         $http.post(window.baseUrl + 'Home/GetEmployee',
             {
                 EmployeeNo: EmpNo

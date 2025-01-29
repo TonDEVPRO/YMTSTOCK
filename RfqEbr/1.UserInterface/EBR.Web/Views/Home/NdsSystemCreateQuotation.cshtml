@@ -219,15 +219,10 @@
 
             </div>
         </div>
-
-
-
         <!-- Customer Information Section -->
         <div class="mb-4 p-3 border rounded bg-light">
-
             <h4 class="text-bold">Customer Information</h4>
             <div class="row">
-                <!-- Customer Name -->
                 <div class="mb-3 col-md-6">
                     <label class="col-form-label text-bold">First name</label>
                     <input type="text"
@@ -351,8 +346,6 @@
                             ng-options="x for x in ListDropSku"
                             ng-change="GetSkuCode(QuoData.StyleName)">
                     </select>
-
-
                 </div>
                 <div class="mb-3 col-md-6">
 
@@ -361,10 +354,7 @@
 
                 </div>
 
-                @* <input type="text" id="totalPrice" class="form-control" ng-model="NewEntry.TotalPrice" ng-value="NewEntry.Quantity * NewEntry.PricePerUnit" readonly> *@
                 <div class="container mt-3">
-
-                    <!-- Form Section -->
                     <div class="mb-4 p-3 border rounded bg-light">
                         <!-- Row สำหรับ สี, ไซส์, จำนวน -->
                         <div class="row align-items-center">
@@ -383,23 +373,17 @@
                                     <option value="">เลือกสี</option>
                                 </select>
                             </div>
-
                             <!-- Quantity Input -->
                             <div class="col-md-2">
                                 <label for="quantityInput" class="form-label text-bold">จำนวน:</label>
                                 <input type="number" id="quantityInput" class="form-control" ng-model="NewEntry.Quantity" placeholder="กรอกจำนวนสินค้า" min="0">
 
                             </div>
-
-
                             <!-- Price Input -->
                             <div class="col-md-2">
                                 <label for="priceInput" class="form-label text-bold">ราคา (ต่อหน่วย):</label>
                                 <input type="number" id="priceInput" class="form-control" ng-model="NewEntry.PricePerUnit" placeholder="กรอกราคาต่อหน่วย" min="0">
-
                             </div>
-
-
                             <!-- Total Price Display -->
                             <div class="col-md-2">
                                 <label for="totalPrice" class="form-label text-bold">ราคารวม:</label>
@@ -407,11 +391,9 @@
                             </div>
 
                             <!-- Add Button -->
-
                             <div class="col-md-2 d-flex align-items-end mt-3">
                                 <button class="btn btn-primary w-100" ng-click="AddEntry()">เพิ่ม</button>
                             </div>
-
                         </div>
                     </div>
 
@@ -450,7 +432,6 @@
                         @*  เพิ่มค่าขนส่งเพื่อไปคำนวน *@
                         <div class="row">
                             <!-- shipping -->
-
                             <div class="mb-3 col-md-3">
                                 <label class="col-form-label text-bold">Shipping price (THB) :</label>
                                 <input type="text"
@@ -460,8 +441,6 @@
                                        placeholder="Shipping price">
                             </div>
                         </div>
-
-
 
 
                         @* Map total price & total sum *@
@@ -486,16 +465,6 @@
 
                         </div>
                     </div>
-
-
-                    @* <!-- Notes Input -->
-                        <div class="mb-3 col-md-12">
-                            <label class="col-form-label text-bold">หมายเหตุ</label>
-                            <textarea class="form-control"
-                                      ng-model="QuoData.Remark"
-                                      placeholder="Remark"></textarea>
-                        </div> *@
-
                     <div class="mb-3 col-md-12">
                         <label class="col-form-label text-bold">หมายเหตุ</label>
                         <!-- Dropdown สำหรับเลือก Remark -->

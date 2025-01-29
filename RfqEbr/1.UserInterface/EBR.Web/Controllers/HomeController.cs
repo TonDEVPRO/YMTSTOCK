@@ -1313,16 +1313,16 @@ namespace EBR.Web.Controllers
                     tableHeadDetail.AddCell(cellLeft1);
                     tableHeadDetail.AddCell(cellRight1);
 
-                    //----ที่อยู่ลูกค้า (เต็มความกว้างของตาราง)
-                    //Paragraph LableAddress = new Paragraph();
-                    //LableAddress.Add(new Chunk("ที่อยู่ : ", new Font(BaseFont.CreateFont(FontLinkBold, BaseFont.IDENTITY_H, BaseFont.EMBEDDED), 15)));
-                    //LableAddress.Add(new Chunk(GetOrderTable.CustomerAddress + "\n", new Font(BaseFont.CreateFont(FontLinkNormal, BaseFont.IDENTITY_H, BaseFont.EMBEDDED), 15)));
-                    //LableAddress.Add(new Chunk("ตำบล " + GetOrderTable.QuoSubDistricts + "  อำเภอ " + GetOrderTable.QuoDistricts + "\n", new Font(BaseFont.CreateFont(FontLinkNormal, BaseFont.IDENTITY_H, BaseFont.EMBEDDED), 15)));
-                    //LableAddress.Add(new Chunk("จังหวัด " + GetOrderTable.QuoProvince + " " + GetOrderTable.QuoZipCode + "\n", new Font(BaseFont.CreateFont(FontLinkNormal, BaseFont.IDENTITY_H, BaseFont.EMBEDDED), 15)));
-                    //LableAddress.Leading = 15f;
-                    //LableAddress.Alignment = Element.ALIGN_LEFT;
+                //----ที่อยู่ลูกค้า (เต็มความกว้างของตาราง)
+                //Paragraph LableAddress = new Paragraph();
+                //LableAddress.Add(new Chunk("ที่อยู่ : ", new Font(BaseFont.CreateFont(FontLinkBold, BaseFont.IDENTITY_H, BaseFont.EMBEDDED), 15)));
+                //LableAddress.Add(new Chunk(GetOrderTable.CustomerAddress + "\n", new Font(BaseFont.CreateFont(FontLinkNormal, BaseFont.IDENTITY_H, BaseFont.EMBEDDED), 15)));
+                //LableAddress.Add(new Chunk("ตำบล " + GetOrderTable.QuoSubDistricts + "  อำเภอ " + GetOrderTable.QuoDistricts + "\n", new Font(BaseFont.CreateFont(FontLinkNormal, BaseFont.IDENTITY_H, BaseFont.EMBEDDED), 15)));
+                //LableAddress.Add(new Chunk("จังหวัด " + GetOrderTable.QuoProvince + " " + GetOrderTable.QuoZipCode + "\n", new Font(BaseFont.CreateFont(FontLinkNormal, BaseFont.IDENTITY_H, BaseFont.EMBEDDED), 15)));
+                //LableAddress.Leading = 15f;
+                //LableAddress.Alignment = Element.ALIGN_LEFT;
 
-                    Paragraph LableAddress = new Paragraph();
+                Paragraph LableAddress = new Paragraph();
                     LableAddress.Add(new Chunk("ที่อยู่ :       ", new Font(BaseFont.CreateFont(FontLinkBold, BaseFont.IDENTITY_H, BaseFont.EMBEDDED), 15)));
                     LableAddress.Add(new Chunk(GetOrderTable.CustomerAddress + " ตำบล " + GetOrderTable.QuoSubDistricts + "\n", new Font(BaseFont.CreateFont(FontLinkNormal, BaseFont.IDENTITY_H, BaseFont.EMBEDDED), 15)));
                     LableAddress.Add(new Chunk("               อำเภอ " + GetOrderTable.QuoDistricts + " จังหวัด " + GetOrderTable.QuoProvince + " " + GetOrderTable.QuoZipCode + "\n", new Font(BaseFont.CreateFont(FontLinkNormal, BaseFont.IDENTITY_H, BaseFont.EMBEDDED), 15)));
@@ -1513,18 +1513,7 @@ namespace EBR.Web.Controllers
 
                     decimal vat = (totalAmountValue * 7) / 107;
 
-                    // คำนวณรวมราคาทั้งสิ้น
-                    //decimal grandTotal = totalAmountValue + vat;
-
-
-
-                    // Total amount (Right Alignment)
-                    //Paragraph totalAmount = new Paragraph("Vat 7% : " + vat.ToString("N2") + "\n" +
-                    //                                     "ราคาก่อน Vat : " + BeforeVat.ToString("N2") + "\n" +
-                    //                                     "รวมราคาทั้งสิ้น : " + totalAmountValue.ToString("N2") + "",
-                    //                                      new Font(BaseFont.CreateFont(FontLinkBold, BaseFont.IDENTITY_H, BaseFont.EMBEDDED), 16));
-                    //totalAmount.Alignment = Element.ALIGN_RIGHT;
-                    //document.Add(totalAmount);
+ 
 
                     // สร้างตารางหลักสำหรับรูปภาพและ totalAmountTable
                     PdfPTable mainTable = new PdfPTable(1); // สร้างตาราง 2 คอลัมน์
@@ -1577,15 +1566,6 @@ namespace EBR.Web.Controllers
 
 
                 // เซลล์แรก: ใส่รูปภาพ
-                // ใช้ Path.Combine สร้างพาธในโครงสร้างโฟลเดอร์ของ wwwroot
-                //string pmLink = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", "payment.png");
-
-
-                //iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(pmLink); // ใส่ path ของรูปภาพ
-                //    image.ScaleToFit(100f, 100f); // ปรับขนาดรูปภาพ
-                //    image.Alignment = Element.ALIGN_CENTER; // จัดรูปภาพให้อยู่ตรงกลาง
-
-
                 string pmLink = System.Web.Hosting.HostingEnvironment.MapPath("~/Images/payment.png");
 
                     iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(pmLink); // ใส่ path ของรูปภาพ
