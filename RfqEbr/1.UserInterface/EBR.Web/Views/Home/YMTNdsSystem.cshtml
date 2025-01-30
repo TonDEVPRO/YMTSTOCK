@@ -2,8 +2,8 @@
     ViewBag.Title = "_LayoutHOMEData";
     Layout = "~/Views/Shared/_LayoutHOMEData.cshtml";
 }
-@model int
-<div ng-controller="mainController" ng-init="YMTNdsSystemData(@Model)">
+@model EBR.Web.Models.UserQuo
+<div ng-controller="mainController" ng-init="YMTNdsSystemData(@Model.EmpNo , '@Model.CodeId')">
     <div class="navbar-custom">
         <ul class="list-unstyled topbar-menu float-end mb-0">
             <li class="dropdown notification-list d-lg-none">
@@ -204,14 +204,14 @@
                         <div class="row mb-2">
                             <div class="col-md-3">
                                 <div class="card text-bg-primary">
-                                    <div class="card-body btn btn-primary" ng-click="GetQuoTation(@Model);">
+                                    <div class="card-body btn btn-primary" ng-click="GetQuoTation(@Model.EmpNo , '@Model.CodeId');">
                                         <h3>Quotation</h3>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="card text-bg-primary">
-                                    <div class="card-body btn btn-primary" ng-click="GetOrderInformation(@Model);">
+                                    <div class="card-body btn btn-primary" ng-click="GetOrderInformation(@Model.EmpNo , '@Model.CodeId');">
                                         <h3>OrderInformation</h3>
                                     </div>
                                 </div>

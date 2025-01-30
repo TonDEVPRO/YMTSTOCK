@@ -2,8 +2,9 @@
     ViewBag.Title = "_LayoutHOMEData";
     Layout = "~/Views/Shared/_LayoutHOMEData.cshtml";
 }
-@model int
-<body ng-controller="mainController" ng-init="YMTHomeData(@Model)">
+@model EBR.Web.Models.UserQuo
+
+<body ng-controller="mainController" ng-init="YMTHomeData(@Model.EmpNo , @Model.CodeId)">
     <div class="navbar-custom">
         <ul class="list-unstyled topbar-menu float-end mb-0">
             <li class="dropdown notification-list d-lg-none">
@@ -204,28 +205,28 @@
                         <div class="row mb-2">
                             <div class="col-md-3">
                                 <div class="card text-bg-primary">
-                                    <div class="card-body btn btn-primary" ng-click="NdssystemLink(@Model);">
+                                    <div class="card-body btn btn-primary" ng-click="NdssystemLink(@Model.EmpNo , @Model.CodeId);">
                                         <h3>NDS SYSTEM</h3>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="card text-bg-success">
-                                    <div class="card-body btn btn-success" ng-click="RFIDUrlInfor(@Model);">
+                                    <div class="card-body btn btn-success" ng-click="RFIDUrlInfor(@Model.EmpNo , @Model.CodeId);">
                                         <h3>NDS SHOP</h3>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="card text-bg-primary">
-                                    <div class="card-body btn btn-dark" ng-click="RFIDUrlInfor(@Model);">
+                                    <div class="card-body btn btn-dark" ng-click="RFIDUrlInfors(@Model.EmpNo , @Model.CodeId);">
                                         <h3>RFID</h3>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="card text-bg-info">
-                                    <div class="card-body btn btn-info" ng-click="POSSystemData(@Model);">
+                                    <div class="card-body btn btn-info" ng-click="POSSystemData(@Model.EmpNo , @Model.CodeId);">
                                         <h3>POS</h3>
                                     </div>
                                 </div>

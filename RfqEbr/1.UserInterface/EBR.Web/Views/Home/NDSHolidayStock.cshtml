@@ -2,9 +2,9 @@
     ViewBag.Title = "_LayoutHOMEData";
     Layout = "~/Views/Shared/_LayoutHOMEData.cshtml";
 }
-@model int
+@model EBR.Web.Models.UserQuo
 
-<div ng-controller="mainController" ng-init="NDSHolidayStocks(@Model)">
+<div ng-controller="mainController" ng-init="NDSHolidayStocks(@Model.EmpNo ,'@Model.CodeId')">
     <div class="navbar-custom">
         <ul class="list-unstyled topbar-menu float-end mb-0">
             <li class="dropdown notification-list d-lg-none">
@@ -216,15 +216,15 @@
                                 </button>
                             </div>
                             @*<div class="col-sm-8">
-                <div class="text-sm-end">
-                    <button type="button" class="btn btn-warning right" data-bs-toggle="modal" data-bs-target="#AddMasterStock" ng-click="GetData();">
-                        AddMasterStock
-                    </button>
-                    <button type="button" class="btn btn-danger right" data-bs-toggle="modal" data-bs-target="#PrintReport">
-                        PrintReport
-                    </button>
-                </div>
-            </div>*@
+                                    <div class="text-sm-end">
+                                        <button type="button" class="btn btn-warning right" data-bs-toggle="modal" data-bs-target="#AddMasterStock" ng-click="GetData();">
+                                            AddMasterStock
+                                        </button>
+                                        <button type="button" class="btn btn-danger right" data-bs-toggle="modal" data-bs-target="#PrintReport">
+                                            PrintReport
+                                        </button>
+                                    </div>
+                                </div>*@
                         </div>
                         <div class="row table-responsive">
                             <table id="dataTable" class="display table  table-striped table-bordered nowrap">
@@ -316,7 +316,7 @@
                                 <label class="col-form-label text-bold">Cost</label>
                                 <input type="number" class="form-control" ng-model="ListHolidayData.Cost">
                             </div>
-       
+
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
@@ -328,14 +328,14 @@
                                 <input type="number" class="form-control" ng-model="ListHolidayData.Total">
                             </div>
                         </div>
-                            <hr />
-                            <div class="row">
-                                <div class="mb-3 col-md-12">
-                                    <label class="col-form-label text-bold">Remark/Location</label>
-                                    <input type="text" class="form-control" ng-model="ListHolidayData.Remark">
-                                </div>
+                        <hr />
+                        <div class="row">
+                            <div class="mb-3 col-md-12">
+                                <label class="col-form-label text-bold">Remark/Location</label>
+                                <input type="text" class="form-control" ng-model="ListHolidayData.Remark">
                             </div>
                         </div>
+                    </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-success" ng-click="SaveHolidayStock(ddlOrderNo,ddlStyle,ddlcolor,ddlSize , ListHolidayData ,@Model );">Save</button>
                         <button type="submit" class="btn btn-warning" ng-click="reloadPage();">Clear</button>

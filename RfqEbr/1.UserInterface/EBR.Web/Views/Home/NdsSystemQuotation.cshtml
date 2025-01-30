@@ -2,10 +2,11 @@
     ViewBag.Title = "_LayoutHOMEData";
     Layout = "~/Views/Shared/_LayoutHOMEData.cshtml";
 }
-@model int
+@model EBR.Web.Models.UserQuo
 
 
-<div ng-controller="mainController" ng-init="Getdataindex(@Model)">
+
+<div ng-controller="mainController" ng-init="Getdataindex(@Model.EmpNo , '@Model.CodeId')">
     <div class="navbar-custom">
         <ul class="list-unstyled topbar-menu float-end mb-0">
             <li class="dropdown notification-list d-lg-none">
@@ -198,11 +199,11 @@
                     <h1 class="page-title">Quotation Online</h1>
                 </div>
             </div>
-            <div class="row">    
+            <div class="row">
                 <div class="col-md-12">
                     <div class="card">
                         <div class="col-md-12 text-end">
-                            <button class="btn btn-secondary m-3" type="button" ng-click="CreateQuo(@Model)"> New </button>
+                            <button class="btn btn-secondary m-3" type="button" ng-click="CreateQuo(@Model.EmpNo , '@Model.CodeId')"> New </button>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive p-3">
@@ -222,6 +223,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+ 
                                         <tr ng-repeat="item in data">
                                             <td class="text-center">{{ item.Id }}</td>
                                             <td class="text-center">{{ item.QuotationNumber }}</td>
@@ -234,17 +236,17 @@
                                                 <button type="button" class="btn btn-secondary right" disabled ng-show="item.QuoStatus == 1">
                                                     Edit
                                                 </button>
-                                                <button type="button" class="btn btn-primary right" ng-show="item.QuoStatus == 0" ng-click="editQuo(item.QuotationNumber , @Model)">
+                                                <button type="button" class="btn btn-primary right" ng-show="item.QuoStatus == 0" ng-click="editQuo(@Model.EmpNo , item.QuotationNumber)">
                                                     Edit
                                                 </button>
                                             </td>
                                             <td class="text-center">
-                                                <button type="button" class="btn btn-success right" ng-click="PrintPDF(item.QuotationNumber , @Model)">
+                                                <button type="button" class="btn btn-success right" ng-click="PrintPDF(@Model.EmpNo , item.QuotationNumber)">
                                                     PDF
                                                 </button>
                                             </td>
                                             <td class="text-center">
-                                                <button type="button" class="btn btn-info right" ng-click="viewQuotation(item.QuotationNumber , @Model)">
+                                                <button type="button" class="btn btn-info right" ng-click="viewQuotation(@Model.EmpNo , item.QuotationNumber)">
                                                     View
                                                 </button>
                                             </td>

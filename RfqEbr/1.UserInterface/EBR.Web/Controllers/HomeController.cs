@@ -64,7 +64,6 @@ namespace EBR.Web.Controllers
         {
             return RedirectToAction("YMTGroup", "Home");
         }
-
         public ActionResult Login()
         {
             return View();
@@ -76,7 +75,6 @@ namespace EBR.Web.Controllers
             Session.Abandon(); //Kill session;
             return RedirectToAction("Login", "Home");
         }
-
         public ActionResult GetEmployee(int EmployeeNo)
         {
             var getEmpDetail = _uow.YMTGUsers.GetAll().Where(x => x.Id == EmployeeNo).FirstOrDefault();
@@ -86,8 +84,6 @@ namespace EBR.Web.Controllers
         //YMTG CheckUser
         public ActionResult checkUser(string Emp_EmpNo, string Emp_Pass)
         {
-
-
             var CheckRole = _uow.YMTGUsers.GetAll().Where(t => t.YPTUser == Emp_EmpNo && t.YPTPass == Emp_Pass).FirstOrDefault();
 
             if (CheckRole == null)
@@ -101,18 +97,12 @@ namespace EBR.Web.Controllers
             }
         }
 
+        //Auth Login all page
         public ActionResult YMTGroup()
         {
             return View();
         }
-
-        public ActionResult GetEmpUser(string EmployeeNo)
-        {
-            var getEmpDetail = _uow.EmployeeLogins.GetAll().Where(x => x.EmpNo == EmployeeNo).FirstOrDefault();
-            return new JsonNetResult(getEmpDetail);
-        }
-
-        public ActionResult YMTHome(int EmpNo)
+        public ActionResult YMTHome(int EmpNo ,string CodeId)
         {
             int empSession = Convert.ToInt32(Session["EmpNo"]);
             if (empSession != EmpNo)
@@ -128,7 +118,14 @@ namespace EBR.Web.Controllers
             {
                 if (CheckRole.Status == "0" || CheckRole.Status == "2" || CheckRole.Status == "33")
                 {
-                    return View(EmpNo);
+                    var EmpUser = new UserQuo
+                    {
+                        EmpNo = EmpNo,
+                        CodeId = CodeId
+                    };
+
+
+                    return View(EmpUser);
                 }
                 else
                 {
@@ -136,9 +133,7 @@ namespace EBR.Web.Controllers
                 }
             }
         }
-
-
-        public ActionResult YMTNdsStock(int EmpNo)
+        public ActionResult YMTNdsStock(int EmpNo, string CodeId)
         {
             int empSession = Convert.ToInt32(Session["EmpNo"]);
 
@@ -157,16 +152,20 @@ namespace EBR.Web.Controllers
             {
                 if (CheckRole.Status == "0" || CheckRole.Status == "2" || CheckRole.Status == "33")
                 {
-                    return View(EmpNo);
+                    var EmpUser = new UserQuo
+                    {
+                        EmpNo = EmpNo,
+                        CodeId = CodeId
+                    };
+                    return View(EmpUser);
                 }
                 else
                 {
                     return RedirectToAction("Home", "Home", new { EmpNo = EmpNo });
                 }
             }
-        }
-        
-      public ActionResult POSSystem(int EmpNo)
+        }      
+        public ActionResult POSSystem(int EmpNo, string CodeId)
         {
             int empSession = Convert.ToInt32(Session["EmpNo"]);
 
@@ -185,7 +184,12 @@ namespace EBR.Web.Controllers
             {
                 if (CheckRole.Status == "0" || CheckRole.Status == "2" || CheckRole.Status == "33")
                 {
-                    return View(EmpNo);
+                    var EmpUser = new UserQuo
+                    {
+                        EmpNo = EmpNo,
+                        CodeId = CodeId
+                    };
+                    return View(EmpUser);
                 }
                 else
                 {
@@ -193,71 +197,53 @@ namespace EBR.Web.Controllers
                 }
             }
         }
-
-
         [HttpGet]
         public JsonResult GetData()
         {
- 
-                var data = _uow.YMTGNDSShopStocks.GetAll()
-                                  .Select(e => new
-                                  {
-                                      e.Id,
-                                      e.Style,
-                                      e.Description,
-                                      e.Color,
-                                      e.Size,
-                                      e.Cost,
-                                      e.Price,
-                                      e.Total
-                                  })
-                                  .ToList();
+            var data = _uow.YMTGNDSShopStocks.GetAll()
+                              .Select(e => new
+                              {
+                                  e.Id,
+                                  e.Style,
+                                  e.Description,
+                                  e.Color,
+                                  e.Size,
+                                  e.Cost,
+                                  e.Price,
+                                  e.Total
+                              })
+                              .ToList();
             return Json(new { data = data }, JsonRequestBehavior.AllowGet);
-
         }
-
-
-        // ** Start **  MenuList StockNDS //
         public ActionResult getStockStyleNDS()
         {
             var MasterStyle = _uow.YMTGNDSShopStocks.GetAll().Where(p => p.Status == 1).GroupBy(p => p.Style).ToList();
             var MasterStyles = MasterStyle.Select(g => g.Key).ToList();
             return new JsonNetResult(MasterStyles);
         }
-
         public ActionResult GetDescStyle(string Style)
         {
             var ListDescData = _uow.YMTGNDSShopStocks.GetAll().Where(z => z.Style == Style && z.Status == 1).FirstOrDefault();
             return new JsonNetResult(ListDescData);
         }
-
         public ActionResult GetColors(YMTGNDSShopStock ListStyleColors)
         {
             var MasterStyle = _uow.YMTGNDSShopStocks.GetAll().Where(p => p.Status == 1 && p.Style == ListStyleColors.Style).GroupBy(p => p.Color).ToList();
             var MasterStyles = MasterStyle.Select(g => g.Key).ToList();
             return new JsonNetResult(MasterStyles);
         }
-
         public ActionResult GetSizeNDS(YMTGNDSShopStock ListSizes)
         {
             var MasterList = _uow.YMTGNDSShopStocks.GetAll().Where(p => p.Status == 1 && p.Style == ListSizes.Style && p.Color == ListSizes.Color).GroupBy(p => p.Size).ToList();
             var MasterLists = MasterList.Select(g => g.Key).ToList();
             return new JsonNetResult(MasterLists);
         }
-
         public ActionResult GetAllStock(YMTGNDSShopStock ListAllStock)
         {
             var MasterListAllStock = _uow.YMTGNDSShopStocks.GetAll().Where(p => p.Status == 1 &&
             p.Style == ListAllStock.Style && p.Color == ListAllStock.Color && p.Size == ListAllStock.Size).FirstOrDefault();
             return new JsonNetResult(MasterListAllStock);
         }
-
-
-
-        //** END** MenuList StockNDS //
-
-        //** START **  MenuList SaveStock //
-
         public ActionResult SaveStocks(YMTGNDSShopStock ndsShopStocks)
         {
             var existingData = _uow.YMTGNDSShopStocks.GetAll().FirstOrDefault(x => x.Id == ndsShopStocks.Id);
@@ -281,9 +267,6 @@ namespace EBR.Web.Controllers
             }
 
         }
-
-
-
         public ActionResult SaveStockLogs(YMTGNDSShopStockLog ndsShopStocksLogs)
         {
             ndsShopStocksLogs.Remark = "AddStock";
@@ -291,25 +274,17 @@ namespace EBR.Web.Controllers
             _uow.YMTGNDSShopStockLogs.Add(ndsShopStocksLogs);
             _uow.Commit();
             return new JsonNetResult(ndsShopStocksLogs);
-
-
-
         }
-
         public ActionResult EditStock(YMTGNDSShopStock ListId)
         {
             var getquo = _uow.YMTGNDSShopStocks.GetAll().Where(z => z.Id == ListId.Id).FirstOrDefault();
             return new JsonNetResult(getquo);
         }
-
-
         public ActionResult UpdateStocks(YMTGNDSShopStock ndsShopStocks)
         {
             var existingData = _uow.YMTGNDSShopStocks.GetAll().FirstOrDefault(x => x.Id == ndsShopStocks.Id);
             if (existingData == null)
             {
-                //var errorstock = $"Data with ID {ndsShopStocks.Id} not found.";
-
                 var errorstock = "Data not found";
                 return new JsonNetResult(errorstock);
             } else
@@ -320,15 +295,11 @@ namespace EBR.Web.Controllers
                 existingData.Size = ndsShopStocks.Size;
                 existingData.Price = ndsShopStocks.Price;
                 existingData.Total = ndsShopStocks.Total;
-
                 _uow.YMTGNDSShopStocks.Update(existingData);
                 _uow.Commit();
-
                 return new JsonNetResult(existingData);
             }
         }
-
-
         public ActionResult UpdateStockLogs(YMTGNDSShopStockLog ndsShopStocksLogs)
         {
             ndsShopStocksLogs.Remark = "UpdateStock";
@@ -337,27 +308,22 @@ namespace EBR.Web.Controllers
             _uow.Commit();
             return new JsonNetResult(ndsShopStocksLogs);
         }
-
-
         public ActionResult GetAutoColors()
         {
             var MasterColor = _uow.YMTGNDSShopStocks.GetAll().Where(p => p.Status == 1).GroupBy(p => p.Color).ToList();
             var MasterColors = MasterColor.Select(g => g.Key).ToList();
             return new JsonNetResult(MasterColors);
         }
-
         public ActionResult GetAutoSizes()
         {
             var MasterSize = _uow.YMTGNDSShopStocks.GetAll().Where(p => p.Status == 1).GroupBy(p => p.Size).ToList();
             var MasterSizes = MasterSize.Select(g => g.Key).ToList();
             return new JsonNetResult(MasterSizes);
         }
-
         public ActionResult CheckMasterStock(YMTGNDSShopStock MasterStocks)
         {
             var errorstatus = "HaveStock";
             var MasterStock = _uow.YMTGNDSShopStocks.GetAll().Where(z => z.Style == MasterStocks.Style && z.Size == MasterStocks.Size && z.Color == MasterStocks.Color).FirstOrDefault();
-
             if (MasterStock == null)
             {
                 return new JsonNetResult(MasterStocks);
@@ -365,34 +331,25 @@ namespace EBR.Web.Controllers
             {
                 return new JsonNetResult(errorstatus);
             }
-
-
-
         }
-
         public ActionResult SaveMasterStock(YMTGNDSShopStock MasterSaveStocks)
         {
             MasterSaveStocks.Status = 1; 
             MasterSaveStocks.CreateDate = DateTime.Now;
             _uow.YMTGNDSShopStocks.Add(MasterSaveStocks);
             _uow.Commit();
-
             return new JsonNetResult(MasterSaveStocks);
         }
 
-
-
-        public ActionResult NDSHolidayStock(int EmpNo)
+        //HolidayStock all fuction
+        public ActionResult NDSHolidayStock(int EmpNo , string CodeId)
         {
             int empSession = Convert.ToInt32(Session["EmpNo"]);
-
             if (empSession != EmpNo)
             {
                 return RedirectToAction("Login", "Home");
             }
-
             var CheckRole = _uow.YMTGUsers.GetAll().Where(t => t.Id == EmpNo).FirstOrDefault();
-
             if (EmpNo == 0)
             {
                 return RedirectToAction("Login", "Home");
@@ -401,7 +358,12 @@ namespace EBR.Web.Controllers
             {
                 if (CheckRole.Status == "0" || CheckRole.Status == "2" || CheckRole.Status == "33")
                 {
-                    return View(EmpNo);
+                    var EmpUser = new UserQuo
+                    {
+                        EmpNo = EmpNo,
+                        CodeId = CodeId
+                    };
+                    return View(EmpUser);
                 }
                 else
                 {
@@ -426,11 +388,9 @@ namespace EBR.Web.Controllers
             return Json(new { data = ListStockHoliday });
         }
 
-
         [HttpGet]
         public JsonResult GetholidayData()
         {
-
             var dataHoliday = _uow.YMTGNDSShopHolidays.GetAll()
                               .Select(e => new
                               {
@@ -446,59 +406,44 @@ namespace EBR.Web.Controllers
                               })
                               .ToList();
             return Json(new { data = dataHoliday }, JsonRequestBehavior.AllowGet);
-
         }
-
         public ActionResult GetStockHolidays()
         {
             var MasterOrder = _uow.YMTGNDSShopHolidays.GetAll().Where(p => p.Status == 1).GroupBy(p => p.OrderNo).ToList();
             var MasterOrders = MasterOrder.Select(g => g.Key).ToList();
             return new JsonNetResult(MasterOrders);
         }
-
         public ActionResult GetHolidayStyle(string OrderNos)
         {
             var MasterStyle = _uow.YMTGNDSShopHolidays.GetAll().Where(p => p.Status == 1 && p.OrderNo == OrderNos).GroupBy(p => p.Style).ToList();
             var MasterStyles = MasterStyle.Select(g => g.Key).ToList();
             return new JsonNetResult(MasterStyles);
         }
-
         public ActionResult GetHolidayDescStyle(string OrderNo, string Style)
         {
             var MasterStock = _uow.YMTGNDSShopHolidays.GetAll().Where(p => p.Status == 1 && p.OrderNo == OrderNo && p.Style == Style).FirstOrDefault();
             return new JsonNetResult(MasterStock);
         }
-
         public ActionResult GetHolidayColor(string OrderNo, string Style)
         {
             var MasterColor = _uow.YMTGNDSShopHolidays.GetAll().Where(p => p.Status == 1 && p.OrderNo == OrderNo && p.Style == Style).GroupBy(p => p.Color).ToList();
             var MasterColors = MasterColor.Select(g => g.Key).ToList();
             return new JsonNetResult(MasterColors);
         }
-
         public ActionResult GetHolidaySizes(string OrderNo, string Style, string Color)
         {
             var MasterSize = _uow.YMTGNDSShopHolidays.GetAll().Where(p => p.Status == 1 && p.OrderNo == OrderNo && p.Style == Style && p.Color == Color).GroupBy(p => p.Size).ToList();
             var MasterSizes = MasterSize.Select(g => g.Key).ToList();
             return new JsonNetResult(MasterSizes);
         }
-
-
         public ActionResult GetHolidayDetailAlls(string OrderNo, string Style, string Color, string Size)
         {
             var MasterAllData = _uow.YMTGNDSShopHolidays.GetAll().Where(p => p.Status == 1 && p.OrderNo == OrderNo && p.Style == Style && p.Color == Color && p.Size == Size).FirstOrDefault();
             return new JsonNetResult(MasterAllData);
         }
-
-
-
-
-
-
         public ActionResult SaveHolidayStocks(YMTGNDSShopSaveHoliday SaveHoliday, string UserId)
         {
             var Descriptions = "";
-
             if (SaveHoliday.Description == null || SaveHoliday.Description == "")
             {
                 Descriptions = "";
@@ -507,9 +452,7 @@ namespace EBR.Web.Controllers
             {
                 Descriptions = SaveHoliday.Description;
             }
-
             var getSaveHoliday = _uow.YMTGNDSShopSaveHolidays.GetAll().Where(z => z.OrderNo == SaveHoliday.OrderNo).FirstOrDefault();
-
             if(getSaveHoliday == null)
             {
                 SaveHoliday.Description = Descriptions;
@@ -529,19 +472,14 @@ namespace EBR.Web.Controllers
                 getSaveHoliday.Description = Descriptions;
                 getSaveHoliday.CreateBy = UserId;
                 getSaveHoliday.CreateDate = DateTime.Now;
-
                 _uow.YMTGNDSShopSaveHolidays.Update(getSaveHoliday);
                 _uow.Commit();
-
                 return new JsonNetResult(getSaveHoliday);
             }
         }
 
-
-
-
-
-        public ActionResult YMTNdsSystem(int EmpNo)
+        //NDS SYSTEM // 
+        public ActionResult YMTNdsSystem(int EmpNo , string CodeId)
         {
             int empSession = Convert.ToInt32(Session["EmpNo"]);
 
@@ -560,7 +498,12 @@ namespace EBR.Web.Controllers
             {
                 if (CheckRole.Status == "0" || CheckRole.Status == "2" || CheckRole.Status == "33")
                 {
-                    return View(EmpNo);
+                    var EmpUser = new UserQuo
+                    {
+                        EmpNo = EmpNo,
+                        CodeId = CodeId
+                    };
+                    return View(EmpUser);
                 }
                 else
                 {
@@ -568,11 +511,7 @@ namespace EBR.Web.Controllers
                 }
             }
         }
-
-
-
-
-        public ActionResult NdsSystemQuotation(int EmpNo)
+        public ActionResult NdsSystemQuotation(int EmpNo , string CodeId)
         {
             int empSession = Convert.ToInt32(Session["EmpNo"]);
             if (empSession != EmpNo)
@@ -588,7 +527,12 @@ namespace EBR.Web.Controllers
             {
                 if (CheckRole.Status == "0" || CheckRole.Status == "2" || CheckRole.Status == "33")
                 {
-                    return View(EmpNo);
+                    var EmpUser = new UserQuo
+                    {
+                        EmpNo = EmpNo,
+                        CodeId = CodeId
+                    };
+                    return View(EmpUser);
                 }
                 else
                 {
@@ -596,57 +540,47 @@ namespace EBR.Web.Controllers
                 }
             }
         }
-
-
-
         public ActionResult GetdataQuo()
         {
-
             var dataquo = _uow.YmtgOrderNdss.GetAll()
             .Where(a => a.QuoCancel == 0)
             .OrderByDescending(a => a.Id) // àÃÕÂ§ÅÓ´Ñº Id ¨Ò¡ÁÒ¡ä»¹éÍÂ
             .ToList();
-
-
             return new JsonNetResult(dataquo);
         }
-
-
-
-        //public ActionResult NdsSystemEditQuotation(string QuotationNumber)
-        //{
-
-        //    var dataquoEditOrder = _uow.YmtgOrderNdss.GetAll().Where(z => z.QuotationNumber == QuotationNumber)
-        //        .FirstOrDefault();
-
-
-        //    return new JsonNetResult(dataquoEditOrder);
-        //}
-
-        public ActionResult NdsSystemEditQuotation  (string QuotationNumber, int EmpNo )
+        public ActionResult NdsSystemEditQuotation  (int EmpNo ,string CodeId)
         {
-
-            //string QuotationNumber, int EmpNo
-            // สร้างข้อมูลตัวอย่าง
-            var EmpUser = new UserQuo
+            int empSession = Convert.ToInt32(Session["EmpNo"]);
+            if (empSession != EmpNo)
             {
-                EmpNo = EmpNo,
-                QuotationNumber = QuotationNumber
-            };
-
-            // ส่ง Model ไปที่ View
-            return View(EmpUser);
+                return RedirectToAction("Login", "Home");
+            }
+            var CheckRole = _uow.YMTGUsers.GetAll().Where(t => t.Id == EmpNo).FirstOrDefault();
+            if (EmpNo == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            else
+            {
+                if (CheckRole.Status == "0" || CheckRole.Status == "2" || CheckRole.Status == "33")
+                {
+                    var EmpUser = new UserQuo
+                    {
+                        EmpNo = EmpNo,
+                        CodeId = CodeId
+                    };
+                    return View(EmpUser);
+                }
+                else
+                {
+                    return RedirectToAction("Home", "Home", new { EmpNo = EmpNo });
+                }
+            }
         }
-
-
-
-
-
 
         [HttpGet]
         public JsonResult GetdataquoNew()
         {
-
             var data = _uow.YmtgOrderNdss.GetAll()
                               .Select(e => new
                               {
@@ -658,35 +592,22 @@ namespace EBR.Web.Controllers
                                   e.QuoLastname,
                                   e.CreateDate,
                                   e.QuoStatus
-
                               })
                               .ToList();
             return Json(new { data = data }, JsonRequestBehavior.AllowGet);
-
         }
-
-
-
         public ActionResult GetdataQuoForEdit(string QuotationNumber, string EmpNos)
         {
-
             var dataquoEditOrder =  _uow.YmtgOrderNdss.GetAll().Where(z => z.QuotationNumber == QuotationNumber)
                 .FirstOrDefault();
-
-
             return new JsonNetResult(dataquoEditOrder);
         }
-
-
         public ActionResult GetSku()
         {
             var MasterStylesDataGroup =_uow.MasterStyles.GetAll().GroupBy(p => p.Description).ToList();
             var MasterStylesData = MasterStylesDataGroup.Select(g => g.Key).ToList();
-
             return new JsonNetResult(MasterStylesData);
         }
-
-
         public ActionResult GetColorss()
         {
             var colors = new List<object>();
@@ -696,11 +617,8 @@ namespace EBR.Web.Controllers
             colors.Add("Navy");
             colors.Add("White");
             colors.Add("NO COLOR");
-
             return new JsonNetResult(colors);
         }
-
-
         public ActionResult GetSizes()
         {
             var sizes = new List<object>();
@@ -713,21 +631,13 @@ namespace EBR.Web.Controllers
             sizes.Add("3XL");
             sizes.Add("4XL");
             sizes.Add("NO SIZE");
-
             return new JsonNetResult(sizes);
         }
-
-
-
-
         public ActionResult GetOrderType()
         {
-
             var GetOrderTypeLists = _uow.TypeOrderFroms.GetAll().Select(p => p.TypeRecapShow).ToList();
             return new JsonNetResult(GetOrderTypeLists);
-
         }
-
         public ActionResult GetSkuCode(MasterStyle style)
         {
             var Nomatching = "No matching SKU Codes found.";
@@ -747,7 +657,6 @@ namespace EBR.Web.Controllers
             }
             return new JsonNetResult(skuCodes);
         }
-
         [HttpGet]
         public ActionResult GetProvinces()
         {
@@ -762,7 +671,7 @@ namespace EBR.Web.Controllers
             var GetDistrictLists = GetDistrict.Select(g => g.Key).ToList();
             return new JsonNetResult(GetDistrictLists);
         }
-       [HttpPost]
+        [HttpPost]
         public ActionResult GetListSubs(string Districts , string Provinces)
         {
             var GetSubDistricts = _uow.MasterProvinces.GetAll().Where(z => z.Districts == Districts && z.Provinces == Provinces)
@@ -783,7 +692,6 @@ namespace EBR.Web.Controllers
         public ActionResult GetLoadRemark()
         {
             var GetLoadRemark = _uow.MasterRemarks.GetAll().Select(k => k.RemarkQuo).ToList();
-
             return new JsonNetResult(GetLoadRemark);
         }
         [HttpPost]
@@ -792,8 +700,6 @@ namespace EBR.Web.Controllers
             var dataquoEditProduct = _uow.YmtgProductNdss.GetAll().Where(z => z.QuotationNumber == QuotationNumber).ToList();
             return new JsonNetResult(dataquoEditProduct);
         }
-
-
         [HttpGet]
         public ActionResult GetQuotationFiles(string quotationNumber)
         {
@@ -806,20 +712,13 @@ namespace EBR.Web.Controllers
                 .Where(f => f.QuotationNumber == quotationNumber).ToList();
             return new JsonNetResult(files);
         }
-
-
-
         public ActionResult DeleteFile(string filePaths, string quotationNumber , int DelIds)
         {
             var getdatamain = _uow.QuotationFiles.GetAll().Where(z => z.Id == DelIds).FirstOrDefault();
-
             if (getdatamain != null)
             {
-                // ลบข้อมูลจากฐานข้อมูล
                 _uow.QuotationFiles.Delete(getdatamain.Id);
                 _uow.Commit();
-
-                // ลบไฟล์ออกจากโฟลเดอร์
                 string filePath = getdatamain.FilePath; // สมมติว่ามี FilePath ในข้อมูล
                 if (!string.IsNullOrEmpty(filePath) && System.IO.File.Exists(filePath))
                 {
@@ -838,38 +737,30 @@ namespace EBR.Web.Controllers
             {
                 return new JsonNetResult(new { error = "Data not found" });
             }
-
         }
-
         [HttpPost]
         public ActionResult UploadFiledata(HttpPostedFileBase files, string fileDescription, string quotationNumber)
         {
-            // ตรวจสอบว่าไฟล์ถูกส่งมาหรือไม่
             if (files == null || files.ContentLength == 0)
             {
                 return Json(new { success = false, message = "No files uploaded." }, JsonRequestBehavior.AllowGet);
             }
-
-            // ตรวจสอบว่าหมายเลข Quotation ถูกส่งมาหรือไม่
             if (string.IsNullOrEmpty(quotationNumber))
             {
                 return Json(new { success = false, message = "Quotation number is required." }, JsonRequestBehavior.AllowGet);
             }
 
-            // กำหนดค่าเริ่มต้นให้ fileDescription หากไม่ได้ส่งมา
             if (string.IsNullOrEmpty(fileDescription))
             {
                 fileDescription = string.Empty;
             }
 
-            // สร้างโฟลเดอร์สำหรับเก็บไฟล์
             var quotationFolderPath = Path.Combine(Server.MapPath("~/Uploads"), quotationNumber);
             if (!Directory.Exists(quotationFolderPath))
             {
                 Directory.CreateDirectory(quotationFolderPath);
             }
 
-            // กำหนดชื่อไฟล์และที่อยู่สำหรับบันทึกไฟล์
             var fileName = Path.GetFileName(files.FileName);
             var filePath = Path.Combine(quotationFolderPath, fileName);
 
@@ -886,18 +777,7 @@ namespace EBR.Web.Controllers
             // บันทึกไฟล์ลงเซิร์ฟเวอร์
             files.SaveAs(filePath);
 
-            // สร้างข้อมูลไฟล์ใหม่สำหรับบันทึกลงฐานข้อมูล
-            //var newFile = new QuotationFile
-            //{
-            //    QuotationNumber = quotationNumber,
-            //    FileName = fileName,
-            //    FilePath = Path.Combine("Uploads", quotationNumber, fileName).Replace("\\", "/"), // ใช้ Path แบบ Relative
-            //    FileDescription = fileDescription,
-            //    CreatedAt = DateTime.Now
-            //};
-
             var newFile = new QuotationFile();
-
             newFile.QuotationNumber = quotationNumber;
             newFile.FileName = fileName;
             newFile.FilePath = Path.Combine("Uploads", quotationNumber, fileName).Replace("\\", "/"); 
@@ -907,15 +787,9 @@ namespace EBR.Web.Controllers
 
             _uow.QuotationFiles.Add(newFile);
             _uow.Commit();
-
             // ส่งข้อมูลกลับไปยัง Client
             return new JsonNetResult(newFile);
-            //return Json(new { success = true, data = newFile }, JsonRequestBehavior.AllowGet);
         }
-
-
-
-
         [HttpGet]
         public ActionResult DownloadFile(string filePath)
         {
@@ -923,13 +797,11 @@ namespace EBR.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "File path is required.");
             }
-
             // ตรวจสอบว่า path เริ่มต้นด้วย "Uploads" หรือไม่
             if (filePath.StartsWith("Uploads", StringComparison.OrdinalIgnoreCase))
             {
                 filePath = filePath.Substring("Uploads".Length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
             }
-
             // ระบุ path แบบ absolute
             var absolutePath = Path.Combine(Server.MapPath("~/Uploads"), filePath);
 
@@ -937,42 +809,24 @@ namespace EBR.Web.Controllers
             {
                 return HttpNotFound("File not found.");
             }
-
             var fileName = Path.GetFileName(absolutePath);
             var fileBytes = System.IO.File.ReadAllBytes(absolutePath);
 
             // ส่งไฟล์กลับไปให้ผู้ใช้
             return File(fileBytes, "application/octet-stream", fileName);
         }
-
-
-
-
-        
-
-
-        //Update data
         [HttpPost]
         public ActionResult UpdateQuotations(QuotationUpdateModel updateModel , string EmpNos)
         {
-
-
-  
             if (updateModel == null)
             {
                 var errorcheck = "Invalid data.";
-
                 return new JsonNetResult(errorcheck);
-
             }
-
-
-       
             var existingOrder = _uow.YmtgOrderNdss.GetAll().FirstOrDefault(q => q.QuotationNumber == updateModel.QuotationNumber);
             if (existingOrder == null)
             {
                 var errorcheck1 = "Quotation not found.";
-
                 return new JsonNetResult(errorcheck1);
             }
             else
@@ -998,15 +852,8 @@ namespace EBR.Web.Controllers
                 existingOrder.QuoLastUpdate = DateTime.Now;
                 existingOrder.QuoShippingPrice = updateModel.QuoShippingPrice;
                 existingOrder.QuoStatus = updateModel.QuoStatus; 
-
                 _uow.YmtgOrderNdss.Update(existingOrder);
                 _uow.Commit();
-
-
-
-
-
-                //Loop Delete Data 
 
                 var DataProducts = _uow.YmtgProductNdss.GetAll()
                .Where(p => p.QuotationNumber == updateModel.QuotationNumber)
@@ -1014,25 +861,19 @@ namespace EBR.Web.Controllers
 
                 foreach(var data in DataProducts)
                 {
-
                     _uow.YmtgProductNdss.Delete(data.Id);
                     _uow.Commit();
                 }
 
                 //getdata 
-
                         var getdataProducts = _uow.YmtgProductNdss.GetAll()
                 .Where(p => p.QuotationNumber == updateModel.QuotationNumber)
                 .FirstOrDefault();
-
-
-         
-
+        
                 if (getdataProducts == null)
                 {
                     foreach (var entry in updateModel.Entries)
                     {
-
                         var newpro = new YmtgProductNds();
                         newpro.QuotationNumber = updateModel.QuotationNumber;
                         newpro.OrderNumber = existingOrder.OrderNumber;
@@ -1046,8 +887,6 @@ namespace EBR.Web.Controllers
                         newpro.PrintingType = 0;
                         newpro.CreateBy = EmpNos;
                         newpro.CreateDate = DateTime.Now;
-
-
 
                         if (!string.IsNullOrEmpty(entry.SKUCodeFull) && entry.SKUCodeFull.Length > 3)
                         {
@@ -1068,12 +907,7 @@ namespace EBR.Web.Controllers
             }
             return new JsonNetResult(existingOrder);
         }
-
-
-
-
-
-        public ActionResult NdsSystemCreateQuotation(int EmpNo)
+        public ActionResult NdsSystemCreateQuotation(int EmpNo , string CodeId)
         {
             int empSession = Convert.ToInt32(Session["EmpNo"]);
 
@@ -1081,9 +915,7 @@ namespace EBR.Web.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-
             var CheckRole = _uow.YMTGUsers.GetAll().Where(t => t.Id == EmpNo).FirstOrDefault();
-
             if (EmpNo == 0)
             {
                 return RedirectToAction("Login", "Home");
@@ -1092,7 +924,12 @@ namespace EBR.Web.Controllers
             {
                 if (CheckRole.Status == "0" || CheckRole.Status == "2" || CheckRole.Status == "33")
                 {
-                    return View(EmpNo);
+                    var EmpUser = new UserQuo
+                    {
+                        EmpNo = EmpNo,
+                        CodeId = CodeId
+                    };
+                    return View(EmpUser);
                 }
                 else
                 {
@@ -1100,13 +937,9 @@ namespace EBR.Web.Controllers
                 }
             }
         }
-
-
-
         [HttpGet]
         public ActionResult PrintPDF(string quotationNumber)
         {
-
             var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             var FontLinkBold = Path.Combine(baseDirectory, @"fonts\THSarabunPSK\THSarabun Bold.ttf");
             var FontLinkNormal = Path.Combine(baseDirectory, @"fonts\THSarabunPSK\THSarabun.ttf");
@@ -1125,14 +958,10 @@ namespace EBR.Web.Controllers
             if (quotationNumber != null && quotationNumber != "")
             {
                 GetOrderTable = _uow.YmtgOrderNdss.GetAll().Where(z => z.QuotationNumber == quotationNumber).FirstOrDefault();
-
                 GetProductTable = _uow.YmtgProductNdss.GetAll().Where(z => z.QuotationNumber == quotationNumber).ToList();
-
 
                 remarkText = GetOrderTable.QuoRemark;
                 preparedBy = GetOrderTable?.CreateBy ?? "Unknown";
-                //GetMasterStyle = _context.MasterStyles
-
             }
 
 
@@ -1145,8 +974,6 @@ namespace EBR.Web.Controllers
                     //เพิ่มสำหรับ footer 
                     writer.PageEvent = new FooterEvent(remarkText, accountInfo, preparedBy, FontLinkBold, FontLinkNormal);
                     document.Open();
-
-
                     // Header with Image and Text
                     PdfPTable headerTable = new PdfPTable(2);
                     headerTable.WidthPercentage = 100;
@@ -1382,7 +1209,7 @@ namespace EBR.Web.Controllers
                     {
                         // ดึงข้อมูลจาก MasterStyle
                         var masterStyle = _uow.MasterStyles.GetAll()
-                            .Where(ms => ms.StyleCode == product.ProductName)
+                            .Where(ms => ms.StyleCode == product.SKUCode)
                             .FirstOrDefault();
 
                         string productDescription = product.ProductName;
@@ -1606,9 +1433,6 @@ namespace EBR.Web.Controllers
      
       
         }
-
-
-        //Get Quotation file by order num
         [HttpPost]
         public ActionResult GetDataQuoFileTables(string orderNumbers)
         {
@@ -1643,25 +1467,15 @@ namespace EBR.Web.Controllers
             }
             return new JsonNetResult(fileQuos);
         }
-
-
-
-
-
-        public ActionResult NdsSystemViewPage(string quotationNumber , int EmpNo)
+        public ActionResult NdsSystemViewPage(int EmpNo ,string CodeId)
         {
             var model = new UserQuo
             {
-                QuotationNumber = quotationNumber,
+                CodeId = CodeId,
                 EmpNo = EmpNo
             };
-
             return View(model);
         }
-
-
-
-
         [HttpGet]
         public JsonResult GetOrderInfos()
         {
@@ -1678,12 +1492,8 @@ namespace EBR.Web.Controllers
                 .OrderByDescending(o => o.OrderNumber)
                 .ToList();
             return Json(new { data = orderData }, JsonRequestBehavior.AllowGet);
-
         }
-
-
-        
-        public ActionResult NdsSystemOrderInformation(int EmpNo)
+        public ActionResult NdsSystemOrderInformation(int EmpNo , string CodeId)
         {
             int empSession = Convert.ToInt32(Session["EmpNo"]);
             if (empSession != EmpNo)
@@ -1699,7 +1509,12 @@ namespace EBR.Web.Controllers
             {
                 if (CheckRole.Status == "0" || CheckRole.Status == "2" || CheckRole.Status == "33")
                 {
-                    return View(EmpNo);
+                    var EmpUser = new UserQuo
+                    {
+                        EmpNo = EmpNo,
+                        CodeId = CodeId
+                    };
+                    return View(EmpUser);
                 }
                 else
                 {
@@ -1707,7 +1522,6 @@ namespace EBR.Web.Controllers
                 }
             }
         }
-
         [HttpGet]
         public ActionResult GetOrderDetails(string orderNumber)
         {
@@ -1715,7 +1529,6 @@ namespace EBR.Web.Controllers
                 .Where(o => o.OrderNumber == orderNumber).FirstOrDefault();
             return new JsonNetResult(order);
         }
-
         [HttpGet]
         public ActionResult GetProductOrders(string orderNumber)
         {
@@ -1723,17 +1536,15 @@ namespace EBR.Web.Controllers
                 .Where(o => o.OrderNumber == orderNumber).ToList();
             return new JsonNetResult(productOrder);
         }
-
-        public ActionResult NdsSystemViewAttachments(string orderNumber, int EmpNo)
+        public ActionResult NdsSystemViewAttachments(string CodeId, int EmpNo)
         {
             var model = new UserQuo
             {
-                QuotationNumber = orderNumber,
+                CodeId = CodeId,
                 EmpNo = EmpNo
             };
             return View(model);
         }
-
         [HttpPost]
         public ActionResult GetDataOtherFileTable(string orderNumbers)
         {
@@ -1741,7 +1552,6 @@ namespace EBR.Web.Controllers
                 .Where(f => f.OrderNumber == orderNumbers).ToList();
             return new JsonNetResult(fileOther);
         }
-
         [HttpPost]
         public ActionResult UploadFileAboutOrders(HttpPostedFileBase file, string fileDescription, string orderNumber)
         {
@@ -1802,113 +1612,12 @@ namespace EBR.Web.Controllers
             // Return success response
             return Json(new { success = true, data = newFile }, JsonRequestBehavior.AllowGet);
         }
-
- 
-        public ActionResult RFIDIndex(int EmpNo)
-        {
-            int empSession = Convert.ToInt32(Session["EmpNo"]);
-            if (empSession != EmpNo)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-            var CheckRole = _uow.YMTGUsers.GetAll().Where(t => t.Id == EmpNo).FirstOrDefault();
-            if (EmpNo == 0)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-            else
-            {
-                if (CheckRole.Status == "0" || CheckRole.Status == "2" || CheckRole.Status == "33")
-                {
-                    return View(EmpNo);
-                }
-                else
-                {
-                    return RedirectToAction("Home", "Home", new { EmpNo = EmpNo });
-                }
-            }
-        }
-        public ActionResult GetTags()
-        {
-            // ประกาศ List เพื่อเก็บผลลัพธ์ทั้งหมด
-            List<Product> allData = new List<Product>();
-            // วนลูปผ่าน TagsRFID
-            var TagsRFID = _uow.RFIDTags.GetAll().ToList();
-            foreach (var d in TagsRFID)
-            {
-                // ดึงข้อมูลจาก Products ตามเงื่อนไข และเพิ่มลงใน allData
-                var data = _uow.Products.GetAll().Where(z => z.RFIDData == d.EPC).ToList();
-                allData.AddRange(data);
-            }
-            return Json(allData, JsonRequestBehavior.AllowGet);
-        }
-        public void StartReading()
-        {
-            if (RFIDReader.CreateTcpConn(IPConfig, this))
-            {
-                RFIDReader._Tag6C.GetEPC(IPConfig, eAntennaNo._1 | eAntennaNo._2 | eAntennaNo._3 | eAntennaNo._4, eReadType.Inventory);
-            }
-        }
-
-        public void ReStartReading()
-        {
-            var delRFID = _uow.RFIDTags.GetAll().ToList(); // ดึงข้อมูลทั้งหมดจากตาราง RFIDTags
-            foreach (var d in delRFID)
-            {
-                _uow.RFIDTags.Delete(d.Id);
-                _uow.Commit();
-            }
-            if (RFIDReader.CreateTcpConn(IPConfig, this))
-            {
-                RFIDReader._Tag6C.GetEPC(IPConfig, eAntennaNo._1 | eAntennaNo._2 | eAntennaNo._3 | eAntennaNo._4, eReadType.Inventory);
-            }
-        }
-        public void StopReading()
-        {
-            RFIDReader._RFIDConfig.Stop(IPConfig);
-            RFIDReader.CloseConn(IPConfig);
-            var delRFID = _uow.RFIDTags.GetAll().ToList(); // ดึงข้อมูลทั้งหมดจากตาราง RFIDTags
-            foreach (var d in delRFID)
-            {
-                _uow.RFIDTags.Delete(d.Id);
-                _uow.Commit();
-            }
-        }
-
-        public void OutPutTags(Tag_Model tag)
-        {
-            var newTag = new RFIDTag
-            {
-                EPC = tag.EPC,
-                ReadTime = DateTime.Now,
-                IsActive = 1
-            };
-            var checkdata = _uow.RFIDTags.GetAll().Where(t => t.EPC == tag.EPC).FirstOrDefault();
-            if (checkdata == null)
-            {
-                _uow.RFIDTags.Add(newTag);
-                _uow.Commit();
-                displayedEpcs.Add(tag.EPC);
-            }
-            else
-            {
-                displayedEpcs.Add(tag.EPC);
-            }
-        }
-
-        public void EventUpload(CallBackEnum type, object param) { }
-        public void GPIControlMsg(GPI_Model gpi_model) { }
-        public void OutPutTagsOver() { }
-        public void PortClosing(string connID) { }
-        public void PortConnecting(string connID) { }
-        public void WriteDebugMsg(string msg) { }
-        public void WriteLog(string msg) { }
         [HttpPost]
         public ActionResult SaveQuotations(YmtgOrderNds ListdataQuos)
         {
             if (ListdataQuos == null)
             {
-   
+
                 var errordata = "ข้อมูลไม่ถูกต้อง";
 
                 return new JsonNetResult(errordata);
@@ -1951,7 +1660,7 @@ namespace EBR.Web.Controllers
             return new JsonNetResult(ListdataQuos);
         }
         [HttpPost]
-        public ActionResult SaveToProductTable(List<ProductList> Entries , string EmpNos)
+        public ActionResult SaveToProductTable(List<ProductList> Entries, string EmpNos)
 
         {
 
@@ -2019,7 +1728,7 @@ namespace EBR.Web.Controllers
                 _uow.Commit();
 
                 // ลบไฟล์ออกจากโฟลเดอร์
-                 filePath = getdatamain.FilePath; // สมมติว่ามี FilePath ในข้อมูล
+                filePath = getdatamain.FilePath; // สมมติว่ามี FilePath ในข้อมูล
                 if (!string.IsNullOrEmpty(filePath) && System.IO.File.Exists(filePath))
                 {
                     try
@@ -2039,5 +1748,109 @@ namespace EBR.Web.Controllers
             }
         }
 
+
+
+        //RFID DATA
+        public ActionResult RFIDIndex(int EmpNo , string CodeId)
+        {
+            int empSession = Convert.ToInt32(Session["EmpNo"]);
+            if (empSession != EmpNo)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var CheckRole = _uow.YMTGUsers.GetAll().Where(t => t.Id == EmpNo).FirstOrDefault();
+            if (EmpNo == 0)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            else
+            {
+                if (CheckRole.Status == "0" || CheckRole.Status == "2" || CheckRole.Status == "33")
+                {
+                    var EmpUser = new UserQuo
+                    {
+                        EmpNo = EmpNo,
+                        CodeId = CodeId
+                    };
+                    return View(EmpUser);
+                }
+                else
+                {
+                    return RedirectToAction("Home", "Home", new { EmpNo = EmpNo });
+                }
+            }
+        }
+        public ActionResult GetTags()
+        {
+            // ประกาศ List เพื่อเก็บผลลัพธ์ทั้งหมด
+            List<Product> allData = new List<Product>();
+            // วนลูปผ่าน TagsRFID
+            var TagsRFID = _uow.RFIDTags.GetAll().ToList();
+            foreach (var d in TagsRFID)
+            {
+                // ดึงข้อมูลจาก Products ตามเงื่อนไข และเพิ่มลงใน allData
+                var data = _uow.Products.GetAll().Where(z => z.RFIDData == d.EPC).ToList();
+                allData.AddRange(data);
+            }
+            return Json(allData, JsonRequestBehavior.AllowGet);
+        }
+        public void StartReading()
+        {
+            if (RFIDReader.CreateTcpConn(IPConfig, this))
+            {
+                RFIDReader._Tag6C.GetEPC(IPConfig, eAntennaNo._1 | eAntennaNo._2 | eAntennaNo._3 | eAntennaNo._4, eReadType.Inventory);
+            }
+        }
+        public void ReStartReading()
+        {
+            var delRFID = _uow.RFIDTags.GetAll().ToList(); // ดึงข้อมูลทั้งหมดจากตาราง RFIDTags
+            foreach (var d in delRFID)
+            {
+                _uow.RFIDTags.Delete(d.Id);
+                _uow.Commit();
+            }
+            if (RFIDReader.CreateTcpConn(IPConfig, this))
+            {
+                RFIDReader._Tag6C.GetEPC(IPConfig, eAntennaNo._1 | eAntennaNo._2 | eAntennaNo._3 | eAntennaNo._4, eReadType.Inventory);
+            }
+        }
+        public void StopReading()
+        {
+            RFIDReader._RFIDConfig.Stop(IPConfig);
+            RFIDReader.CloseConn(IPConfig);
+            var delRFID = _uow.RFIDTags.GetAll().ToList(); // ดึงข้อมูลทั้งหมดจากตาราง RFIDTags
+            foreach (var d in delRFID)
+            {
+                _uow.RFIDTags.Delete(d.Id);
+                _uow.Commit();
+            }
+        }
+        public void OutPutTags(Tag_Model tag)
+        {
+            var newTag = new RFIDTag
+            {
+                EPC = tag.EPC,
+                ReadTime = DateTime.Now,
+                IsActive = 1
+            };
+            var checkdata = _uow.RFIDTags.GetAll().Where(t => t.EPC == tag.EPC).FirstOrDefault();
+            if (checkdata == null)
+            {
+                _uow.RFIDTags.Add(newTag);
+                _uow.Commit();
+                displayedEpcs.Add(tag.EPC);
+            }
+            else
+            {
+                displayedEpcs.Add(tag.EPC);
+            }
+        }
+        public void EventUpload(CallBackEnum type, object param) { }
+        public void GPIControlMsg(GPI_Model gpi_model) { }
+        public void OutPutTagsOver() { }
+        public void PortClosing(string connID) { }
+        public void PortConnecting(string connID) { }
+        public void WriteDebugMsg(string msg) { }
+        public void WriteLog(string msg) { }
     }
 }

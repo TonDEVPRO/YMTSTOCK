@@ -3,8 +3,9 @@
     Layout = "~/Views/Shared/_LayoutHOMEData.cshtml";
 }
 
-@model int
-<div ng-controller="mainController" ng-init="GetDataPageLoad(@Model)">
+
+@model EBR.Web.Models.UserQuo
+<div ng-controller="mainController" ng-init="GetDataPageLoad(@Model.EmpNo , '@Model.CodeId')">
     <div class="navbar-custom">
         <ul class="list-unstyled topbar-menu float-end mb-0">
             <li class="dropdown notification-list d-lg-none">
@@ -494,11 +495,11 @@
     <!-- Action Buttons -->
     <div class="m-4">
         <button class="btn btn-primary" ng-click="SaveQuotation(QuoData,SelectedProvinces,
-                                        SelectedDistricts,SelectedSub,SZipcode,skuCode,SelectedTypeSell,Entries , @Model)">
+                                        SelectedDistricts,SelectedSub,SZipcode,skuCode,SelectedTypeSell,Entries , @Model.EmpNo)">
             Save
         </button>
         @* <button class="btn btn-secondary" ng-click="ClearForm()">ล้างข้อมูล</button> *@
-        <button class="btn btn-danger" ng-click="Cancel(@Model)">Cancel</button>
+        <button class="btn btn-danger" ng-click="Cancel(@Model.EmpNo)">Cancel</button>
     </div>
 
 </div>

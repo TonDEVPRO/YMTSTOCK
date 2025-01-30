@@ -11,7 +11,7 @@ namespace EBR.Web.Models
     public class UserQuo
     {
 
-        public string QuotationNumber { get; set; }
+        public string CodeId { get; set; }
         public int EmpNo { get; set; }
 
 

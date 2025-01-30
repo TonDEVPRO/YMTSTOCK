@@ -36,9 +36,9 @@
         }
     });
 
-    $scope.searchReport = [{ DateFrom: "", DateTo: "" }];
-    $scope.ClearData = function () { location.reload(); };
-    $scope.InvoiceData = [{ PartNoItem: '', Customers: '', Packages: '' }];
+    $scope.reloadPage = function () {
+        $window.location.reload();
+    };
     $scope.ClearData = function () { location.reload(); };
     $scope.SaveLogin = function (EmpNoData) {
         if (EmpNoData == undefined) {
@@ -77,88 +77,10 @@
                             text: 'No Authorized In System'
                         });
                     } else {
-
-
-                        window.location.href = window.baseUrl + "Home/YMTHome?EmpNo=" + $scope.listEmpNo.Id
+                        window.location.href = window.baseUrl + "Home/YMTHome?EmpNo=" + $scope.listEmpNo.Id + '&CodeId=' + '0'
                     }
                 });
         }
-    };
-    $scope.YMTHrManPower = function (EmpNo) {
-        $http.get(window.baseUrl + 'Home/APIPRO').then(function (response) {
-            var data = response.data;
-            $scope.listdata = data;
-
-            // เตรียมข้อมูลสำหรับกราฟ
-            var labels = data.map(function (item) { return item.ProductName; });
-            var salesData = data.map(function (item) { return item.SalesAmount; });
-            var totalSales = salesData.reduce(function (acc, value) { return acc + value; }, 0);
-
-            // สร้าง Pie chart ด้วย Chart.js
-            var ctx = document.getElementById('salesChart').getContext('2d');
-            var chart = new Chart(ctx, {
-                type: 'pie',
-                data: {
-
-                    datasets: [{
-                        label: 'Sales Amount',
-                        data: salesData,
-                        backgroundColor: [
-
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)',
-                            'rgba(255, 99, 132, 0.2)'
-                        ],
-                        borderColor: [
-
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)',
-                            'rgba(255, 99, 132, 1)'
-                        ],
-                        borderWidth: 2
-                    }],
-                    labels: labels
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        //legend: {
-                        //    position: 'top',
-                        //    labels: {
-                        //        font: {
-                        //            size: 20
-                        //        }
-                        //    }
-                        //},
-                        tooltip: {
-                            callbacks: {
-                                label: function (tooltipItem) {
-                                    var label = tooltipItem.label || '';
-                                    var value = tooltipItem.raw;
-                                    var percentage = ((value / totalSales) * 100).toFixed(2);
-                                    return label + '  : ' + value + ' (' + percentage + '%)';
-                                }
-                            }
-                        },
-                        datalabels: {
-                            formatter: function (value, context) {
-                                var percentage = ((value / totalSales) * 100).toFixed(2);
-                                return percentage + '%';
-                            },
-                            color: '#000',
-                        }
-                    }
-                },
-                plugins: [ChartDataLabels]
-            });
-        });
-
     };
     $scope.YMTHomeData = function (EmpNo) {
 
@@ -171,50 +93,6 @@
                 $scope.emplist = res.data;
                 console.log($scope.emplist);
             });
-    }
-    $scope.YMTPNDSData = function (EmpNo) {
-        $http.post(window.baseUrl + 'Home/GetEmployee',
-            {
-                EmployeeNo: EmpNo
-            }).then(function (res) {
-                $scope.emplist = res.data;
-                $scope.users = [
-                    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin' },
-                    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User' },
-                    { id: 3, name: 'Michael Johnson', email: 'michael@example.com', role: 'Manager' },
-                    { id: 4, name: 'Alice Brown', email: 'alice@example.com', role: 'Admin' },
-                    { id: 5, name: 'Bob Davis', email: 'bob@example.com', role: 'User' }
-                ];
-
-                $scope.$on('ngRepeatFinished', function () {
-                    $('#example').DataTable();
-                });
-
-            }
-            )
-    };
-    $scope.YMTQCOnlineData = function (EmpNo) {
-        $http.post(window.baseUrl + 'Home/GetEmployee',
-            {
-                EmployeeNo: EmpNo
-            }).then(function (res) {
-                $scope.emplist = res.data;
-            });
-    }
-    $scope.YMTPNoteData = function (EmpNo) {
-        $scope.StatusRole = 0;
-        $http.post(window.baseUrl + 'Home/GetEmployee',
-            {
-                EmployeeNo: EmpNo
-            }).then(function (res) {
-                $scope.emplist = res.data;
-            });
-        if ($scope.StatusRole == 0) {
-            $scope.GetMasterCustomerOK();
-        }
-        $http.post(window.baseUrl + 'Home/GetMasterCustomerName').then(function (res) {
-            $scope.MasterCust = res.data;
-        });
     }
     $scope.YMTNdsStockData = function (EmpNo) {
         $http.post(window.baseUrl + 'Home/GetEmployee',
@@ -238,17 +116,14 @@
     }
 
 
+
+    // ** Start **  MenuList StockNDS //
     $scope.getStockStyle = function () {
         $http.get(window.baseUrl + 'Home/getStockStyleNDS')
             .then(function (response) {
                 $scope.ListStockStyle = response.data;
             })
     };
-
-
-
-    // ** Start **  MenuList StockNDS //
-
     $scope.getstocknds = function () {
         $http.get(window.baseUrl + 'Home/GetDataStockNds')
             .then(function (response) {
@@ -259,8 +134,6 @@
                 console.error(error);
             });
     };
-
-
     $scope.GetDescStyle = function (ddlStyle) {
         $scope.ddlcolor = '';
         $scope.ddlSize = '';
@@ -274,7 +147,6 @@
             })
         })
     };
-
     $scope.GetDescColors = function (ddlStyle, ddlcolor) {
         $scope.ddlSize = '';
         $scope.ListStockTotal = '';
@@ -285,7 +157,6 @@
                 console.log($scope.ListSizeNDS);
             })
     };
-
     $scope.GetDetailAll = function (ddlStyle, ddlcolor, ddlSize) {
         $http.post(window.baseUrl + 'Home/GetAllStock', { Style: ddlStyle, color: ddlcolor, Size: ddlSize })
             .then(function (response) {
@@ -296,15 +167,12 @@
 
     // ** END **  MenuList StockNDS //
 
-    $scope.reloadPage = function () {
-        $window.location.reload();
-    };
+
 
     //Sum Total Add stock
     $scope.SumTotal = function (Totals, AddQty) {
         $scope.TotalStock = Totals + AddQty;
     };
-
     $scope.ReduceTotal = function (ListStocks, ReduceQty) {
         if (ListStocks.Total < ReduceQty) {
             Swal.fire({
@@ -315,14 +183,10 @@
             $scope.ReduceQty = '';
             $scope.UpTotalStock = ListStocks.Total;
         } else {
-
             $scope.UpTotalStock = ListStocks.Total - ReduceQty;
         }
-    };
-
-
-
-    $scope.editQuotation = function (id) {
+    }
+    $scope.editStocks = function (id) {
         $scope.UpTotalStock = '';
 
         $http.post(window.baseUrl + 'Home/EditStock', { id: id })
@@ -330,9 +194,6 @@
                 $scope.ListStock = response.data;
             })
     };
-
-
-
     // SaveStockNDS //
     $scope.SaveStock = function (ListStockTotal, TotalStock, AddNewQty, FullUserId) {
         $scope.ListSaveStock =
@@ -381,9 +242,7 @@
             });
         });
     };
-
     $scope.UpdateStockss = function (ListStock, ReduceQty, UpTotalStock, FullUserId) {
-
         $scope.ListUpdateStock =
         {
             Total: UpTotalStock, Id: ListStock.Id,
@@ -391,7 +250,6 @@
             Description: ListStock.Description, Price: ListStock.Price,
             Size: ListStock.Size, Style: ListStock.Style, Status: ListStock.Status
         };
-
         $scope.ListUpdateStockLog =
         {
             StockId: ListStock.Id,
@@ -400,8 +258,6 @@
             TotalQty: UpTotalStock,
             CreateBy: FullUserId
         };
-
-
         $http.post(window.baseUrl + 'Home/UpdateStocks', {
             ndsShopStocks: $scope.ListUpdateStock
         }).then(function (response) {
@@ -413,7 +269,6 @@
             }).then(function (response) {
                 $scope.ListStocklogs = response.data;
             });
-
             Swal.fire({
                 icon: "success",
                 title: "You Update Stock Complete",
@@ -423,17 +278,7 @@
             });
         });
     };
-
-
-
-
-
-
-
-    $scope.YMTNdsSystemData = function (EmpNo) {
-        console.log(EmpNo);
-
-
+    $scope.YMTNdsSystemData = function (EmpNo , CodeId) {
         $http.post(window.baseUrl + 'Home/GetEmployee',
             {
                 EmployeeNo: EmpNo
@@ -441,13 +286,7 @@
                 $scope.emplist = res.data;
             });
     }
-
-
-
     $scope.YMTHolidayStockData = function (EmpNo) {
-        console.log(EmpNo);
-
-
         $http.post(window.baseUrl + 'Home/GetEmployee',
             {
                 EmployeeNo: EmpNo
@@ -455,15 +294,10 @@
                 $scope.emplist = res.data;
             });
     }
-
-
-
     $scope.GetData = function () {
         $http.get('/Home/getStockStyleNDS')
             .then(function (response) {
                 $scope.ListStockStyle = response.data;
-
-                console.log($scope.ListStockStyle);
             });
 
         $scope.complete = function (string) {
@@ -482,23 +316,15 @@
 
             $http.post('/Home/GetDescStyle', { Style: $scope.StyleNo }).then(function (response) {
                 $scope.ListStyle = response.data;
-
-                console.log($scope.ListStyle);
-
-
                 $scope.GetColorData();
             });
         };
     };
-
     $scope.GetColorData = function () {
         $http.get('/Home/GetAutoColors')
             .then(function (response) {
                 $scope.ListColorsAuto = response.data;
-
-                console.log($scope.ListColorsAuto);
             });
-
         $scope.completeColor = function (string) {
             var output = [];
             angular.forEach($scope.ListColorsAuto, function (Color) {
@@ -508,24 +334,17 @@
             });
             $scope.filterDataColor = output;
         };
-
         $scope.fillColor = function (string) {
             $scope.Color = string;
             $scope.filterDataColor = null;
-
-            console.log($scope.Color);
-
             $scope.GetSizeData();
         };
     };
-
-
     $scope.GetSizeData = function () {
         $http.get('/Home/GetAutoSizes')
             .then(function (response) {
                 $scope.ListSizeAuto = response.data;
             });
-
         $scope.completeSize = function (string) {
             var output = [];
             angular.forEach($scope.ListSizeAuto, function (Size) {
@@ -535,7 +354,6 @@
             });
             $scope.filterDataSize = output;
         };
-
         $scope.fillSize = function (string) {
             $scope.Size = string;
             $scope.filterDataSize = null;
@@ -547,13 +365,7 @@
             };
         };
     };
-
-
-
-
-
     $scope.SaveMasterStock = function (StyleNo, Descriptions, Colors, Sizes, AddMaster, EmpNo) {
-
         $scope.ListMasterStock = {
             Style: StyleNo,
             Color: Colors,
@@ -565,8 +377,6 @@
             Remark: AddMaster.Remark,
             CreateBy: EmpNo
         }
-
-
 
         if (AddMaster.Cost > AddMaster.Price) {
             Swal.fire({
@@ -594,17 +404,14 @@
                         MasterSaveStocks: $scope.ListMasterStock
                     }).then(function (res) {
                         $scope.ListSaveDataStock = res.data
-                        console.log($scope.ListSaveDataStock);
-
 
                         Swal.fire({
                             icon: "success",
                             title: "You Save Master Stock Complete",
                             text: "TotalStock : " + $scope.ListSaveDataStock.Total + ""
                         }).then(function () {
-                            $window.location.href = "/Home/YMTNdsStock?EmpNo=" + FullUserId;
+                            $window.location.href = "/Home/YMTNdsStock?EmpNo=" + EmpNo + '&CodeId=' + '0';
                         });
-
 
                         $scope.Color = '';
                         $scope.Size = '';
@@ -619,9 +426,7 @@
             });
         }
     }
-
-
-    $scope.NDSHolidayStocks = function (EmpNo) {
+    $scope.NDSHolidayStocks = function (EmpNo , CodeId) {
         $http.post(window.baseUrl + 'Home/GetEmployee',
             {
                 EmployeeNo: EmpNo
@@ -640,33 +445,19 @@
                 $scope.GetStockHoliday();
             });
     }
-
-
-
-
-
     $scope.GetStockHoliday = function () {
         $http.get(window.baseUrl + 'Home/GetStockHolidays')
             .then(function (response) {
                 $scope.ListHolidayOrder = response.data;
             })
     };
-
-
-
-
-
     $scope.GetHolidayOrder = function (ddlOrderNo) {
         $http.post(window.baseUrl + 'Home/GetHolidayStyle', { OrderNos: ddlOrderNo }).then(function (response) {
             $scope.ListHolidayStyle = response.data;
             console.log($scope.ListHolidayStyle);
         })
     };
-
-
-
     $scope.GetHolidayDescStyle = function (ddlOrderNo, ddlStyle) {
-
         $http.post(window.baseUrl + 'Home/GetHolidayDescStyle', { OrderNo: ddlOrderNo, Style: ddlStyle }).then(function (response) {
             $scope.ListHolidayDesc = response.data;
             $http.post(window.baseUrl + 'Home/GetHolidayColor', { OrderNo: ddlOrderNo, Style: ddlStyle }).then(function (response) {
@@ -674,14 +465,7 @@
             })
         })
     };
-
-
     $scope.GetHolidaySize = function (ddlOrderNo, ddlStyle, Colors) {
-
-        console.log(ddlOrderNo);
-        console.log(ddlStyle);
-        console.log(Colors);
-
         $http.post(window.baseUrl + 'Home/GetHolidaySizes', { OrderNo: ddlOrderNo, Style: ddlStyle, Color: Colors }).then(function (response) {
             $scope.ListHolidaySize = response.data;
             console.log($scope.ListHolidaySize);
@@ -696,90 +480,42 @@
             };
         })
     };
-
-
-
-
     $scope.GetHolidayDetailAll = function (ddlOrderNo, ddlStyle, Colors, ddlSize) {
-
-        console.log(ddlOrderNo);
-        console.log(ddlStyle);
-        console.log(Colors);
-
         $http.post(window.baseUrl + 'Home/GetHolidayDetailAlls', { OrderNo: ddlOrderNo, Style: ddlStyle, Color: Colors, Size: ddlSize }).then(function (response) {
-
-
-
             $scope.ListHolidayData = response.data;
-            console.log($scope.ListHolidayData);
-
-
-
-        })
+        });
     };
-
-
-
     $scope.SaveHolidayStock = function (ddlOrderNo, ddlStyle, Colors, ddlSize, alldata, UserIds) {
-
-        console.log(ddlOrderNo);
-        console.log(ddlStyle);
-        console.log(Colors);
-        console.log(ddlSize);
-        console.log(alldata);
-        console.log(UserIds);
-
-
-
         $http.post(window.baseUrl + 'Home/SaveHolidayStocks', { SaveHoliday: alldata, UserId: UserIds }).then(function (response) {
-
-
-
             $scope.ListdataA = response.data;
-            console.log($scope.ListdataA);
-
             Swal.fire({
                 icon: "success",
                 title: "You save Holiday Stock Complete",
                 text: "TotalStock : " + $scope.ListdataA.Total + ""
             }).then(function () {
-                $window.location.href = "/Home/NDSHolidayStock?EmpNo=" + FullUserId;
+                $window.location.href = "/Home/NDSHolidayStock?EmpNo=" + FullUserId + '&CodeId=' + '0';
             });
-
         })
-
-
     };
-
-
-
-
-
     $scope.GetMasterSeason = function (MasterSea) {
         $http.post(window.baseUrl + 'Home/GetMasterBandName', {
             CodeName: MasterSea
         }).then(function (res) {
             $scope.ListCodeName = res.data
-            console.log($scope.ListCodeName);
         });
         $http.post(window.baseUrl + 'Home/GetMasterSeasons', {
             CodeName: MasterSea
         }).then(function (res) {
             $scope.ListSeason = res.data
-            console.log($scope.ListSeason);
         });
     }
     $scope.GetMasterStyleName = function (MasterCustomer, SeasonNames) {
-
         $http.post(window.baseUrl + 'Home/GetListAllStyle', {
             CodeName: MasterCustomer,
             SeasonName: SeasonNames
         }).then(function (res) {
             $scope.Listdata = res.data
         });
-
-
-
         $http.post(window.baseUrl + 'Home/GetMasterStyle', {
             CodeName: MasterCustomer,
             SeasonName: SeasonNames
@@ -788,7 +524,6 @@
         });
     }
     $scope.GetMasterOrderNo = function (MasterCustomer, SeasonNames, StyleNames) {
-
         $http.post(window.baseUrl + 'Home/GetListAllStyle', {
             CodeName: MasterCustomer,
             ListStyle: StyleNames,
@@ -808,11 +543,8 @@
 
     }
     $scope.uploadFiles = function () {
-
         var files = document.getElementById('fileInput').files;
         var formData = new FormData();
-
-        console.log(files);
 
         if (files.length == 0) {
             Swal.fire({
@@ -821,8 +553,6 @@
                 text: 'Please uploadfiles',
             });
         } else {
-
-
             $scope.ListDataAlready =
             {
                 brandCode: $scope.MasterCustomer,
@@ -833,8 +563,6 @@
                 TypeName: $scope.TypeName,
                 NewFileName: files[0].name
             };
-
-            console.log($scope.ListDataAlready);
 
             $http.post(window.baseUrl + 'Home/checkfilealready', {
                 DataAlready: $scope.ListDataAlready
@@ -847,8 +575,6 @@
                     for (var i = 0; i < files.length; i++) {
                         formData.append('files', files[i]);
                     }
-
-                    // Append form data
                     formData.append('brandCode', $scope.MasterCustomer);
                     formData.append('brandName', $scope.ListCodeName.CustomerName);
                     formData.append('season', $scope.SeasonName);
@@ -856,21 +582,11 @@
                     formData.append('OrderNo', $scope.OrderNo);
                     formData.append('TypeName', $scope.TypeName);
                     formData.append('Id', $scope.emplist.Id);
-
-                    console.log($scope.emplist);
-
-
-
-
                     $http.post(window.baseUrl + 'Home/UploadFiles', formData, {
                         headers: { 'Content-Type': undefined },
                         transformRequest: angular.identity
                     }).then(function (res) {
                         $scope.Listdataupload = res.data
-                        console.log($scope.Listdataupload);
-
-
-
                         if ($scope.Listdataupload == 'No files uploaded.') {
                             Swal.fire({
                                 icon: 'error',
@@ -878,7 +594,6 @@
                                 text: 'Please uploadfiles',
                             });
                         } else {
-
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Uploadfile Success',
@@ -886,39 +601,27 @@
                             });
                             $scope.Listdata = $scope.Listdataupload.GetFinishdata;
                         }
-
                     });
 
                 } else {
-
                     Swal.fire({
                         icon: 'error',
                         title: '!!! Error Already Data and FileUpload.!!!',
                         text: 'Please check Data and file upload',
                     });
-
-
                 }
             });
         }
-
     };
-
     $scope.checkEnter = function (event, EmpNoData) {
-        console.log(event);
-
-
         $scope.inputValue = '';
-
         if (event.keyCode === 13) {
             if (EmpNoData == undefined) {
-
                 Swal.fire({
                     icon: 'error',
                     title: 'EmployeeNo && Password',
                     text: 'Please Insert EmployeeNo && Password'
                 });
-
             } else if (EmpNoData.EmpNo == '' || EmpNoData.EmpNo == undefined) {
                 Swal.fire({
                     icon: 'error',
@@ -954,348 +657,11 @@
             }
         }
     };
-
-    //CheckMenu
-    $scope.ChecKStaus = function (Status) {
-        $scope.StatusRole = Status;
-        console.log(Status);
-
-        if ($scope.StatusRole == 2) {
-            $scope.GetMasterCustomerOK();
-        }
-    };
-    $scope.GetMasterCustomerOK = function () {
-        $http.post(window.baseUrl + 'Home/GetMasterCustomers').then(function (res) {
-            $scope.GetMasterCustomesData = res.data
-            console.log($scope.GetMasterCustomesData);
-        });
-    };
-    $scope.GetNameCustomer = function (UploadLoadCustomer) {
-        $http.post(window.baseUrl + 'Home/GetMasterNameCustomers', {
-            getBandname: UploadLoadCustomer
-        }).then(function (res) {
-            $scope.ListNameCustomer = res.data
-        });
-
-        $http.post(window.baseUrl + 'Home/GetUpdateSeason', {
-            CodeName: UploadLoadCustomer
-        }).then(function (res) {
-            $scope.GetListSeason = res.data
-            console.log($scope.GetListSeason);
-        });
-    };
-    $scope.GetUpateStyles = function (UploadLoadCustomer, SeasonNames) {
-        $http.post(window.baseUrl + 'Home/GetUpateMasterStyle', {
-            CodeName: UploadLoadCustomer,
-            SeasonName: SeasonNames
-        }).then(function (res) {
-            $scope.GetListStylename = res.data
-            console.log($scope.GetListStylename);
-        });
-    }
-    $scope.GetUpdateOrderNo = function (UploadLoadCustomer, SeasonUpdateName, StyleNameUpdate) {
-        $http.post(window.baseUrl + 'Home/GetUpdateMasterOrder', {
-            UpdateCodeName: UploadLoadCustomer,
-            UpdateSeasonName: SeasonUpdateName,
-            UpdateStyleName: StyleNameUpdate
-        }).then(function (res) {
-            $scope.GetListOrderName = res.data
-            console.log($scope.GetListOrderName);
-        });
-
-    }
-    $scope.GetUpdateTypeName = function (UploadLoadCustomer, SeasonUpdateName, StyleNameUpdate, OrderNoUpdate) {
-
-        $http.post(window.baseUrl + 'Home/GetUpdateMasterTypeName', {
-            UpdateCodeName: UploadLoadCustomer,
-            UpdateSeasonName: SeasonUpdateName,
-            UpdateStyleName: StyleNameUpdate,
-            UpdateOrderNo: OrderNoUpdate
-        }).then(function (res) {
-            $scope.GetListTypename = res.data
-            console.log($scope.GetListTypename);
-        });
-
-    }
-    $scope.GetDataUpdatefile = function (UploadLoadCustomer, SeasonUpdateName, StyleNameUpdate, OrderNoUpdate, TypenameUpdate) {
-
-        $http.post(window.baseUrl + 'Home/Getdataupdate', {
-            UpdateCodeName: UploadLoadCustomer,
-            UpdateSeasonName: SeasonUpdateName,
-            UpdateStyleName: StyleNameUpdate,
-            UpdateOrderNo: OrderNoUpdate,
-            UpdateTypename: TypenameUpdate
-        }).then(function (res) {
-            $scope.Listdataupdate = res.data
-            console.log($scope.Listdataupdate);
-        });
-    }
-    $scope.uploadUpdateFiles = function () {
-
-        var files = document.getElementById('fileInputs').files;
-        var formData = new FormData();
-
-
-
-
-        if (files.length == 0) {
-            Swal.fire({
-                icon: 'error',
-                title: '!!! No files uploaded.!!!',
-                text: 'Please uploadfiles',
-            });
-        } else {
-
-
-            $scope.ListDataAlready = {
-                brandCode: $scope.UploadLoadCustomer, brandName: $scope.ListNameCustomer.BrandName, season: $scope.SeasonUpdateName, styleName: $scope.StyleNameUpdate,
-                OrderNo: $scope.OrderNoUpdate, TypeName: $scope.TypeNameUpdate, NewFileName: files[0].name
-            };
-
-
-            $http.post(window.baseUrl + 'Home/checkfilealready', {
-                DataAlready: $scope.ListDataAlready
-            }).then(function (res) {
-                $scope.listfile = res.data
-                console.log($scope.listfile);
-
-                if ($scope.listfile == '') {
-                    for (var i = 0; i < files.length; i++) {
-                        formData.append('files', files[i]);
-                    }
-                    formData.append('brandCode', $scope.UploadLoadCustomer);
-                    formData.append('brandName', $scope.ListNameCustomer.BrandName);
-                    formData.append('season', $scope.SeasonUpdateName);
-                    formData.append('styleName', $scope.StyleNameUpdate);
-                    formData.append('OrderNo', $scope.OrderNoUpdate);
-                    formData.append('TypeName', $scope.TypeNameUpdate);
-                    formData.append('Id', $scope.emplist.Id);
-
-                    $http.post(window.baseUrl + 'Home/UploadUpdatesFiles', formData, {
-                        headers: { 'Content-Type': undefined },
-                        transformRequest: angular.identity
-                    }).then(function (res) {
-                        $scope.Listdataupdate = res.data
-                        console.log($scope.Listdataupdate);
-
-                        if ($scope.Listdataupdates == 'No files uploaded.') {
-                            Swal.fire({
-                                icon: 'error',
-                                title: '!!! No files uploaded.!!!',
-                                text: 'Please uploadfiles',
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Uploadfile Success',
-                                text: 'Uploadfile Success'
-                            });
-                        }
-                    });
-                }
-                else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: '!!! Error Data !!!',
-                        text: 'Please delete old data before revision',
-                    });
-                }
-            });
-        }
-    };
-    $scope.deldataupdate = function (deldata) {
-        console.log(deldata);
-
-        $http.post(window.baseUrl + 'Home/DeldataupdateToLog', {
-            deldatas: deldata
-        }).then(function (res) {
-            $scope.Listdataupdate = res.data;
-
-            console.log($scope.Listdataupdate);
-        });
-    }
-
-
-    //MenuSearch 
-    $scope.GetListCustomerSearch = function (CustomerSearch) {
-
-
-        $http.post(window.baseUrl + 'Home/GetListCustomerSearchs', {
-            CustomerSearchs: CustomerSearch
-        }).then(function (res) {
-            $scope.ListSearchData = res.data;
-
-            $scope.ListBrandName = $scope.ListSearchData[0].BrandName;
-
-            console.log($scope.ListSearchData);
-            console.log($scope.ListBrandName);
-        });
-
-        $http.post(window.baseUrl + 'Home/GetSearchSeason', {
-            CustomerSearchs: CustomerSearch
-        }).then(function (res) {
-            $scope.GetSearchListSeason = res.data
-            console.log($scope.GetSearchListSeason);
-        });
-
-
-
-
-
-    }
-    $scope.GetSearchStylesName = function (CustomerSearch, SeasonSearch) {
-
-
-
-
-        $http.post(window.baseUrl + 'Home/ListSearchStylesName', {
-            CustomerSearchs: CustomerSearch,
-            SeasonSearchs: SeasonSearch
-        }).then(function (res) {
-            $scope.ListSearchData = res.data;
-
-            console.log($scope.ListSearchData);
-        });
-
-        $http.post(window.baseUrl + 'Home/MenuSearchMasterStyle', {
-            CustomerSearchs: CustomerSearch,
-            SeasonSearchs: SeasonSearch
-        }).then(function (res) {
-            $scope.GetSearchListStylename = res.data;
-
-            console.log($scope.GetSearchListStylename);
-        });
-
-    }
-    $scope.GetSearchOrderNo = function (CustomerSearch, SeasonSearch, StyleNameSearch) {
-        $http.post(window.baseUrl + 'Home/ListSearchOrderNo', {
-            CustomerSearchs: CustomerSearch,
-            SeasonSearchs: SeasonSearch,
-            StyleNameSearchs: StyleNameSearch
-        }).then(function (res) {
-            $scope.ListSearchData = res.data;
-
-            console.log($scope.ListSearchData);
-        });
-
-        $http.post(window.baseUrl + 'Home/MenuSearchOrderNo', {
-            CustomerSearchs: CustomerSearch,
-            SeasonSearchs: SeasonSearch,
-            StyleNameSearchs: StyleNameSearch
-        }).then(function (res) {
-            $scope.GetSearchListOrderName = res.data;
-
-            console.log($scope.GetSearchListOrderName);
-        });
-
-    }
-    $scope.GetSearchTypeName = function (CustomerSearch, SeasonSearch, StyleNameSearch, OrderNoSearch) {
-        $http.post(window.baseUrl + 'Home/ListSearchTypename', {
-            CustomerSearchs: CustomerSearch,
-            SeasonSearchs: SeasonSearch,
-            StyleNameSearchs: StyleNameSearch,
-            OrderNoSearchs: OrderNoSearch
-        }).then(function (res) {
-            $scope.ListSearchData = res.data;
-
-            console.log($scope.ListSearchData);
-        });
-
-
-        $http.post(window.baseUrl + 'Home/MenuSearchTypeName', {
-            CustomerSearchs: CustomerSearch,
-            SeasonSearchs: SeasonSearch,
-            StyleNameSearchs: StyleNameSearch,
-            OrderNoSearchs: OrderNoSearch
-        }).then(function (res) {
-            $scope.GetSearchListTypename = res.data;
-
-            console.log($scope.GetSearchListTypename);
-        });
-    }
-    $scope.GetSearchdatafile = function (CustomerSearch, SeasonSearch, StyleNameSearch, OrderNoSearch, TypeNameSearch) {
-        $http.post(window.baseUrl + 'Home/ListSearchdataupdate', {
-            CustomerSearchs: CustomerSearch,
-            SeasonSearchs: SeasonSearch,
-            StyleNameSearchs: StyleNameSearch,
-            OrderNoSearchs: OrderNoSearch,
-            TypeNameSearchs: TypeNameSearch
-        }).then(function (res) {
-            $scope.ListSearchData = res.data;
-
-            console.log($scope.ListSearchData);
-        });
-    }
-    $scope.ShippingManualFAEmp = function (EmpNo) {
-        $http.post(window.baseUrl + 'Home/GetEmployee',
-            {
-                EmployeeNo: EmpNo
-            }).then(function (res) {
-                $scope.emplist = res.data;
-
-                console.log($scope.emplist);
-
-
-                $scope.NewPro = [];
-                $http.post(window.baseUrl + 'Home/GetCustomerNewProduct').then(function (res) {
-                    $scope.NewPro = res.data;
-                });
-
-                $scope.complete = function (string) {
-                    var output = [];
-                    angular.forEach($scope.NewPro, function (CustomerData) {
-                        if (CustomerData.toLowerCase().indexOf(string.toLowerCase()) >= 0) {
-                            output.push(CustomerData);
-                        }
-                    });
-                    $scope.filterCountry = output;
-                };
-                $scope.fillTextbox = function (string) {
-                    $scope.CustomerData = string;
-                    $scope.filterCountry = null;
-
-                    $http.post(window.baseUrl + 'Home/GetCustomerData',
-                        {
-                            CustomerDatas: $scope.CustomerData
-
-                        }).then(function (res) {
-                            $scope.AllSaveDatas = res.data
-                            console.log($scope.AllSaveDatas);
-
-                            $scope.ShowShip = 99;
-                            $scope.ShowMeaAndRemark = 55;
-
-                            $http.post(window.baseUrl + 'Home/GetManualall',
-                                {
-                                    InvoiceNo: $scope.AllSaveDatas[0].PLNo
-                                }).then(function (res) {
-
-                                    $scope.MasterRemarks = res.data.ShippingSaveRemarkData
-
-                                    $scope.AllMeasure = res.data.ShippingSaveMeasurementData
-
-                                    $scope.SaveShipBill = res.data.ShippingManualBillData
-
-
-                                    console.log(res.data);
-
-                                });
-                        });
-                };
-            });
-    };
-
-
-    $scope.GetQuoTation = function (EmpNos) {
+    $scope.GetQuoTation = function (EmpNos, CodeId) {
         console.log(EmpNos);
-        window.location.href = window.baseUrl + "Home/NdsSystemQuotation?EmpNo=" + EmpNos
+        window.location.href = window.baseUrl + "Home/NdsSystemQuotation?EmpNo=" + EmpNos + '&CodeId=' + CodeId
     };
-
-    $scope.Getdataindex = function (EmpNo) {
-
-        console.log(EmpNo);
-
-
+    $scope.Getdataindex = function (EmpNo , CodeId) {
         $http.post(window.baseUrl + 'Home/GetEmployee',
             {
                 EmployeeNo: EmpNo
@@ -1303,178 +669,45 @@
                 $scope.emplist = res.data;
                 console.log($scope.emplist);
             });
-
-
-
         $http.post(window.baseUrl + 'Home/GetdataQuo')
             .then(function (response) {
-                $scope.ListQuo = response.data; // เก็บผลลัพธ์จาก Backend
-
-                console.log($scope.ListQuo);
-
-
+                $scope.ListQuo = response.data; 
                 $scope.data = [];
                 $http.get(window.baseUrl + 'Home/GetdataquoNew')
                     .then(function (response) {
                         $scope.data = response.data.data;
-
                         setTimeout(function () {
                             $('#dataTable').DataTable();
                         }, 0);
                     });
-
-                /*              $scope.initializeDataTable(); // เรียกใช้ DataTable หลังจากข้อมูลพร้อม*/
             })
             .catch(function (error) {
                 console.error("Error:", error);
             });
     }
-
-    // ฟังก์ชันสร้าง DataTable
-    $scope.initializeDataTable = function () {
-        $('#quotationTable').DataTable({
-            destroy: true, // ลบ DataTable เดิมก่อน
-            data: $scope.ListQuo, // ใช้ข้อมูลจาก $scope.ListQuo
-            datalist: $scope.emplist,
-            columns: [
-                { data: 'QuotationNumber', className: 'text-center' },
-                { data: 'QuoType', className: 'text-center' },
-                { data: 'CustomerName', className: 'text-center' },
-                { data: 'QuoLastname', className: 'text-center' },
-                {
-                    data: 'CreateDate',
-                    className: 'text-center',
-                    render: function (data) {
-                        return new Date(data).toLocaleDateString('th-TH');
-                    }
-                },
-                {
-                    data: 'QuoStatus',
-                    className: 'text-center',
-                    render: function (data) {
-                        return data === 1 ? 'Confirmed' : '';
-                    }
-                },
-                {
-                    data: null,
-                    className: 'text-center',
-                    render: function (data, type, row, datalist) {
-                        if (row.QuoStatus === 0) {
-                            return `<button class="btn btn-primary edit-button" data-quotation-number="${data.QuotationNumber}">Edit</button>`;
-                        } else {
-                            return `<button class="btn btn-secondary edit-button" data-quotation-number="${data.QuotationNumber}" disabled>Edit</button>`;
-                        }
-                    }
-                },
-                {
-                    data: null,
-                    className: 'text-center',
-                    render: function (data) {
-                        return `<button class="btn btn-success pdf-button" data-quotation-number="${data.QuotationNumber}">PDF</button>`;
-                    }
-                },
-                {
-                    data: null,
-                    className: 'text-center',
-                    render: function (data) {
-                        return `<button class="btn btn-info view-button" data-quotation-number="${data.QuotationNumber}">View</button>`;
-                    }
-                }
-            ],
-            order: [[0, 'desc']] // เรียงลำดับ Quotation Number
-        });
-
-        // จัดการ Event Buttons
-        $('#quotationTable').on('click', '.edit-button', function () {
-            //const id = $(this).data('quotationNumber');
-            //const IdCreate = $(this).datalist('Id');
-            //$scope.editQuo(id, IdCreate);
-            const id = $(this).data('quotationNumber');
-            const IdCreate = $(this).data('createBy');
-            $scope.editQuo(id, IdCreate);
-        });
-
-        $('#quotationTable').on('click', '.pdf-button', function () {
-            const id = $(this).data('QuotationNumber');
-            $scope.PrintPDF(id);
-        });
-
-        $('#quotationTable').on('click', '.view-button', function () {
-            const id = $(this).data('QuotationNumber');
-            $scope.viewQuotation(id);
-        });
-    };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // ฟังก์ชัน Edit เพื่อเปลี่ยนเส้นทางไปยังหน้าที่ต้องการแก้ไข
-    $scope.editQuo = function (QuoNo, EmpNos) {
-        // ไปยังหน้าแก้ไขข้อมูล โดยใช้ quotationNumber เป็นพารามิเตอร์
-        console.log(QuoNo);
-        console.log(EmpNos);
-
-
-        //$http.post(window.baseUrl + 'Home/NdsSystemEditQuotation', {
-        //    QuotationNumber: QuoNo,
-        //    EmpNo: EmpNos
-        //})
-        //    .then(function (response) {
-        //        $scope.data = response.data;
-        //        console.log($scope.data);
-        //    });
-
-        $window.location.href = 'NdsSystemEditQuotation?EmpNo=' + EmpNos + '&QuotationNumber=' + QuoNo;
+    $scope.editQuo = function (EmpNos, QuoNo ) {
+        $window.location.href = 'NdsSystemEditQuotation?EmpNo=' + EmpNos + '&CodeId=' + QuoNo;
     }
-
-
-    $scope.GetdataQuoForEdits = function (EmpNo, QuoNum) {
-        console.log(QuoNum);
+    $scope.GetdataQuoForEdits = function (EmpNo, CodeId) {
         console.log(EmpNo);
-
+        console.log(CodeId);
 
         $scope.NewEntry = {
             TotalPrice: 0,
             Quantity: 0,
             PricePerUnit: 0
         };
-
-
         $http.post(window.baseUrl + 'Home/GetEmployee',
             {
                 EmployeeNo: EmpNo
             }).then(function (res) {
                 $scope.emplist = res.data;
-                console.log($scope.emplist);
             });
-
-
         $scope.GetPageLoad(EmpNo);
-
         $http.post(window.baseUrl + 'Home/GetdataQuoForEdit', {
-            QuotationNumber: QuoNum,
+            QuotationNumber: CodeId,
             EmpNos: EmpNo
         }).then(function (response) {
-
-
-            console.log(response.data);
-
-
-            //const shipDate = response.data.shipDate
-            //    ? formatDateToDDMMYYYY(new Date(response.data.shipDate))
-            //    : '';
-            /* $scope.SelectedProvinces = response.data.provinces;*/
-
             $scope.QuoData = {
                 QuoNumber: response.data.QuotationNumber,
                 CustomerName: response.data.CustomerName,
@@ -1491,17 +724,11 @@
                 CustomerTaxID: response.data.CustomerTaxID,
                 CustomerAddressTax: response.data.CustomerAddressTax,
                 CustomerPhone: response.data.CustomerPhone,
-                /* Remark: response.data.remark,*/
                 CreateBy: EmpNo,// ***
                 CreateDate: new Date().toISOString().slice(0, 10),// รูปแบบ dd/MM/yyyy HH:mm:ss
                 StyleName: response.data.StyleName,// ไม่มี MAP
                 QuoType: response.data.QuoType,
                 QuoLastname: response.data.QuoLastname,
-                // QuoCompanyName: response.data.quoCompanyName,
-                //QuoProvince: response.data.quoProvince,
-                //QuoDistricts: response.data.quoDistricts,
-                //QuoSubDistricts: response.data.quoSubDistricts,
-                //QuoZipCode: response.data.quoZipCode,
 
                 Remark: response.data.QuoRemark,
                 QuoTaxID: response.data.QuoTaxID,
@@ -1512,40 +739,21 @@
 
             };
 
-
-            console.log($scope.QuoData);
-
-
             $scope.selectedShipDate = $scope.QuoData.ShipDate.split('T')[0];
-
             $scope.isConfirmed = $scope.QuoData.QuoStatus.toString() === '1';
             $scope.selectedShipDate = $scope.isConfirmed ? $scope.QuoData.ShipDate : '';
-
             $scope.selectedShipDate = new Date($scope.QuoData.ShipDate).toLocaleDateString('en-GB');
-
-            console.log($scope.selectedShipDate);
-
             $scope.SelectedTypeSell = $scope.QuoData.QuoType;
-            console.log($scope.QuoData.QuoType);
-
             $scope.SelectedProvinces = response.data.QuoProvince;
-
-
-            console.log(response.data.QuoProvince);
             $scope.GetListDistricts(response.data.QuoProvince);
-
             $scope.SelectedDistricts = response.data.QuoDistricts;
             $scope.GetListSub(response.data.QuoDistricts, response.data.QuoProvince)
             $scope.SelectedSub = response.data.QuoSubDistricts;
             $scope.SZipcode = response.data.QuoZipCode;
 
-
-
             $http.post(window.baseUrl + 'Home/GetForEditProduct', {
                 QuotationNumber: $scope.QuoData.QuoNumber
             }).then(function (response) {
-                console.log(response.data);
-
                 // ตรวจสอบว่า response.data เป็น Array หรือไม่
                 if (Array.isArray(response.data)) {
                     $scope.Entries = response.data.map(entry => ({
@@ -1568,55 +776,34 @@
 
         })
     }
-
-    $scope.GetDataPageLoad = function (EmpNo) {
-
- 
+    $scope.GetDataPageLoad = function (EmpNo , CodeId) {
         $scope.NewEntry = {
             TotalPrice: 0,
             Quantity: 0,
             PricePerUnit : 0
         };
-        console.log($scope.NewEntry.TotalPrice);
-     /*   $scope.NewEntry.TotalPrice = 0;*/
-
-        console.log(EmpNo);
         $scope.GetSku(); // โหลด Style Name
         $scope.GetColors(); // โหลด Color
         $scope.GetSizes();     // โหลด Sizes
         $scope.GetProvince(); // โหลด จังหวัด
         $scope.GetOrderType(); // โหลด Type order
         $scope.GetLoadRemark(); // โหลด Master remark
-
-
     };
-
-
     $scope.GetPageLoad = function (EmpNo) {
-
-        console.log(EmpNo);
         $scope.GetSku(); // โหลด Style Name
         $scope.GetColors(); // โหลด Color
         $scope.GetSizes();     // โหลด Sizes
         $scope.GetProvince(); // โหลด จังหวัด
         $scope.GetOrderType(); // โหลด Type order
         $scope.GetLoadRemark(); // โหลด Master remark
-
-
     };
-
-
-    /*EXEC gnerateQuotationNumber*/
     $scope.GetSku = function () {
         $http.get(window.baseUrl + 'Home/GetSku')
             .then(function (response) {
                 $scope.ListDropSku = response.data;
-                console.log("Sku Number:", response.data);
             });
     };
-
     $scope.GetSkuCode = function (styleName) {
-        console.log("Selected StyleName:", styleName);
         $http.post(window.baseUrl + 'Home/GetSkuCode', {
             StyleCode: styleName
         })
@@ -1627,10 +814,6 @@
                 console.error("Error fetching SKU Codes:", error);
             });
     };
-
-    /* ListCompany*/
-
-    /* $scope.GetPageLoad()*/ //เรียกใช้ฟังก์ชัน - > มีการเรียกจากหน้า ng-init="GetPageLoad()"
     $scope.GetColors = function () {
         $http.get(window.baseUrl + 'Home/GetColorss')
             .then(function (response) {
@@ -1645,28 +828,20 @@
                 console.log("Colors:", response.data);
             });
     };
-
     $scope.GetOrderType = function () {
-
-
         $http.get(window.baseUrl + 'Home/GetOrderType')
             .then(function (response) {
                 $scope.ListTypeSell = response.data;
                 console.log("OrderTypes:", response.data);
             });
-
     }
-
     $scope.GetProvince = function () {
         $http.get(window.baseUrl + 'Home/GetProvinces')
             .then(function (response) {
                 $scope.ListProvinces = response.data;
             });
     }
-
     $scope.GetListDistricts = function (Provincess) {
-
-        // ส่งข้อมูลไปยัง Backend
         $http.post(window.baseUrl + 'Home/GetDistricts',
             {
                 Provinces: Provincess
@@ -1675,46 +850,32 @@
                 $scope.ListDistricts = response.data;
             });
     }
-
     $scope.GetListSub = function (SelectedDistricts, SelectedProvinces) {
-        //Get SubDist Where จังหวัด, อำเภอ
-        console.log(SelectedDistricts, SelectedProvinces);
-        // ส่งข้อมูลไปยัง Backend
         $http.post(window.baseUrl + 'Home/GetListSubs',
             {
                 Districts: SelectedDistricts,
                 Provinces: SelectedProvinces
             })
             .then(function (response) {
-                console.log("Response จาก Backend:", response);
                 $scope.ListSub = response.data; // เก็บผลลัพธ์จาก Backend
-                console.log("ListDistricts:", $scope.ListSub);
             })
             .catch(function (error) {
                 console.error("Error:", error);
             });
     }
-
     $scope.GetListZipcode = function (SelectedSub, SelectedDistricts) {
-
-        console.log(SelectedSub, SelectedDistricts);
-        // ส่งข้อมูลไปยัง Backend
         $http.post(window.baseUrl + 'Home/GetListZipcode',
             {
-
                 Districts: SelectedDistricts,
                 SubDistricts: SelectedSub
             })
             .then(function (response) {
                 $scope.SZipcode = response.data; // เก็บผลลัพธ์จาก Backend
-
-                console.log($scope.SZipcode);
             })
             .catch(function (error) {
                 console.error("Error:", error);
             });
     }
-
     $scope.GetLoadRemark = function () {
         $http.get(window.baseUrl + 'Home/GetLoadRemark')
             .then(function (response) {
@@ -1723,17 +884,12 @@
                 console.error("Error loading remarks:", error);
             });
     };
-
-
     $scope.AddEntry = function () {
         if (!$scope.skuCode || !$scope.QuoData.StyleName || !$scope.NewEntry.SelectedSize || !$scope.NewEntry.SelectedColor || !$scope.NewEntry.Quantity || !$scope.NewEntry.PricePerUnit) {
-
-
             Swal.fire({
                 icon: "error",
                 title: "Oops...",
                 text: "Please fill in all information completely!"
-
             });
             return;
         }
@@ -1757,9 +913,7 @@
             TotalPrice: 0
         };
     };
-
     $scope.RemoveEntry = function (index) {
-
         if (index >= 0 && index < $scope.Entries.length) {
             $scope.Entries.splice(index, 1);
             console.log("After removal:", $scope.Entries);
@@ -1770,66 +924,30 @@
             alert('');
         }
     };
-
     $scope.TotalSum = 0;
-
     // ฟังก์ชันคำนวณยอดรวมทั้งหมด
     $scope.CalculateTotalSum = function () {
-
-        //console.log("CalculateTotalSum Called");
-
-        // เช็คว่าเป็น Array - ตั้งต้นเป็น Array ว่าง (ต้องเช็คเพราะว่าบางทีมันมองเป็น NULL)
         const entries = Array.isArray($scope.Entries) ? $scope.Entries : [];
-
-        //console.log("Entries:", entries);
-
-        // Entries
         const entryTotal = entries.reduce(function (sum, entry) {
             return sum + (entry.Quantity * entry.PricePerUnit);
         }, 0);
-
-        //console.log("Entry Total:", entryTotal);
-
-        // เช็ค แปลง QuoShippingPrice เป็น Number
         const shippingPrice = isNaN(parseFloat($scope.QuoData.QuoShippingPrice)) ? 0 : parseFloat($scope.QuoData.QuoShippingPrice);
-        //console.log("Parsed Shipping Price:", shippingPrice);
-
-        // Sum and update TotalPrice
         $scope.QuoData.TotalPrice = entryTotal + shippingPrice;
-        /*console.log("Total Price Updated:", $scope.QuoData.TotalPrice);*/
-
     };
-
     $scope.CalculateQty = function () {
         $scope.QuoData.TotalQty = $scope.Entries.reduce(function (sum, entry) {
             return sum + entry.Quantity;
         }, 0);
     };
-
-
-
-    //$scope.QuoData.TotalPrice = $scope.TotalSum;
-    //$scope.NewQuoNumber = [];
-
-
-
-    //GenQuotationNumber
     $scope.GenerateQuotationNumber = function () {
         $http.get(window.baseUrl + 'Home/GenerateQuotationNumber')
             .then(function (response) {
                 $scope.NewQuoNumber = response.data;
                 console.log("QuotationNumber:", response.data);
             });
-
     }
-
-
-
-    // File
-
     $scope.UploadFile = function () {
         var fileInput = document.getElementById('fileInput').files[0];
-
         if (!fileInput) {
             Swal.fire({
                 icon: "warning",
@@ -1838,8 +956,6 @@
             });
             return;
         }
-
-        // ตรวจสอบและตั้งค่า fileDescription เป็นค่าว่างถ้าไม่มีการกรอก
         if (!$scope.fileDescription || $scope.fileDescription.trim() === "") {
             $scope.fileDescription = "";
         }
@@ -1852,22 +968,14 @@
         $http.post(window.baseUrl + 'Home/UploadFiledata', formData, {
             headers: { 'Content-Type': undefined }
         }).then(function (response) {
-
-
-
-            console.log(response);
-            // ใช้ $scope.$apply เพื่อกระตุ้น AngularJS ให้จับการเปลี่ยนแปลง
             $scope.$applyAsync(function () {
                 $scope.files.push(response.data); // เพิ่มไฟล์ใหม่ลงในตาราง
             });
-
             Swal.fire({
                 icon: "success",
                 title: "File uploaded",
                 text: "The file has been uploaded successfully."
             });
-
-
             $scope.fileDescription = ""; // ล้างคำอธิบาย
             document.getElementById('fileInput').value = null; // ล้างไฟล์ที่เลือก
         }).catch(function (error) {
@@ -1879,17 +987,10 @@
             });
         });
     };
-
-
     $scope.downloadFile = function (filePath) {
-
-        console.log(filePath);
         window.open(window.baseUrl + 'Home/DownloadFile?filePath=' + encodeURIComponent(filePath), '_blank');
     };
-
     $scope.deleteFile = function (filePaths, index, DelId) {
-        console.log(index);
-
         Swal.fire({
             title: "Are you sure?",
             text: "This file will be permanently deleted!",
@@ -1923,15 +1024,11 @@
             }
         });
     };
-
     $scope.GetLoadFiles = function () {
-        // ตรวจสอบว่ามี Quotation Number หรือไม่
-        console.log($scope.QuoData.QuoNumber + " Quo")
         if (!$scope.QuoData.QuoNumber) {
             console.warn("Quotation number is required.");
             return;
         }
-
         // เรียก API ดึงข้อมูลไฟล์
         $http.get(window.baseUrl + 'Home/GetQuotationFiles', {
             params: { quotationNumber: $scope.QuoData.QuoNumber }
@@ -1942,33 +1039,22 @@
             console.error("Error loading files:", error);
         });
     };
-
-
     $scope.updateShipmentDate = function () {
         if ($scope.isConfirmed) {
-            // กรณี Confirm เป็นจริง ให้ตั้งค่า ShipDate
             $scope.selectedShipDate = $scope.QuoData.ShipDate || '';
         } else {
             // กรณีไม่ Confirm ให้ลบค่า ShipDate
             $scope.clearShipmentDate();
         }
     };
-
     $scope.clearShipmentDate = function () {
         $scope.selectedShipDate = ''; // เคลียร์ค่าของ ShipDate
     };
-
     $scope.$watch('isConfirmed', function (newValue, oldValue) {
         if (newValue !== oldValue) {
             $scope.updateShipmentDate();
         }
     });
-
-    $scope.viewQuotation = function (quotationNumber) {
-        // ดึงข้อมูล Quotation โดยใช้ API
-
-    };
-
     $scope.deleteQuotation = function (quotationNumber) {
         Swal.fire({
             title: 'Are you sure?',
@@ -1990,11 +1076,7 @@
     };
 
     // Function Update
-
     $scope.UpdateQuotation = function (EmpNo, selectedShipDate) {
-        console.log(selectedShipDate);
-
-
         if (!$scope.QuoData.QuoNumber || !$scope.Entries.length) {
             Swal.fire({
                 icon: "error",
@@ -2093,8 +1175,6 @@
         //        });
         //    });
     };
-
-
     $scope.Cancel = function (EmpNo) {
         Swal.fire({
             title: 'Are you sure?',
@@ -2107,19 +1187,13 @@
             cancelButtonText: 'No, stay here'
         }).then((result) => {
             if (result.isConfirmed) {
-                $window.location.href = 'NdsSystemQuotation?EmpNo=' + EmpNo;
+                $window.location.href = 'NdsSystemQuotation?EmpNo=' + EmpNo + '&CodeId=' + '0';
             }
         });
     };
-
-
-    $scope.CreateQuo = function (EmpNo) {
-        // Redirect to CreateQuo View
-        $window.location.href = 'NdsSystemCreateQuotation?EmpNo=' + EmpNo;
+    $scope.CreateQuo = function (EmpNo, CodeId) {
+        $window.location.href = 'NdsSystemCreateQuotation?EmpNo=' + EmpNo + '&CodeId=' + CodeId;
     };
-
-
-
     $scope.PrintPDF = function (NumberQuo) {
         // รับค่า QuotationNumber จากข้อมูลที่กรอกโดยผู้ใช้
         console.log(NumberQuo);
@@ -2138,32 +1212,16 @@
         // เปิดแท็บใหม่เพื่อดาวน์โหลดหรือแสดงไฟล์ PDF
         window.open(url, '_blank');
     };
+    $scope.viewQuotation = function (EmpNo ,quotationNumber ) {
+        console.log(EmpNo);
+        console.log(quotationNumber);
 
-
-
-    $scope.viewQuotation = function (quotationNumber, EmpNos) {
-
-        $window.location.href = '/Home/NdsSystemViewPage?EmpNo=' + EmpNos + '&quotationNumber=' + quotationNumber;
-
+        $window.location.href = '/Home/NdsSystemViewPage?EmpNo=' + EmpNo + '&CodeId=' + quotationNumber;
     };
-
     $scope.backHome = function (EmpNo) {
-        $window.location.href = 'NdsSystemQuotation?EmpNo=' + EmpNo;
+        $window.location.href = 'NdsSystemQuotation?EmpNo=' + EmpNo + '&CodeId=' + '0';
     };
-
-
-    // Order Information
-
     $scope.GetOrderInfo = function (EmpNo) {
-        //$http.get(window.baseUrl + "Home/GetOrderInfos")
-        //    .then(function (response) {
-        //        $scope.dataOrders = response.data.data; // Bind data to scope
-        //        console.log($scope.dataOrders);
-        //        initializeDataTable(); // เรียก DataTable หลังโหลดข้อมูล
-        //    }, function (error) {
-        //        console.error("Error fetching order information: ", error);
-        //    });
-
         $http.post(window.baseUrl + 'Home/GetEmployee',
             {
                 EmployeeNo: EmpNo
@@ -2171,28 +1229,18 @@
                 $scope.emplist = res.data;
 
             });
-
-
-
         $scope.dataOrders = [];
         $http.get(window.baseUrl + 'Home/GetOrderInfos')
             .then(function (response) {
                 $scope.dataOrders = response.data.data;
-
-
-                console.log($scope.dataOrders);
                 setTimeout(function () {
                     $('#dataTables').DataTable();
                 }, 0);
             });
     };
-
-    $scope.GetOrderInformation = function (EmpNo) {
-        console.log(EmpNo);
-
-        $window.location.href = 'NdsSystemOrderInformation?EmpNo=' + EmpNo;
+    $scope.GetOrderInformation = function (EmpNo, CodeId) {
+        $window.location.href = 'NdsSystemOrderInformation?EmpNo=' + EmpNo + '&CodeId=' + CodeId;
     }
-
     $scope.formatDate = function (netDate) {
         // ดึงเฉพาะตัวเลขจาก /Date(...)/ และแปลงเป็น timestamp
         var timestamp = parseInt(netDate.replace(/\/Date\((\d+)\)\//, '$1'));
@@ -2208,16 +1256,10 @@
 
         return `${day}/${month}/${year}`; // คืนค่าวันที่ในรูปแบบ dd/MM/yyyy
     };
-
-
     $scope.openModal = function (orderNumber) {
-        // เรียกข้อมูลจากเซิร์ฟเวอร์เพื่อแสดงใน ModalPopup
         $http.get(window.baseUrl + `Home/GetOrderDetails?orderNumber=${orderNumber}`)
             .then(function (response) {
                 $scope.modalData = response.data;
-
-                console.log($scope.modalData);
-
                 $scope.GetProductOrder($scope.modalData.OrderNumber);
                 // เก็บข้อมูลใน $scope.modalData
                 $('#OrderDetails').modal('show'); // เปิด ModalPopup
@@ -2227,15 +1269,8 @@
 
 
     };
-
     $scope.GetProductOrder = function (orderNumber) {
-
-        console.log(orderNumber);
-
-
         $http.get(window.baseUrl + `Home/GetProductOrders?orderNumber=${orderNumber}`)
-
-
             .then(function (response) {
                 $scope.productOrders = response.data; // เก็บข้อมูลใน scope
                 console.log($scope.productOrders);
@@ -2244,8 +1279,18 @@
                 console.error("Error fetching product orders: ", error);
             });
     };
-
     $scope.GetPageFile = function (EmpNo, orderNumber) {
+
+        console.log(EmpNo);
+        console.log(orderNumber);
+
+        $http.post(window.baseUrl + 'Home/GetEmployee',
+            {
+                EmployeeNo: EmpNo
+            }).then(function (res) {
+                $scope.emplist = res.data;
+            });
+
         // ดึงค่าจาก URL Query String
         const urlParams = new URLSearchParams(window.location.search);
         /*      const orderNumber = urlParams.get('orderNumber'); // ดึงค่าของ orderNumber*/
@@ -2257,45 +1302,37 @@
 
         $scope.GetDataQuoFileTable(orderNumber);
     };
-
-
     $scope.GetDataQuoFileTable = function (orderNumber) {
-
-
         $http.post(window.baseUrl + 'Home/GetDataQuoFileTables',
             {
                 orderNumbers: orderNumber
             })
             .then(function (response) {
                 $scope.quoFile = response.data;
+
+                console.log($scope.quoFile);
+
                 if (Array.isArray($scope.quoFile) && $scope.quoFile.length > 0) {
                     var quotationNumber = $scope.quoFile[0].quotationNumber;
                     $scope.quotationNumber = quotationNumber;
                 } else {
                     $scope.quotationNumber = "";
                 }
-                console.log($scope.quoFile);
             })
             .catch(function (error) {
                 console.error("Error:", error);
             });
-
         $http.post(window.baseUrl + 'Home/GetDataOtherFileTable', {
 
             orderNumbers: orderNumber
         })
             .then(function (response) {
                 $scope.files = response.data; // เก็บข้อมูลใน scope
-                console.log($scope.files);
-
-
             }, function (error) {
                 console.error("Error OtherFile : ", error);
             });
 
     };
-
-
     $scope.downloadQuotation = function (quotationNumber) {
         if (!quotationNumber) {
             Swal.fire({
@@ -2368,9 +1405,6 @@
             });
         });
     };
-
-
-
     $scope.deleteFileAboutOrder = function (filePath, index, fileId) {
         Swal.fire({
             title: "Are you sure?",
@@ -2405,15 +1439,11 @@
             }
         });
     };
-
-
     $scope.GetFilesData = function (orderNumber, EmpNo) {
-        $window.location.href = 'NdsSystemViewAttachments?orderNumber=' + orderNumber + '&EmpNo=' + EmpNo;
+        $window.location.href = 'NdsSystemViewAttachments?EmpNo=' + EmpNo + '&CodeId=' + orderNumber  ;
     };
-
-
     $scope.backHomeOrder = function (EmpNo) {
-        $window.location.href = 'NdsSystemOrderInformation?EmpNo=' + EmpNo;
+        $window.location.href = 'NdsSystemOrderInformation?EmpNo=' + EmpNo + '&CodeId=' + '0';
     };
 
 
@@ -2422,9 +1452,7 @@
 
 
     ///RFID Menu
-
-
-    $scope.RFIDGETDATA = function (EmpNo) {
+    $scope.RFIDGETDATA = function (EmpNo , CodeId) {
         console.log(EmpNo);
 
 
@@ -2443,30 +1471,21 @@
             });
 
     };
-
-    $scope.RFIDUrlInfor = function (EmpNo) {
-        $window.location.href = 'RFIDIndex?EmpNo=' + EmpNo;
+    $scope.RFIDUrlInfor = function (EmpNo, CodeId) {
+        $window.location.href = 'RFIDIndex?EmpNo=' + EmpNo + '&CodeId=' + CodeId;
     };
-
-    $scope.NdssystemLink = function (EmpNo) {
-        $window.location.href = 'YMTNdsSystem?EmpNo=' + EmpNo;
+    $scope.NdssystemLink = function (EmpNo , CodeId) {
+        $window.location.href = 'YMTNdsSystem?EmpNo=' + EmpNo + '&CodeId=' + CodeId;
     };
-
     $scope.tags = [];
-
     let intervalPromise;
-
     $scope.StartCheck = 1;
     $scope.EPCID = ''; // Default EPCID value
     $scope.ActiveId = 1; // Default Active status
     $scope.products = []; // Array to hold product data
-
     $scope.getTags = function () {
         $http.post(window.baseUrl + 'Home/GetTags').then(function (response) {
             $scope.products = response.data;
-
-
-
             $scope.groupedProducts = (function () {
                 let groupedCache = null; // แคชข้อมูลที่ประมวลผลแล้ว
                 let lastProductList = []; // เก็บสถานะของ $scope.products ล่าสุด
@@ -2530,54 +1549,34 @@
         });
 
     };
-
     $scope.ClickStart = function () {
         $http.post(window.baseUrl + 'Home/StartReading').then(function (response) {
             $scope.getTags();
         });
         $scope.StartCheck = 2;
     };
-
-
     $scope.startReading = function () {
         $http.post(window.baseUrl + 'Home/StartReading').then(function (response) {
             $scope.getTags();
         });
     };
-
     $scope.ReStartReading = function () {
         $http.post(window.baseUrl + 'Home/ReStartReading').then(function (response) {
             $scope.getTags();
         });
     };
-
-
     $scope.stopReading = function () {
         $http.post(window.baseUrl + 'Home/StopReading').then(function () {
             $scope.StartCheck = 1;
         });
     };
-
-
-
-
-
-
-
     ///RFID Menu
-
 
 
     $scope.POSSystemData = function (EmpNo) {
 
         $window.location.href = 'POSSystem?EmpNo=' + EmpNo;
     }
-
-
-
-
-
-
     $scope.SaveQuotation = function (QuoData, SelectedProvinces, SelectedDistricts,
         SelectedSub, SZipcode, skuCode, SelectedTypeSell, Entries, EmpNo) {
         // Validate ค่าว่าง
@@ -2717,8 +1716,15 @@
     };
 
 
+    $scope.YmtHomeClick = function (EmpNo) {
 
+        console.log(EmpNo);
 
+        console.log($scope.emplist);
+        
+    };
+
+    
 
 
 

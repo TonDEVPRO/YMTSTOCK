@@ -2,10 +2,11 @@
     ViewBag.Title = "_LayoutHOMEData";
     Layout = "~/Views/Shared/_LayoutHOMEData.cshtml";
 }
-@model int
+@model EBR.Web.Models.UserQuo
 
 
-<div ng-controller="mainController" ng-init="YMTNdsStockData(@Model)">
+
+<div ng-controller="mainController" ng-init="YMTNdsStockData(@Model.EmpNo ,'@Model.CodeId')">
     <div class="navbar-custom">
         <ul class="list-unstyled topbar-menu float-end mb-0">
             <li class="dropdown notification-list d-lg-none">
@@ -231,6 +232,7 @@
                                         <th>Price</th>
                                         <th>Cost</th>
                                         <th>Total</th>
+                                        <th>EditStock</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -243,6 +245,11 @@
                                         <td>{{ item.Price }}</td>
                                         <td>{{ item.Cost }}</td>
                                         <td>{{ item.Total }}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editModal" ng-click="editStocks(item.Id);">
+                                                Update
+                                            </button>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -332,12 +339,12 @@
                         <div class="row">
                             <div class="mb-3 col-md-12">
                                 <label class="col-form-label text-bold">Remark/Location</label>
-                                <input type="text" class="form-control" ng-model="ListStockTotal.Remark" >
+                                <input type="text" class="form-control" ng-model="ListStockTotal.Remark">
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-success" ng-click="SaveStock(ListStockTotal,TotalStock,AddNewQty ,@Model );">Save</button>
+                        <button type="submit" class="btn btn-success" ng-click="SaveStock(ListStockTotal,TotalStock,AddNewQty ,@Model.EmpNo );">Save</button>
                         <button type="submit" class="btn btn-warning" ng-click="reloadPage();">Clear</button>
                     </div>
                 </div>
@@ -410,7 +417,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-success" ng-click="UpdateStockss(ListStock,ReduceQty,UpTotalStock ,@Model);">Update</button>
+                        <button type="submit" class="btn btn-success" ng-click="UpdateStockss(ListStock,ReduceQty,UpTotalStock ,@Model.EmpNo);">Update</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -470,7 +477,7 @@
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label class="col-form-label text-bold">Remark/Location</label>
-                                <input type="text" class="form-control" id="Total" ng-model="AddMaster.Remark"  />
+                                <input type="text" class="form-control" id="Total" ng-model="AddMaster.Remark" />
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -481,6 +488,5 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>

@@ -3,9 +3,9 @@
     Layout = "~/Views/Shared/_LayoutHOMEData.cshtml";
 }
 
-@model int
+@model EBR.Web.Models.UserQuo
 
-<div ng-controller="mainController" ng-init="GetOrderInfo(@Model)">
+<div ng-controller="mainController" ng-init="GetOrderInfo(@Model.EmpNo , '@Model.CodeId')">
     <div class="navbar-custom">
         <ul class="list-unstyled topbar-menu float-end mb-0">
             <li class="dropdown notification-list d-lg-none">
@@ -224,7 +224,7 @@
                                         </button>
                                     </td>
                                     <td class="text-center">
-                                        <button type="button" class="btn btn-success" ng-click="GetFilesData(item.OrderNumber , @Model);">
+                                        <button type="button" class="btn btn-success" ng-click="GetFilesData(item.OrderNumber , @Model.EmpNo);">
                                             Files
                                         </button>
                                     </td>
