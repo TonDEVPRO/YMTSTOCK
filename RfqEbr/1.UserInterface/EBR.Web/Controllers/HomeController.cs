@@ -44,7 +44,6 @@ using Rectangle = iTextSharp.text.Rectangle;
 using RFIDReaderAPI;
 using RFIDReaderAPI.Models;
 using System.Net.Http.Headers;
-using QRCoder;
 
 
 namespace EBR.Web.Controllers
@@ -52,9 +51,7 @@ namespace EBR.Web.Controllers
     public class HomeController : Controller , RFIDReaderAPI.Interface.IAsynchronousMessage
     {
         private readonly IUnitOfWork _uow;
-
         string IPConfig = "192.168.3.248:9090";
-
         private List<string> displayedEpcs = new List<string>();
         public HomeController(IUnitOfWork uow)
         {
@@ -80,7 +77,6 @@ namespace EBR.Web.Controllers
             var getEmpDetail = _uow.YMTGUsers.GetAll().Where(x => x.Id == EmployeeNo).FirstOrDefault();
             return new JsonNetResult(getEmpDetail);
         }
-
         //YMTG CheckUser
         public ActionResult checkUser(string Emp_EmpNo, string Emp_Pass)
         {
@@ -96,7 +92,6 @@ namespace EBR.Web.Controllers
                 return new JsonNetResult(CheckRole);
             }
         }
-
         //Auth Login all page
         public ActionResult YMTGroup()
         {
@@ -1747,7 +1742,6 @@ namespace EBR.Web.Controllers
                 return new JsonNetResult(new { error = "Data not found" });
             }
         }
-
 
 
         //RFID DATA

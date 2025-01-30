@@ -78,8 +78,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\EmployeeInnoConfiguration.cs" />
-    <Compile Include="Configuration\EmployeeLoginConfiguration.cs" />
     <Compile Include="Configuration\MasterRemarkConfig.cs" />
     <Compile Include="Configuration\AttachmentsModelConfig.cs" />
     <Compile Include="Configuration\PaymentConfig.cs" />
@@ -100,11 +98,6 @@
     <Compile Include="Configuration\YMTGOrderGroupConfiguration.cs" />
     <Compile Include="Configuration\YMTGOrderDetailConfiguration.cs" />
     <Compile Include="Configuration\YMTGNDSShopStockConfig.cs" />
-    <Compile Include="Configuration\YPTGUploadDetailConfiguration.cs" />
-    <Compile Include="Configuration\YPTGUploadDataConfiguration.cs" />
-    <Compile Include="Configuration\YPTGUploadfileDataLogConfiguration.cs" />
-    <Compile Include="Configuration\YPTGUploadfileDataConfiguration.cs" />
-    <Compile Include="Configuration\YPTGUploadfileConfiguration.cs" />
     <Compile Include="Configuration\YMTGUserConfiguration.cs" />
     <Compile Include="Configuration\AuthorizeSystemMasterConfiguration.cs" />
     <Compile Include="Core\CustomCore.cs" />

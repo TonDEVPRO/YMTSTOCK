@@ -11,11 +11,6 @@
                 <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                     <i class="dripicons-search noti-icon"></i>
                 </a>
-                <div class="dropdown-menu dropdown-menu-animated dropdown-lg p-0">
-                    <form class="p-3">
-                        <input type="text" class="form-control" placeholder="Search ..." aria-label="Recipient's username">
-                    </form>
-                </div>
             </li>
             <li class="dropdown notification-list">
                 <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
@@ -104,57 +99,7 @@
                         </div>
                     </div>
                 </div>
-            </li>
-            <li class="dropdown notification-list d-none d-sm-inline-block">
-                <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                    <i class="dripicons-view-apps noti-icon"></i>
-                </a>
-                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated dropdown-lg p-0">
-                    <div class="p-2">
-                        <div class="row g-0">
-                            <div class="col">
-                                <a class="dropdown-icon-item" href="#">
-                                    <img src="~/Styles/assets/images/brands/slack.png" alt="slack">
-                                    <span>Slack</span>
-                                </a>
-                            </div>
-                            <div class="col">
-                                <a class="dropdown-icon-item" href="#">
-                                    <img src="~/Styles/assets/images/brands/github.png" alt="Github">
-                                    <span>GitHub</span>
-                                </a>
-                            </div>
-                            <div class="col">
-                                <a class="dropdown-icon-item" href="#">
-                                    <img src="~/Styles/assets/images/brands/dribbble.png" alt="dribbble">
-                                    <span>Dribbble</span>
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="row g-0">
-                            <div class="col">
-                                <a class="dropdown-icon-item" href="#">
-                                    <img src="~/Styles/assets/images/brands/bitbucket.png" alt="bitbucket">
-                                    <span>Bitbucket</span>
-                                </a>
-                            </div>
-                            <div class="col">
-                                <a class="dropdown-icon-item" href="#">
-                                    <img src="~/Styles/assets/images/brands/dropbox.png" alt="dropbox">
-                                    <span>Dropbox</span>
-                                </a>
-                            </div>
-                            <div class="col">
-                                <a class="dropdown-icon-item" href="#">
-                                    <img src="~/Styles/assets/images/brands/g-suite.png" alt="G Suite">
-                                    <span>G Suite</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </li>
+            </li>         
             <li class="dropdown notification-list">
                 <a class="nav-link dropdown-toggle nav-user arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false"
                    aria-expanded="false">
@@ -184,7 +129,6 @@
                     </a>
                 </div>
             </li>
-
         </ul>
         <button class="button-menu-mobile open-left">
             <i class="mdi mdi-menu"></i>
@@ -205,21 +149,21 @@
                         <div class="row mb-2">
                             <div class="col-md-3">
                                 <div class="card text-bg-primary">
-                                    <div class="card-body btn btn-primary" ng-click="NdssystemLink(@Model.EmpNo , @Model.CodeId);">
+                                    <div class="card-body btn btn-info" ng-click="NdssystemLink(@Model.EmpNo , @Model.CodeId);">
                                         <h3>NDS SYSTEM</h3>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="card text-bg-success">
-                                    <div class="card-body btn btn-success" ng-click="RFIDUrlInfor(@Model.EmpNo , @Model.CodeId);">
+                                    <div class="card-body btn btn-info" ng-click="NDSShopLink(@Model.EmpNo , @Model.CodeId);">
                                         <h3>NDS SHOP</h3>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="card text-bg-primary">
-                                    <div class="card-body btn btn-dark" ng-click="RFIDUrlInfors(@Model.EmpNo , @Model.CodeId);">
+                                    <div class="card-body btn btn-info" ng-click="RFIDUrlInfors(@Model.EmpNo , @Model.CodeId);">
                                         <h3>RFID</h3>
                                     </div>
                                 </div>
@@ -231,8 +175,6 @@
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
                 </div>

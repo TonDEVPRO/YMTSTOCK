@@ -7,26 +7,17 @@ public class YmtgOrderModelConfig : EntityTypeConfiguration<YmtgOrderModel>
 {
     public YmtgOrderModelConfig()
     {
-
-        // Mapping Properties
-        // Table Name
         ToTable("YMTG_NDS_ViewOrder");
 
-        // Primary Key
         HasKey(t => t.Id);
-
-
         Property(t => t.OrderNumber)
             .IsRequired()
             .HasMaxLength(50);
-
         Property(t => t.OrderDate)
             .IsRequired();
-
         Property(t => t.OrderStatus)
             .IsRequired()
             .HasMaxLength(50);
-
         Property(t => t.ShipDate)
             .IsOptional();
 
@@ -66,9 +57,7 @@ public class YmtgOrderModelConfig : EntityTypeConfiguration<YmtgOrderModel>
             .HasMaxLength(50);
 
         Property(t => t.CreateDate)
-            .IsRequired();
-
-    
+            .IsRequired();   
     }
 }
 

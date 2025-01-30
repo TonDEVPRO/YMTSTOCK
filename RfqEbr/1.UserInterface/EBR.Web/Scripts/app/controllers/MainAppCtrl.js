@@ -1477,6 +1477,11 @@
     $scope.NdssystemLink = function (EmpNo , CodeId) {
         $window.location.href = 'YMTNdsSystem?EmpNo=' + EmpNo + '&CodeId=' + CodeId;
     };
+    $scope.NDSShopLink = function (EmpNo, CodeId) {
+        $window.location.href = 'YMTNdsStock?EmpNo=' + EmpNo + '&CodeId=' + CodeId;
+    };
+
+
     $scope.tags = [];
     let intervalPromise;
     $scope.StartCheck = 1;
@@ -1573,9 +1578,9 @@
     ///RFID Menu
 
 
-    $scope.POSSystemData = function (EmpNo) {
+    $scope.POSSystemData = function (EmpNo , CodeId) {
 
-        $window.location.href = 'POSSystem?EmpNo=' + EmpNo;
+        $window.location.href = 'POSSystem?EmpNo=' + EmpNo + '&CodeId=' + CodeId;
     }
     $scope.SaveQuotation = function (QuoData, SelectedProvinces, SelectedDistricts,
         SelectedSub, SZipcode, skuCode, SelectedTypeSell, Entries, EmpNo) {
@@ -1715,21 +1720,7 @@
       
     };
 
-
-    $scope.YmtHomeClick = function (EmpNo) {
-
-        console.log(EmpNo);
-
-        console.log($scope.emplist);
-        
-    };
-
     
-
-
-
-
-
 
 }]);
 

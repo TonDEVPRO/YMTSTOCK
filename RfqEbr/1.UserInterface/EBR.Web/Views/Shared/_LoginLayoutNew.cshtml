@@ -16,12 +16,6 @@
     <meta name="mobile-web-app-capable" content="yes">
     <title>YMT-GROUP</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    @*Fav and touch icons
-        <link href="@(parthIcon)" rel="shortcut icon" type="image/x-icon" />
-        <link rel="icon" href="@(parthIcon)" sizes="32x32" />
-        <link rel="icon" href="@(parthIcon)" sizes="48x48" />
-        <link rel="icon" href="@(parthIcon)" sizes="64x64" />*@
-
     <link rel="shortcut icon" href="~/Images/YMTHolding.png">
 
     <!-- Fontawesome -->
@@ -32,7 +26,6 @@
     <link href="~/Content/volt.css" rel="stylesheet" />
     <link href="~/Content/volt.css.map" rel="stylesheet" />
 
-    @*@Styles.Render("~/Content/css")*@
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
 
@@ -47,14 +40,12 @@
                 </div>
             </div>
         </section>
-
     </main>
 
     <script src="~/Content/js/sweetalert299.js"></script>
 
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/angular")
-    @*@Scripts.Render("~/bundles/addon")*@
     @Scripts.Render("~/bundles/app")
 
     <script>

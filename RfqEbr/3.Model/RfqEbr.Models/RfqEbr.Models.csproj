@@ -100,7 +100,6 @@
     <Compile Include="Table\AuthorizeSystemMaster.cs" />
     <Compile Include="Table\RFIDTag.cs" />
     <Compile Include="Table\Product.cs" />
-    <Compile Include="Table\EmployeeInno.cs" />
     <Compile Include="Table\YMTGNDSShopSaveHoliday.cs" />
     <Compile Include="Table\YMTGNDSShopHolidayLog.cs" />
     <Compile Include="Table\YMTGNDSShopHoliday.cs" />
@@ -108,13 +107,7 @@
     <Compile Include="Table\YMTGNDSShopStockLog.cs" />
     <Compile Include="Table\YMTGOrderGroup.cs" />
     <Compile Include="Table\YMTGOrderDetail.cs" />
-    <Compile Include="Table\YPTGUploadDetail.cs" />
-    <Compile Include="Table\YPTGUploadData.cs" />
-    <Compile Include="Table\YPTGUploadfileDataLog.cs" />
-    <Compile Include="Table\YPTGUploadfileData.cs" />
-    <Compile Include="Table\YPTGUploadfile.cs" />
     <Compile Include="Table\YMTGUser.cs" />
-    <Compile Include="Table\EmployeeLogin.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

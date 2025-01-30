@@ -37,10 +37,6 @@ namespace RfqEbr.Data
 
         //MRB DISPOSITION REPORT
 
-        public IRepository<EmployeeLogin> EmployeeLogins { get { return GetStandardRepo<EmployeeLogin>(); } }
-        public IRepository<EmployeeInno> EmployeeInnos { get { return GetStandardRepo<EmployeeInno>(); } }
-
-
         public ICustomRepository Custom { get { return GetRepo<ICustomRepository>(); } }
 
 
@@ -48,18 +44,7 @@ namespace RfqEbr.Data
         //YMTG
         public IRepository<YMTGUser> YMTGUsers { get { return GetStandardRepo<YMTGUser>(); } }
         public IRepository<YMTGOrderDetail> YMTGOrderDetails { get { return GetStandardRepo<YMTGOrderDetail>(); } }
-        public IRepository<YPTGUploadfile> YPTGUploadfiles { get { return GetStandardRepo<YPTGUploadfile>(); } }
-
-        public IRepository<YPTGUploadDetail> YPTGUploadDetails { get { return GetStandardRepo<YPTGUploadDetail>(); } }
-
-        public IRepository<YPTGUploadData> YPTGUploadDatas { get { return GetStandardRepo<YPTGUploadData>(); } }
-
-        public IRepository<YPTGUploadfileData> YPTGUploadfileDatas { get { return GetStandardRepo<YPTGUploadfileData>(); } }
-
         public IRepository<YMTGOrderGroup> YMTGOrderGroups { get { return GetStandardRepo<YMTGOrderGroup>(); } }
-
-        public IRepository<YPTGUploadfileDataLog> YPTGUploadfileDataLogs { get { return GetStandardRepo<YPTGUploadfileDataLog>(); } }
-
 
 
         //NDS
