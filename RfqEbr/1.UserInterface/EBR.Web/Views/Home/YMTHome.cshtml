@@ -4,7 +4,7 @@
 }
 @model EBR.Web.Models.UserQuo
 
-<body ng-controller="mainController" ng-init="YMTHomeData(@Model.EmpNo , @Model.CodeId)">
+<body ng-controller="mainController" ng-init="YMTHomeData(@Model.EmpNo , '@Model.CodeId')">
     <div class="navbar-custom">
         <ul class="list-unstyled topbar-menu float-end mb-0">
             <li class="dropdown notification-list d-lg-none">
@@ -158,20 +158,6 @@
                                 <div class="card text-bg-success">
                                     <div class="card-body btn btn-info" ng-click="NDSShopLink(@Model.EmpNo , @Model.CodeId);">
                                         <h3>NDS SHOP</h3>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="card text-bg-primary">
-                                    <div class="card-body btn btn-info" ng-click="RFIDUrlInfors(@Model.EmpNo , @Model.CodeId);">
-                                        <h3>RFID</h3>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="card text-bg-info">
-                                    <div class="card-body btn btn-info" ng-click="POSSystemData(@Model.EmpNo , @Model.CodeId);">
-                                        <h3>POS</h3>
                                     </div>
                                 </div>
                             </div>

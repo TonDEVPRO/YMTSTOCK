@@ -11,6 +11,8 @@ namespace RfqEbr.Models.Table
         public int AddQty { get; set; }
         public int TotalQty { get; set; }
         public string Remark { get; set; }
+        public string WareHouseName { get; set; }
+        public string Location { get; set; }
         public string CreateBy { get; set; }
         public DateTime CreateDate { get; set; }
     }

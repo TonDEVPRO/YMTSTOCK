@@ -16,8 +16,6 @@
     <meta name="mobile-web-app-capable" content="yes">
     <title>YMT-GROUP</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-
-
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
 
@@ -29,8 +27,18 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
-</head>
+    <script src="~/Scripts/Quagga.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/simplebar@latest/dist/simplebar.min.css">
+    <script src="https://unpkg.com/simplebar@latest/dist/simplebar.min.js"></script>
 
+    <style>
+        #leftside-menu-container {
+            max-height: calc(100vh - 150px); /* ปรับความสูงให้เมนูเลื่อนเมื่อเกินขอบเขต */
+            overflow-y: auto;
+        }
+    </style>
+
+</head>
 <body class="loading" data-layout-color="light" data-leftbar-theme="dark" data-layout-mode="fluid" data-rightbar-onstart="true" ng-app="MainApp" ng-controller="mainController">
     <div class="wrapper" id="app">
         <div class="leftside-menu">
@@ -42,6 +50,7 @@
                     <img src="~/Images/YMTHolding.png" alt="" height="50" />
                 </span>
             </a>
+
             <div class="mt-5" id="leftside-menu-container" data-simplebar>
                 <ul class="side-nav">
                     <li class="side-nav-title side-nav-item"></li>
@@ -111,17 +120,10 @@
                         </a>
                         <div class="collapse" id="sidebarProjects">
                             <ul class="side-nav-second-level">
+ 
                                 <li>
-                                    <a href="apps-projects-list.html">List</a>
-                                </li>
-                                <li>
-                                    <a href="apps-projects-details.html">Details</a>
-                                </li>
-                                <li>
-                                    <a href="apps-projects-gantt.html">Gantt <span class="badge rounded-pill bg-light text-dark font-10 float-end">New</span></a>
-                                </li>
-                                <li>
-                                    <a href="apps-projects-add.html">Create Project</a>
+                                    <a href="@Url.Action("ViewStockDeviceIT", "StockDeviceIT")?EmpNo=@Model.EmpNo&CodeId=@Model.CodeId">StockDeviceIT</a>
+
                                 </li>
                             </ul>
                         </div>
@@ -146,27 +148,21 @@
             </footer>
         </div>
     </div>
-
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/angular")
     @Scripts.Render("~/bundles/app")
-
     <script>
 		window.baseUrl = "@baseurl";
 		window.autherize = "@Url.Action("Login", "Account")";
 		Icon = "@parthIcon";
     </script>
 
-
     <script src="~/Scripts/node_modules/moment/moment.js"></script>
     <script src="~/Scripts/node_modules/datetime-picker/jquery.datetimepicker.full.js"></script>
     <script src="~/Styles/HyperDEV/assets/js/vendor.min.js"></script>
     <script src="~/Styles/HyperDEV/assets/js/app.min.js"></script>
-
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     @RenderSection("scripts", required: false)
-
 </body>
 </html>

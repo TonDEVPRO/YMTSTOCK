@@ -51,7 +51,7 @@ namespace EBR.Web.Controllers
     public class HomeController : Controller , RFIDReaderAPI.Interface.IAsynchronousMessage
     {
         private readonly IUnitOfWork _uow;
-        string IPConfig = "192.168.3.248:9090";
+        string IPConfig = "192.168.1.116:9090";
         private List<string> displayedEpcs = new List<string>();
         public HomeController(IUnitOfWork uow)
         {
@@ -118,8 +118,6 @@ namespace EBR.Web.Controllers
                         EmpNo = EmpNo,
                         CodeId = CodeId
                     };
-
-
                     return View(EmpUser);
                 }
                 else
@@ -205,7 +203,9 @@ namespace EBR.Web.Controllers
                                   e.Size,
                                   e.Cost,
                                   e.Price,
-                                  e.Total
+                                  e.Total,
+                                  e.WarehouseName,
+                                  e.Location
                               })
                               .ToList();
             return Json(new { data = data }, JsonRequestBehavior.AllowGet);
@@ -290,6 +290,12 @@ namespace EBR.Web.Controllers
                 existingData.Size = ndsShopStocks.Size;
                 existingData.Price = ndsShopStocks.Price;
                 existingData.Total = ndsShopStocks.Total;
+                existingData.WarehouseName = ndsShopStocks.WarehouseName;
+                existingData.Location = ndsShopStocks.Location;
+                existingData.Remark = ndsShopStocks.Remark;
+                existingData.CreateBy = ndsShopStocks.CreateBy;
+                existingData.CreateDate = DateTime.Now;
+               
                 _uow.YMTGNDSShopStocks.Update(existingData);
                 _uow.Commit();
                 return new JsonNetResult(existingData);
@@ -297,6 +303,8 @@ namespace EBR.Web.Controllers
         }
         public ActionResult UpdateStockLogs(YMTGNDSShopStockLog ndsShopStocksLogs)
         {
+            ndsShopStocksLogs.WareHouseName = ndsShopStocksLogs.WareHouseName;
+            ndsShopStocksLogs.Location = ndsShopStocksLogs.Location;
             ndsShopStocksLogs.Remark = "UpdateStock";
             ndsShopStocksLogs.CreateDate = DateTime.Now;
             _uow.YMTGNDSShopStockLogs.Add(ndsShopStocksLogs);
@@ -382,7 +390,6 @@ namespace EBR.Web.Controllers
             }).ToList();
             return Json(new { data = ListStockHoliday });
         }
-
         [HttpGet]
         public JsonResult GetholidayData()
         {
@@ -572,6 +579,22 @@ namespace EBR.Web.Controllers
                 }
             }
         }
+
+        //WareHouse
+        public ActionResult GetWareHouse()
+        {
+            var WareHouseData = _uow.Warehouses.GetAll().GroupBy(p => p.WarehouseName).ToList();
+            var WareHouseDatas = WareHouseData.Select(g => g.Key).ToList();
+            return new JsonNetResult(WareHouseDatas);
+        }
+        public ActionResult Getlocationdescs(string warehousenames)
+        {
+            var WareHouseData = _uow.Warehouses.GetAll().Where(z=>z.WarehouseName == warehousenames).GroupBy(p => p.Location).ToList();
+            var WareHouseDatas = WareHouseData.Select(g => g.Key).ToList();
+            return new JsonNetResult(WareHouseDatas);
+        }
+
+        
 
         [HttpGet]
         public JsonResult GetdataquoNew()
@@ -1204,7 +1227,7 @@ namespace EBR.Web.Controllers
                     {
                         // ดึงข้อมูลจาก MasterStyle
                         var masterStyle = _uow.MasterStyles.GetAll()
-                            .Where(ms => ms.StyleCode == product.SKUCode)
+                            .Where(ms => ms.SKUCode == product.SKUCode)
                             .FirstOrDefault();
 
                         string productDescription = product.ProductName;

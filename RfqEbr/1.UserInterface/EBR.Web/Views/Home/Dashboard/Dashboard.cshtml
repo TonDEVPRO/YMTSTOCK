@@ -1,10 +1,12 @@
 ﻿@{
-    ViewBag.Title = "_LayoutRFID";
-    Layout = "~/Views/Shared/_LayoutRFID.cshtml";
+    ViewBag.Title = "_LayoutHOMEData";
+    Layout = "~/Views/Shared/_LayoutHOMEData.cshtml";
 }
-@model int
 
-<div ng-controller="mainController" ng-init="RFIDGETDATA(@Model)">
+@model EBR.Web.Models.UserQuo
+
+
+<div ng-controller="dashboardController" ng-init="GetEmplData()">
     <div class="navbar-custom">
         <ul class="list-unstyled topbar-menu float-end mb-0">
             <li class="dropdown notification-list d-lg-none">
@@ -189,89 +191,76 @@
         <button class="button-menu-mobile open-left">
             <i class="mdi mdi-menu"></i>
         </button>
-
     </div>
-    <div class="container d-flex justify-content-center align-items-center vh-100" ng-show="StartCheck==1 ">
-        <button class="btn custom-btn" ng-click="ClickStart()">START</button>
-    </div>
-
-
-
-    <div class="row m-2" ng-show="StartCheck==2">
-        <div class="row m-3">
-            <div class="col-md-10"></div>
-            <div class="col-md-2">
-                <button class="btn btn-group-lg btn-lg btn-warning text-end" ng-click="ReStartReading()">Restart</button>
-                <button class="btn btn-group-lg btn-lg btn-danger text-end" ng-click="stopReading()">BACK</button>
+    <div class="wrapper">
+        <div class="row">
+            <div class="row">
+                <div class="p-3">
+                    <h1 class="page-title">Quotation Online</h1>
+                </div>
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="col-md-12 text-end">
+                            <button class="btn btn-secondary m-3" type="button" ng-click="CreateQuo(@Model.EmpNo , '@Model.CodeId')"> New </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive p-3">
+                                <table id="dataTable" class="display table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Dept</th>
+                                            <th class="text-center">Email</th>
+                                            <th class="text-center">Factory</th>
+                                            <th class="text-center">GNXPODepartment</th>
+                                            <th class="text-center">Resign</th>
+                                            <th class="text-center">Status</th>
+                                            <th class="text-center">UserGroup</th>
+                                            <th class="text-center">YPTLevel</th>
+                                            <th class="text-center">YPTName</th>
+                                            <th class="text-center">YPTPODepartment</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in emplist">
+                                            <td class="text-center">{{ item.Dept}}</td>
+                                            <td class="text-center">{{ item.Email}}</td>
+                                            <td class="text-center">{{ item.Factory}}</td>
+                                            <td class="text-center">{{ item.GNXPODepartment}}</td>
+                                            <td class="text-center">{{ item.Resign}}</td>
+                                            <td class="text-center">{{ item.Status}}</td>
+                                            <td class="text-center">{{ item.UserGroup}}</td>
+                                            <td class="text-center">{{ item.YPTLevel}}</td>
+                                            <td class="text-center">{{ item.YPTName}}</td>
+                                            <td class="text-center">{{ item.YPTPODepartment}}</td>
 
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <div class="row mt-3">
-                    <div class="col-md-12">
-                        <div class="table-responsive">
-                            <table class="table table-borderless table-nowrap table-centered mb-0">
-                                <thead class="table-light border-dark border-2">
-                                    <tr>
-                                        <th class="text-left">ProductName</th>
-                                        <th class="text-center">Size</th>
-                                        <th class="text-center">Price</th>
-                                        <th class="text-center">Quantity</th>
-                                        <th class="text-center">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr ng-repeat="product in groupedProducts()">
-                                        <td class="text-left text-nowrap">
-                                            {{product.ProductName}}
-                                        </td>
-                                        <td class="text-center text-nowrap">
-                                            {{product.Size}}
-                                        </td>
-                                        <td class="text-center text-nowrap">
-                                            {{product.Prices  | currency:''}}
-                                        </td>
-                                        <td class="text-center text-nowrap">
-                                            {{ product.TotalQuantity}}
-                                        </td>
-                                        <td class="text-center text-nowrap">
-                                            {{product.TotalPrice  | currency:''}}
-                                        </td>
-                                    </tr>
-                                </tbody>
-
-                                <tfoot class="border-top">
-                                    <tr>
-                                        <td class="text-left text-nowrap font-22"><strong>TotalQty : {{totalQtys}}</strong></td>
-                                        <td class="text-center text-nowrap"><strong></strong></td>
-                                        <td class="text-center text-nowrap"></td>
-                                        <td colspan="2" class="text-end font-22"><strong>TotalAmount : {{TotalsData  | currency:''}}</strong></td>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                                            @*<td class="text-center">
+            <button type="button" class="btn btn-secondary right" disabled ng-show="item.QuoStatus == 1">
+                Edit
+            </button>
+            <button type="button" class="btn btn-primary right" ng-show="item.QuoStatus == 0" ng-click="editQuo(@Model.EmpNo , item.QuotationNumber)">
+                Edit
+            </button>
+        </td>
+        <td class="text-center">
+            <button type="button" class="btn btn-success right" ng-click="PrintPDF(item.QuotationNumber)">
+                PDF
+            </button>
+        </td>
+        <td class="text-center">
+            <button type="button" class="btn btn-info right" ng-click="viewQuotation(@Model.EmpNo , item.QuotationNumber)">
+                View
+            </button>
+        </td>*@
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="row m-3">
-        <div class="col-md-10"></div>
-        <div class="col-md-2">
-            <button class="btn btn-group-lg btn-lg btn-blue text-end" ng-click="GenQr(@Model)">Payment</button>
-        </div>
-
-    </div>
-    <div class="row">
-        <h2 class="mt-5">Payment Details</h2>
-        <div>
-            <p>Payment ID: {{paymentId}}</p>
-            <p>Amount: 500.00</p>
-            <p>Status: Pending</p>
-            <h3>Scan to Pay</h3>
-            <img ng-src="{{qrCodeUrl}}" alt="QR Code" class="img-fluid" />
         </div>
     </div>
 </div>

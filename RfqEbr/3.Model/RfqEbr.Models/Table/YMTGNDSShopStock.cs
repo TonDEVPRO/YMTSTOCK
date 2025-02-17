@@ -14,6 +14,8 @@ namespace RfqEbr.Models.Table
         public decimal Price { get; set; }
         public int Total { get; set; }
         public int Status { get; set; }
+        public string WarehouseName { get; set; }
+        public string Location { get; set; }
         public string Remark { get; set; }
         public string CreateBy { get; set; }
         public DateTime CreateDate { get; set; }

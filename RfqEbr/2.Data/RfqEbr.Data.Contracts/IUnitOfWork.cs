@@ -2,6 +2,9 @@
 using RfqEbr.Data.Contracts.Core;
 using RfqEbr.Data.Contracts.Repository;
 using RfqEbr.Models;
+using RfqEbr.Models.IT.StockDeviceIT;
+using RfqEbr.Models.IT.StockDeviceITInLocation;
+using RfqEbr.Models.IT;
 using RfqEbr.Models.Table;
 
 namespace RfqEbr.Data.Contracts
@@ -57,5 +60,20 @@ namespace RfqEbr.Data.Contracts
         IRepository<Product> Products { get; }
         IRepository<RFIDTag> RFIDTags { get; }
         IRepository<Payment> Payments { get; }
+
+        //NDS 
+        IRepository<Warehouse> Warehouses { get; }
+        IRepository<BarcodeTags> BarcodeTagss { get; }
+
+        //StockIT 
+        IRepository<StockDeviceIT> StockDeviceITs { get; }
+        IRepository<StockDeviceITInQty> StockDeviceITInQtys { get; }
+        IRepository<StockTransactionIT> StockTransactionITs { get; }
+        IRepository<MasterSupplier> MasterSuppliers { get; }
+        IRepository<MasterTransactionType> MasterTransactionTypes { get; }
+        IRepository<MasterLocation> MasterLocations { get; }
+        IRepository<MasterDepartment> MasterDepartments { get; }
+        IRepository<Device> Devices { get; }
+
     }
 }

@@ -2,12 +2,11 @@
     ViewBag.Title = "_LayoutHOMEData";
     Layout = "~/Views/Shared/_LayoutHOMEData.cshtml";
 }
+
 @model EBR.Web.Models.UserQuo
 
-
-
-<div ng-controller="mainController" ng-init="Getdataindex(@Model.EmpNo , '@Model.CodeId')">
-    <div class="navbar-custom">
+<div ng-controller="StockDeviceITController" ng-init="GetStockDeviceData()">
+    <div class="navbar-custom" ng-init="YMTHomeData(@Model.EmpNo , @Model.CodeId)">
         <ul class="list-unstyled topbar-menu float-end mb-0">
             <li class="dropdown notification-list d-lg-none">
                 <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
@@ -196,64 +195,83 @@
         <div class="row">
             <div class="row">
                 <div class="p-3">
-                    <h1 class="page-title">Quotation Online</h1>
+                    <h1 class="page-title">StockDeviceIT</h1>
                 </div>
             </div>
-            <div class="row">
+            <!-- MainBody -->
+            <div class="row mx-0 my-auto">
                 <div class="col-md-12">
                     <div class="card">
-                        <div class="col-md-12 text-end">
-                            <button class="btn btn-secondary m-3" type="button" ng-click="CreateQuo(@Model.EmpNo , '@Model.CodeId')"> New </button>
+                        <div class="col-md-12 d-flex flex-wrap justify-content-between align-items-center p-3">
+                            <div>
+                                <button class="btn btn-primary rounded m-1" style="width: 90px;" disabled> Add </button>
+                            </div>
+                            <div>
+                                <a href="@Url.Action("ViewReceiveStockIT", "ReceiveStockDeviceIT")?EmpNo=@Model.EmpNo&CodeId=@Model.CodeId" class="btn btn-success rounded m-1" style="width: 90px;"> Receive </a>
+                                <a href="@Url.Action("ViewOutStockIT", "OutStockDeviceIT")?EmpNo=@Model.EmpNo&CodeId=@Model.CodeId" class="btn btn-warning rounded m-1" style="width: 90px;"> Out </a>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <div class="table-responsive p-3">
+                        <div class="card-body p-0">
+                            <div class="px-3 py-1 col-md-8">
+                                <input type="text" class="form-control pe-0 me-5 mb-1" ng-model="searchText" ng-change="stockDeviceITFilter()" placeholder="Search by Code, ItemName">
+                                <!-- Checkbox -->
+                                <div class="row ms-1">
+                                    <div class="form-check col-md-6">
+                                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" ng-model="viewUSE" ng-change="stockDeviceITFilter()">
+                                        <label class="form-check-label" for="flexCheckChecked">
+                                            View only items are in stock
+                                        </label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <mute>รายการทั้งหมด: {{stockList.length}}</mute>
+                                    </div>
+                                </div>
+                                <!-- Checkbox -->
+                            </div>
+                            <!-- Table -->
+                            <div class="table-responsive m-3">
                                 <table id="dataTable" class="display table table-striped table-bordered dt-responsive nowrap" style="width:100%">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Id</th>
-                                            <th class="text-center">Quotation Number</th>
-                                            <th class="text-center">Quotation Type</th>
-                                            <th class="text-center">Customer Name</th>
-                                            <th class="text-center">Customer Lastname</th>
-                                            <th class="text-center">Create date</th>
+                                            <th class="text-center">Code</th>
                                             <th class="text-center">Status</th>
-                                            <th class="text-center">Edit</th>
-                                            <th class="text-center">PDF</th>
-                                            <th class="text-center">View</th>
+                                            <th class="text-center">ItemName</th>
+                                            <th class="text-center">Minimum</th>
+                                            <th class="text-center">Qty</th>
                                         </tr>
                                     </thead>
                                     <tbody>
- 
-                                        <tr ng-repeat="item in data">
-                                            <td class="text-center">{{ item.Id }}</td>
-                                            <td class="text-center">{{ item.QuotationNumber }}</td>
-                                            <td class="text-center">{{ item.QuoType }}</td>
-                                            <td class="text-center">{{ item.CustomerName }}</td>
-                                            <td class="text-center">{{ item.QuoLastname }}</td>
-                                            <td class="text-center">{{ formatDate(item.CreateDate)}}</td>
-                                            <td class="text-center">{{  item.QuoStatus == 1 ? 'Confirm' : '' }}</td>
+                                        <tr ng-repeat="item in Data[currentPage]">
+                                            <td class="text-center">{{item.Code}}</td>
                                             <td class="text-center">
-                                                <button type="button" class="btn btn-secondary right" disabled ng-show="item.QuoStatus == 1">
-                                                    Edit
-                                                </button>
-                                                <button type="button" class="btn btn-primary right" ng-show="item.QuoStatus == 0" ng-click="editQuo(@Model.EmpNo , item.QuotationNumber)">
-                                                    Edit
-                                                </button>
+                                                <span style="width:75px" class="fs-5 p-1" ng-class="{'badge badge-success-lighten':item.Status == 0,'badge badge-danger-lighten':item.Status == 1}">
+                                                    {{ item.Status == 0 ? 'USE' : 'CANCEL' }}
+                                                </span>
                                             </td>
-                                            <td class="text-center">
-                                                <button type="button" class="btn btn-success right" ng-click="PrintPDF(item.QuotationNumber)">
-                                                    PDF
-                                                </button>
+                                            <td class="text-center" style="
+                                                        min-width: 120px;
+                                                        max-width: 500px;
+                                                        width: 400px;">
+                                                {{item.ItemName}}
                                             </td>
-                                            <td class="text-center">
-                                                <button type="button" class="btn btn-info right" ng-click="viewQuotation(@Model.EmpNo , item.QuotationNumber)">
-                                                    View
-                                                </button>
-                                            </td>
+                                            <td class="text-center">{{ item.Minimum}}</td>
+                                            <td class="text-center">{{ item.QtyBalance}}</td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
+                            <!-- Table -->
+                            <ul class="pagination m-3" ng-show="totalPages > 1">
+                                <li class="page-item" ng-class="{disabled: currentPage == 0}">
+                                    <button class="page-link" ng-click="goToPage(currentPage - 1)">Previous</button>
+                                </li>
+                                <li class="page-item" ng-repeat="n in visiblePages()" ng-class="{active: n == currentPage}">
+                                    <button class="page-link" ng-click="goToPage(n)">{{ n + 1 }}</button>
+                                </li>
+                                <li class="page-item" ng-class="{disabled: currentPage == totalPages - 1}">
+                                    <button class="page-link" ng-click="goToPage(currentPage + 1)">Next</button>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>

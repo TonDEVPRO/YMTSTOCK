@@ -54,6 +54,12 @@ namespace RfqEbr.Data.Configuration
             Property(e => e.Remark)
                  .HasColumnName("Remark");
 
+            Property(e => e.WarehouseName)
+                     .HasColumnName("WarehouseName");
+
+
+            Property(e => e.Location)
+                    .HasColumnName("Location");
             Property(e => e.CreateBy)
                  .HasColumnName("CreateBy")
                  .HasMaxLength(150);

@@ -78,6 +78,16 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\BarcodeTagsConfig.cs" />
+    <Compile Include="Configuration\DeviceConfig.cs" />
+    <Compile Include="Configuration\MasterDepartmentConfig.cs" />
+    <Compile Include="Configuration\MasterLocationConfig.cs" />
+    <Compile Include="Configuration\MasterSupplierConfig.cs" />
+    <Compile Include="Configuration\MasterTransactionTypeConfig.cs" />
+    <Compile Include="Configuration\StockDeviceITConfig.cs" />
+    <Compile Include="Configuration\StockDeviceITInQtyConfig.cs" />
+    <Compile Include="Configuration\StockDeviceTransactionITConfig.cs" />
+    <Compile Include="Configuration\WarehouseConfig.cs" />
     <Compile Include="Configuration\MasterRemarkConfig.cs" />
     <Compile Include="Configuration\AttachmentsModelConfig.cs" />
     <Compile Include="Configuration\PaymentConfig.cs" />

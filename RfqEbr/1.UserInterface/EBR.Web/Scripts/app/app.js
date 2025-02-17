@@ -106,6 +106,6 @@ angular.module('anguFixedHeaderTable', [])
             }
         };
     }]);
-
+angular.module('barcodeApp', []);
 // Define the main application module
 const myApp = angular.module('MainApp', ['HttpConfig', 'anguFixedHeaderTable']);

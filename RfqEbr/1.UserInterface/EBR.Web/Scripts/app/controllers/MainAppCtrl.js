@@ -1,7 +1,5 @@
 ﻿myApp.controller('mainController', ['$rootScope', '$scope', '$http', '$window', '$interval', function ($rootScope, $scope, $http, $window, $interval) {
 
-    /*    var today = moment(new Date());*/
-
     var options = {
         timepicker: true,
         format: "Y-m-d",
@@ -163,10 +161,30 @@
                 $scope.ListStockTotal = response.data;
                 console.log($scope.ListStockTotal);
             })
+
+        $scope.getWarehouse();
     };
 
-    // ** END **  MenuList StockNDS //
-
+    $scope.getWarehouse = function () {
+        $http.get(window.baseUrl + 'Home/GetWareHouse')
+            .then(function (response) {
+                $scope.datawarehouse = response.data;
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
+    };
+    $scope.getlocationdesc = function (warehousename) {
+        $http.post(window.baseUrl + 'Home/Getlocationdescs', {
+            warehousenames : warehousename
+        }).then(function (response) {
+            $scope.datawarehouses = response.data;
+            console.log($scope.datawarehouses);
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
+    };
 
 
     //Sum Total Add stock
@@ -192,6 +210,10 @@
         $http.post(window.baseUrl + 'Home/EditStock', { id: id })
             .then(function (response) {
                 $scope.ListStock = response.data;
+
+                $scope.getWarehouse();
+
+                $scope.getlocationdesc($scope.ListStock.WarehouseName);
             })
     };
     // SaveStockNDS //
@@ -248,7 +270,9 @@
             Total: UpTotalStock, Id: ListStock.Id,
             Color: ListStock.Color, Cost: ListStock.Cost,
             Description: ListStock.Description, Price: ListStock.Price,
-            Size: ListStock.Size, Style: ListStock.Style, Status: ListStock.Status
+            Size: ListStock.Size, Style: ListStock.Style, Status: ListStock.Status,
+            WarehouseName: ListStock.WarehouseName, Location: ListStock.Location, Remark: ListStock.Remark,
+            CreateBy: FullUserId
         };
         $scope.ListUpdateStockLog =
         {
@@ -256,6 +280,8 @@
             Total: ListStock.Total,
             AddQty: ReduceQty,
             TotalQty: UpTotalStock,
+            WarehouseName: ListStock.WarehouseName,
+            Location: ListStock.Location,
             CreateBy: FullUserId
         };
         $http.post(window.baseUrl + 'Home/UpdateStocks', {
@@ -317,6 +343,8 @@
             $http.post('/Home/GetDescStyle', { Style: $scope.StyleNo }).then(function (response) {
                 $scope.ListStyle = response.data;
                 $scope.GetColorData();
+
+                $scope.getWarehouse();
             });
         };
     };
@@ -1213,9 +1241,6 @@
         window.open(url, '_blank');
     };
     $scope.viewQuotation = function (EmpNo ,quotationNumber ) {
-        console.log(EmpNo);
-        console.log(quotationNumber);
-
         $window.location.href = '/Home/NdsSystemViewPage?EmpNo=' + EmpNo + '&CodeId=' + quotationNumber;
     };
     $scope.backHome = function (EmpNo) {
@@ -1446,9 +1471,11 @@
         $window.location.href = 'NdsSystemOrderInformation?EmpNo=' + EmpNo + '&CodeId=' + '0';
     };
 
+    
 
-
-
+    $scope.RFIDUrlInfors = function (EmpNo, CodeId) {
+        $window.location.href = 'RFIDIndex?EmpNo=' + EmpNo + '&CodeId=' + '0';
+    };
 
 
     ///RFID Menu
@@ -1480,7 +1507,6 @@
     $scope.NDSShopLink = function (EmpNo, CodeId) {
         $window.location.href = 'YMTNdsStock?EmpNo=' + EmpNo + '&CodeId=' + CodeId;
     };
-
 
     $scope.tags = [];
     let intervalPromise;
@@ -1576,7 +1602,6 @@
         });
     };
     ///RFID Menu
-
 
     $scope.POSSystemData = function (EmpNo , CodeId) {
 
@@ -1719,9 +1744,6 @@
 
       
     };
-
-    
-
 }]);
 
 

@@ -5,6 +5,9 @@ using RfqEbr.Data.Contracts.Repository;
 using RfqEbr.Data.Core;
 using RfqEbr.Data.Helpers;
 using RfqEbr.Models;
+using RfqEbr.Models.IT.StockDeviceIT;
+using RfqEbr.Models.IT.StockDeviceITInLocation;
+using RfqEbr.Models.IT;
 using RfqEbr.Models.Table;
 
 //using Architecture.Model;
@@ -90,6 +93,20 @@ namespace RfqEbr.Data
         public IRepository<RFIDTag> RFIDTags { get { return GetStandardRepo<RFIDTag>(); } }
 
         public IRepository<Payment> Payments { get { return GetStandardRepo<Payment>(); } }
-        
+
+        public IRepository<Warehouse> Warehouses { get {return GetStandardRepo<Warehouse>(); } }
+
+        public IRepository<BarcodeTags> BarcodeTagss { get { return GetStandardRepo<BarcodeTags>(); } }
+
+
+        //IT
+        public IRepository<StockDeviceIT> StockDeviceITs { get { return GetStandardRepo<StockDeviceIT>(); } }
+        public IRepository<StockDeviceITInQty> StockDeviceITInQtys { get { return GetStandardRepo<StockDeviceITInQty>(); } }
+        public IRepository<StockTransactionIT> StockTransactionITs { get { return GetStandardRepo<StockTransactionIT>(); } }
+        public IRepository<MasterSupplier> MasterSuppliers { get { return GetStandardRepo<MasterSupplier>(); } }
+        public IRepository<MasterTransactionType> MasterTransactionTypes { get { return GetStandardRepo<MasterTransactionType>(); } }
+        public IRepository<MasterLocation> MasterLocations { get { return GetStandardRepo<MasterLocation>(); } }
+        public IRepository<MasterDepartment> MasterDepartments { get { return GetStandardRepo<MasterDepartment>(); } }
+        public IRepository<Device> Devices { get { return GetStandardRepo<Device>(); } } 
     }
 }

@@ -232,6 +232,8 @@
                                         <th>Price</th>
                                         <th>Cost</th>
                                         <th>Total</th>
+                                        <th>Warehouse</th>
+                                        <th>Location</th>
                                         <th>EditStock</th>
                                     </tr>
                                 </thead>
@@ -245,6 +247,8 @@
                                         <td>{{ item.Price }}</td>
                                         <td>{{ item.Cost }}</td>
                                         <td>{{ item.Total }}</td>
+                                        <td>{{ item.WarehouseName }}</td>
+                                        <td>{{ item.Location }}</td>
                                         <td>
                                             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editModal" ng-click="editStocks(item.Id);">
                                                 Update
@@ -337,11 +341,22 @@
                             </div>
                         </div>
                         <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label class="col-form-label text-bold">Warehouse</label>
+                                <input type="text" class="form-control" ng-model="ListStockTotal.WarehouseName" disabled>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label class="col-form-label text-bold">Location</label>
+                                <input type="text" class="form-control" ng-model="ListStockTotal.Location" disabled>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="mb-3 col-md-12">
-                                <label class="col-form-label text-bold">Remark/Location</label>
+                                <label class="col-form-label text-bold">Remark</label>
                                 <input type="text" class="form-control" ng-model="ListStockTotal.Remark">
                             </div>
                         </div>
+ 
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-success" ng-click="SaveStock(ListStockTotal,TotalStock,AddNewQty ,@Model.EmpNo );">Save</button>
@@ -393,14 +408,9 @@
                             <div class="mb-3 col-md-6">
                                 <label class="col-form-label text-bold">Total</label>
                                 <input type="text" class="form-control" id="Total" ng-model="ListStock.Total" disabled />
-
-                            </div>
-                            <div class="mb-3 col-md-6">
-                                <label class="col-form-label text-bold">Remark/Location</label>
-                                <input type="text" class="form-control" id="Total" ng-model="ListStock.Remark" disabled />
-
                             </div>
                         </div>
+
                         <hr />
                         <div class="row">
                             <div class="mb-3 col-md-6">
@@ -413,6 +423,31 @@
                                        class="form-control"
                                        ng-model="UpTotalStock"
                                        disabled>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label class="col-form-label text-bold">WarehouseName</label>
+                                <select ng-model="ListStock.WarehouseName"
+                                        class="form-control"
+                                        ng-options="x for x in datawarehouse" ng-change="getlocationdesc(ListStock.WarehouseName);"
+                                        placeholder="Warehouse">
+                                </select>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label class="col-form-label text-bold">Location</label>
+                                <select ng-model="ListStock.Location"
+                                        class="form-control"
+                                        ng-options="x for x in datawarehouses"
+                                        placeholder="Location">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="mb-3 col-md-12">
+                                <label class="col-form-label text-bold">Remark</label>
+                                <input type="text" class="form-control" ng-model="ListStock.Remark"  />
                             </div>
                         </div>
                     </div>
@@ -475,13 +510,33 @@
                                 <label class="col-form-label text-bold">Total</label>
                                 <input type="number" class="form-control" ng-model="AddMaster.Total">
                             </div>
+                        </div>
+                        <div class="row">
                             <div class="mb-3 col-md-6">
-                                <label class="col-form-label text-bold">Remark/Location</label>
+                                <label class="col-form-label text-bold">Warehouse</label>
+                                <select ng-model="ddlWarehouse"
+                                        class="form-control"
+                                        ng-options="x for x in datawarehouse" ng-change="getlocationdesc(ddlWarehouse);"
+                                        placeholder="Warehouse">
+                                </select>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label class="col-form-label text-bold">Location</label>
+                                <select ng-model="ddlLocation"
+                                        class="form-control"
+                                        ng-options="x for x in datawarehouses"
+                                        placeholder="Location">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-12">
+                                <label class="col-form-label text-bold">Remark</label>
                                 <input type="text" class="form-control" id="Total" ng-model="AddMaster.Remark" />
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-success" ng-click="SaveMasterStock(StyleNo,ListStyle.Description , Color , Size ,   AddMaster ,@Model);">Save</button>
+                            <button type="submit" class="btn btn-success" ng-click="SaveMasterStock(StyleNo,ListStyle.Description , Color , Size ,   AddMaster ,@Model.EmpNo ,ddlWarehouse ,ddlLocation);">Save</button>
                             <button type="submit" class="btn btn-warning" ng-click="reloadPage();">Clear</button>
                         </div>
                     </div>

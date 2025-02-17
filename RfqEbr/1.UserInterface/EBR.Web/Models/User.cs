@@ -13,7 +13,6 @@ namespace EBR.Web.Models
         public string Name { get; set; }
         public List<string> RoleNames { get; set; }
 
-
         public User()
         {
             RoleNames = new List<string>();

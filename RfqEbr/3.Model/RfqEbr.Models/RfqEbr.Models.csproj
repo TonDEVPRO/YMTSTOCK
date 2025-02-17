@@ -71,8 +71,17 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IT\Device.cs" />
+    <Compile Include="IT\MasterDepartment.cs" />
+    <Compile Include="IT\MasterLocation.cs" />
+    <Compile Include="IT\MasterSupplier.cs" />
+    <Compile Include="IT\MasterTransactionType.cs" />
+    <Compile Include="IT\StockDeviceIT\StockDeviceIT.cs" />
+    <Compile Include="IT\StockDeviceIT\StockDeviceITInQty.cs" />
+    <Compile Include="IT\StockDeviceIT\StockTransactionIT.cs" />
     <Compile Include="Nds\AttachmentsModel.cs" />
     <Compile Include="Nds\FooterEvent.cs" />
+    <Compile Include="Nds\Warehouse.cs" />
     <Compile Include="Nds\Payment.cs" />
     <Compile Include="Nds\Item.cs" />
     <Compile Include="Nds\MasterProvince.cs" />
@@ -98,6 +107,7 @@
     </Compile>
     <Compile Include="Custom\Test.cs" />
     <Compile Include="Table\AuthorizeSystemMaster.cs" />
+    <Compile Include="Table\BarcodeTags.cs" />
     <Compile Include="Table\RFIDTag.cs" />
     <Compile Include="Table\Product.cs" />
     <Compile Include="Table\YMTGNDSShopSaveHoliday.cs" />

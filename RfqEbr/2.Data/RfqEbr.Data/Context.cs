@@ -3,6 +3,9 @@ using System.Security.Cryptography.X509Certificates;
 using RfqEbr.Data.Configuration;
 using RfqEbr.Data.Core;
 using RfqEbr.Models;
+using RfqEbr.Models.IT.StockDeviceIT;
+using RfqEbr.Models.IT.StockDeviceITInLocation;
+using RfqEbr.Models.IT;
 using RfqEbr.Models.Table;
 
 
@@ -61,10 +64,27 @@ namespace RfqEbr.Data
             modelBuilder.Configurations.Add(new RFIDTagsConfig());
 
             modelBuilder.Configurations.Add(new PaymentConfig());
-            
+
+            modelBuilder.Configurations.Add(new WarehouseConfig());
+            modelBuilder.Configurations.Add(new BarcodeTagsConfig());
+
+
+            //IT
+            modelBuilder.Configurations.Add(new StockDeviceITConfig());
+            modelBuilder.Configurations.Add(new StockDeviceITInQtyConfig());
+            modelBuilder.Configurations.Add(new StockDeviceTransactionITConfig());
+
+
+            // MasterData
+            modelBuilder.Configurations.Add(new MasterSupplierConfig());
+            modelBuilder.Configurations.Add(new MasterTransactionTypeConfig());
+            modelBuilder.Configurations.Add(new MasterLocationConfig());
+            modelBuilder.Configurations.Add(new MasterDepartmentConfig());
+            modelBuilder.Configurations.Add(new DeviceConfig());
+
         }
 
-        //#Wansao - Table
+ 
         public DbSet<AuthorizeSystemMaster> AuthorizeSystemMasters { get; set; }
 
         //YMTG
@@ -104,5 +124,21 @@ namespace RfqEbr.Data
         public DbSet<RFIDTag> RFIDTags { get; set; }
         public DbSet<Payment> Payments { get; set; }
         
+
+        public DbSet<Warehouse> Warehouses { get; set; }
+
+        //
+        public DbSet<BarcodeTags> BarcodeTagss { get; set; }
+
+
+        // IT
+        public DbSet<StockDeviceIT> StockDeviceITs { get; set; }
+        public DbSet<StockTransactionIT> StockTransactionITs { get; set; }
+        public DbSet<MasterSupplier> MasterSuppliers { get; set; }
+        public DbSet<StockDeviceITInQty> StockDeviceITInQtys { get; set; }
+        public DbSet<MasterTransactionType> MasterTransactionTypes { get; set; }
+        public DbSet<MasterLocation> MasterLocations { get; set; }
+        public DbSet<Device> Devices { get; set; }
+
     }
 }

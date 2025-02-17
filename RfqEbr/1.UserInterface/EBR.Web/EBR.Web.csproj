@@ -194,7 +194,16 @@
     <Compile Include="App_Start\NinjectWebCommon.cs" />
     <Compile Include="App_Start\WebApiRouteConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MasterData\MasterDepartmentController.cs" />
+    <Compile Include="Controllers\MasterData\MasterDeviceController.cs" />
+    <Compile Include="Controllers\MasterData\MasterSupplierController.cs" />
+    <Compile Include="Controllers\MasterData\MasterTransactionController.cs" />
+    <Compile Include="Controllers\MasterData\MasterTransactionTypeController .cs" />
+    <Compile Include="Controllers\Stock\OutStockDeviceITController.cs" />
+    <Compile Include="Controllers\Stock\ReceiveStockDeviceITController.cs" />
+    <Compile Include="Controllers\Stock\StockDeviceITController.cs" />
     <Compile Include="Filters\AjaxHandleErrorAttribute.cs" />
     <Compile Include="Filters\SessionExpireFilterAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -3604,7 +3613,10 @@
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
     <Content Include="Scripts\app\app.js" />
+    <Content Include="Scripts\app\controllers\FormatDate.js" />
     <Content Include="Scripts\app\controllers\MainAppCtrl.js" />
+    <Content Include="Scripts\app\controllers\ScannerService.js" />
+    <Content Include="Scripts\app\controllers\StockDeviceCtrl.js" />
     <Content Include="Scripts\app\directives.js" />
     <Content Include="Scripts\app\factory.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -3976,6 +3988,7 @@
     <Content Include="Scripts\node_modules\moment\src\locale\zh-hk.js" />
     <Content Include="Scripts\node_modules\moment\src\locale\zh-tw.js" />
     <Content Include="Scripts\node_modules\moment\src\moment.js" />
+    <Content Include="Scripts\Quagga.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\select.js" />
@@ -4372,7 +4385,6 @@
     <Content Include="Views\Shared\_LoginLayoutNew.cshtml" />
     <Content Include="Views\Home\Login.cshtml" />
     <Content Include="Views\Home\YMTHome.cshtml" />
-    <Content Include="Views\Home\YMTPNote.cshtml" />
     <Content Include="Views\Home\YMTGroup.cshtml" />
     <Content Include="Styles\assets\fonts\dripicons-v2.eot" />
     <Content Include="Styles\assets\fonts\dripicons-v2.ttf" />
@@ -4424,10 +4436,6 @@
     <Content Include="Views\Home\NdsSystemViewOrder.cshtml" />
     <Content Include="Views\Home\NdsSystemViewPage.cshtml" />
     <Content Include="Views\Home\NdsSystemOrderInformation.cshtml" />
-    <Content Include="Views\Shared\_LayoutRFID.cshtml" />
-    <Content Include="Views\Home\RFIDIndex.cshtml" />
-    <Content Include="Views\Shared\_LayoutPOS.cshtml" />
-    <Content Include="Views\Home\POSSystem.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -4467,6 +4475,12 @@
     <Content Include="Styles\HyperDEV\assets\fonts\unicons8adf.ttf" />
     <Content Include="Styles\HyperDEV\assets\fonts\unicons8adf.woff" />
     <Content Include="Styles\HyperDEV\assets\fonts\unicons8adf.woff2" />
+    <Content Include="Views\Home\Dashboard\Dashboard.cshtml" />
+    <Content Include="Views\Home\StockDevice_IT\Out\FormOutStockIT.cshtml" />
+    <Content Include="Views\Home\StockDevice_IT\Out\OutStockIT.cshtml" />
+    <Content Include="Views\Home\StockDevice_IT\Receive\FormReceiveStockIT.cshtml" />
+    <Content Include="Views\Home\StockDevice_IT\Receive\ReceiveStockIT.cshtml" />
+    <Content Include="Views\Home\StockDevice_IT\StockDeviceIT.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\2.Data\RfqEbr.Data.Contracts\RfqEbr.Data.Contracts.csproj">
@@ -4523,7 +4537,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>7600</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:9999</IISUrl>
+          <IISUrl>http://localhost:7890</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
